@@ -1,0 +1,17 @@
+{
+  "name": "pathfinder-frontend",
+  "version": "1.0.0",
+  "description": "PathFinder frontend application",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jenitha23/PathFinder_frontend.git"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives",
+    "preview": "vite preview"
+  }
+}
