@@ -42,10 +42,10 @@ export default function StudentHome() {
   ];
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
+    <div className="student-home-page" style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
 
       {/* ── Hero strip ─────────────────────────────────── */}
-      <div style={{
+      <div className="student-home-hero" style={{
         background: "linear-gradient(135deg, #0A2472 0%, #1a3a8f 100%)",
         padding: "56px 0 80px", position: "relative", overflow: "hidden",
       }}>
@@ -84,7 +84,7 @@ export default function StudentHome() {
       <div className="container" style={{ marginTop: -28 }}>
 
         {/* ── Stat Cards ─────────────────────────────────── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}>
+        <div className="student-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}>
           {stats.map((s, i) => (
             <div key={i} className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: `${i * 0.08}s` }}>
               <div style={{ width: 46, height: 46, borderRadius: 14, background: s.bg, display: "grid", placeItems: "center", fontSize: 22, marginBottom: 16 }}>
@@ -97,7 +97,7 @@ export default function StudentHome() {
           ))}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
+        <div className="student-main-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
 
           {/* ── Next Steps ──────────────────────────────── */}
           <div>
@@ -106,7 +106,7 @@ export default function StudentHome() {
             </div>
             <div style={{ display: "grid", gap: 14 }}>
               {DASHBOARD_ACTIONS.map((step, i) => (
-                <div key={i} className="card animate-fade-up" style={{
+                <div key={i} className="card animate-fade-up student-action-card" style={{
                   padding: "22px 24px", display: "flex", gap: 18, alignItems: "flex-start",
                   animationDelay: `${0.2 + i * 0.1}s`,
                 }}>
@@ -197,12 +197,6 @@ export default function StudentHome() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 900px) {
-          div[style*="gridTemplateColumns: \"repeat(3, 1fr)\""] { grid-template-columns: 1fr !important; }
-          div[style*="gridTemplateColumns: \"1.5fr 1fr\""] { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

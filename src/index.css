@@ -237,3 +237,138 @@ input, textarea, select { font-family: inherit; }
 .animate-delay-3  { animation-delay: 0.3s; }
 .animate-delay-4  { animation-delay: 0.4s; }
 .animate-delay-5  { animation-delay: 0.5s; }
+
+/* Responsive: keep visual design, adapt layout */
+@media (max-width: 1100px) {
+  .landing-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .landing-step-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+  }
+
+  .landing-role-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .student-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .student-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .pf-nav,
+  .pf-nav-min {
+    height: auto !important;
+    min-height: 65px;
+  }
+
+  .pf-nav-inner,
+  .pf-nav-min-inner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .pf-nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pf-nav-auth {
+    margin-left: auto;
+  }
+
+  .pf-user-chip {
+    max-width: 170px;
+    overflow: hidden;
+  }
+
+  .pf-user-chip > div:last-child > div:first-child {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .auth-page {
+    height: auto !important;
+    min-height: calc(100vh - 65px);
+    grid-template-columns: 1fr !important;
+    overflow: visible !important;
+  }
+
+  .auth-page-side {
+    height: auto !important;
+    min-height: 320px;
+  }
+
+  .auth-page-form {
+    height: auto !important;
+    min-height: 0;
+    padding: 28px 20px !important;
+  }
+
+  .auth-form-shell {
+    max-width: 560px !important;
+  }
+
+  .landing-hero {
+    padding: 56px 0 72px !important;
+  }
+
+  .landing-showcase-wrap {
+    margin-top: 14px;
+  }
+
+  .hero-showcase-badge-top,
+  .hero-showcase-badge-bottom {
+    display: none;
+  }
+
+  .student-home-hero {
+    padding: 40px 0 64px !important;
+  }
+
+  .student-action-card {
+    flex-direction: column;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    width: min(1100px, 94vw);
+  }
+
+  .pf-brand-text {
+    display: none;
+  }
+
+  .pf-nav-auth .btn-sm,
+  .pf-nav-min .btn-sm {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  .landing-feature-grid,
+  .landing-step-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-showcase-card {
+    width: min(330px, 92vw) !important;
+  }
+
+  .student-home-page h1 {
+    font-size: 28px !important;
+    line-height: 1.2;
+  }
+}
