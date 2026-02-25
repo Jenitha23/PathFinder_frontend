@@ -8,34 +8,37 @@ export default function Navbar() {
   const auth = getAuth();
   const loggedIn = isLoggedIn();
 
+  // Role-based dashboard path
+  const getDashboardPath = () => {
+    if (auth.role === "STUDENT") return "/student/home";
+    if (auth.role === "COMPANY") return "/company/dashboard";
+    if (auth.role === "ADMIN") return "/admin/dashboard";
+    return "/";
+  };
+
   const logout = async () => {
     try {
       if (auth.role === "STUDENT") {
         await api.post("/api/student/auth/logout");
-      }
-
-      if (auth.role === "COMPANY") {
+      } else if (auth.role === "COMPANY") {
         await api.post("/api/company/auth/logout");
       }
-
-      if (auth.role === "ADMIN") {
-        await api.post("/api/admin/auth/logout");
-      }
     } catch {
-      // Always clear local auth even if backend logout fails.
+      // ignore errors
     } finally {
       clearAuth();
       nav("/");
     }
   };
 
-  // Hide full navbar on auth pages — show minimal version
+  // Hide full navbar on auth pages
   const isAuthPage = [
     "/student/login",
     "/student/register",
     "/company/login",
     "/company/register",
     "/admin/login",
+    "/auth/choose",
   ].includes(location.pathname);
 
   if (isAuthPage) {
@@ -103,13 +106,7 @@ export default function Navbar() {
     );
   }
 
-  // Determine dashboard path by role
-  const getDashboardPath = () => {
-    if (auth.role === "STUDENT") return "/student/home";
-    if (auth.role === "COMPANY") return "/company/dashboard";
-    if (auth.role === "ADMIN") return "/admin/dashboard";
-    return "/";
-  };
+  const dashboardPath = getDashboardPath();
 
   return (
     <nav
@@ -193,10 +190,10 @@ export default function Navbar() {
           {loggedIn && (
             <Link
               className="btn btn-ghost btn-sm"
-              to={getDashboardPath()}
+              to={dashboardPath}
               style={{
                 color:
-                  location.pathname === getDashboardPath()
+                  location.pathname === dashboardPath
                     ? "var(--primary)"
                     : "var(--text)",
               }}
@@ -213,10 +210,16 @@ export default function Navbar() {
         >
           {!loggedIn ? (
             <>
-              <Link className="btn btn-outline btn-sm" to="/student/login">
+              <Link
+                className="btn btn-outline btn-sm"
+                to="/auth/choose?mode=login"
+              >
                 Sign In
               </Link>
-              <Link className="btn btn-primary btn-sm" to="/student/register">
+              <Link
+                className="btn btn-primary btn-sm"
+                to="/auth/choose?mode=register"
+              >
                 Get Started
               </Link>
             </>
