@@ -13,6 +13,8 @@ import AdminLogin from "./pages/admin/AdminLogin";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import CompanyDashboard from "./pages/company/CompanyDashboard";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -35,6 +37,10 @@ export default function App() {
         {/* Company */}
         <Route path="/company/login" element={<CompanyLogin />} />
         <Route path="/company/register" element={<CompanyRegister />} />
+        <Route path="/company/dashboard" element={<ProtectedRoute allowRole="COMPANY"><CompanyDashboard />
+    </ProtectedRoute>
+  }
+/>
 
         {/* Admin */}
         <Route path="/admin/login" element={<AdminLogin />} />
