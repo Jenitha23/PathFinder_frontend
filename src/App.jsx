@@ -15,12 +15,15 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import CompanyDashboard from "./pages/company/CompanyDashboard";
 
+import AuthChoose from "./pages/AuthChoose";
+
 export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/auth/choose" element={<AuthChoose />} />
 
         {/* Student */}
         <Route path="/student/login" element={<StudentLogin />} />

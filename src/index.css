@@ -260,6 +260,14 @@ input, textarea, select { font-family: inherit; }
   .student-main-grid {
     grid-template-columns: 1fr !important;
   }
+
+  .company-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .company-main-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 @media (max-width: 900px) {
@@ -341,6 +349,15 @@ input, textarea, select { font-family: inherit; }
     flex-direction: column;
     gap: 12px !important;
   }
+
+  .company-home-hero {
+    padding: 40px 0 64px !important;
+  }
+
+  .company-action-card {
+    flex-direction: column;
+    gap: 12px !important;
+  }
 }
 
 @media (max-width: 640px) {
@@ -368,6 +385,11 @@ input, textarea, select { font-family: inherit; }
   }
 
   .student-home-page h1 {
+    font-size: 28px !important;
+    line-height: 1.2;
+  }
+
+  .company-home-hero h1 {
     font-size: 28px !important;
     line-height: 1.2;
   }
