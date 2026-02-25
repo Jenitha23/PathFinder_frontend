@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 
 function StrengthBar({ password }) {
@@ -23,25 +23,26 @@ function StrengthBar({ password }) {
     <div style={{ marginTop: 8 }}>
       <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} style={{
-            flex: 1, height: 4, borderRadius: 4,
-            background: i <= strength ? colors[strength] : "var(--border)",
-            transition: "background 0.3s",
-          }} />
+          <div
+            key={i}
+            style={{
+              flex: 1,
+              height: 4,
+              borderRadius: 4,
+              background: i <= strength ? colors[strength] : "var(--border)",
+              transition: "background 0.3s",
+            }}
+          />
         ))}
       </div>
       {strength > 0 && (
-        <div style={{ fontSize: 12, color: colors[strength], fontWeight: 600 }}>
-          {labels[strength]} password
-        </div>
+        <div style={{ fontSize: 12, color: colors[strength], fontWeight: 600 }}>{labels[strength]} password</div>
       )}
     </div>
   );
 }
 
 export default function CompanyRegister() {
-  const nav = useNavigate();
-
   const [form, setForm] = useState({
     companyName: "",
     email: "",
@@ -57,7 +58,7 @@ export default function CompanyRegister() {
   const onChange = (e) => {
     setError("");
     setSuccess("");
-    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const validate = () => {
@@ -71,8 +72,11 @@ export default function CompanyRegister() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const v = validate();
-    if (v) { setError(v); return; }
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -85,14 +89,7 @@ export default function CompanyRegister() {
         Password: form.password,
       });
 
-      // Backend returns: message + status, no token (pending approval)
-      setSuccess(
-        data?.message ||
-        "Company registered successfully. Waiting for admin approval."
-      );
-
-      // Optional: take them to login after short delay, but no background timers required.
-      // We keep it simple: show success and provide a button.
+      setSuccess(data?.message || "Company registered successfully. Waiting for admin approval.");
     } catch (err) {
       const msg = err.response?.data;
       if (err.response?.status === 409) {
@@ -108,113 +105,190 @@ export default function CompanyRegister() {
   };
 
   return (
-    <div className="auth-page auth-register-page" style={{
-      height: "calc(100vh - 65px)",
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      overflow: "hidden",
-    }}>
-      {/* Left panel */}
-      <div className="auth-page-side" style={{
-        background: "linear-gradient(145deg, #0A2472 0%, #1a3a8f 100%)",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
+    <div
+      className="auth-page auth-register-page"
+      style={{
+        height: "calc(100vh - 65px)",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
         overflow: "hidden",
-        height: "100%",
-      }}>
-        <div style={{ position: "absolute", top: -60, right: -60, width: 280, height: 280, borderRadius: "50%", background: "rgba(46,196,182,0.1)" }} />
-        <div style={{ position: "absolute", bottom: -80, left: -40, width: 320, height: 320, borderRadius: "50%", background: "rgba(255,107,107,0.06)" }} />
+      }}
+    >
+      <div
+        className="auth-page-side"
+        style={{
+          background: "linear-gradient(145deg, #0A5F75 0%, #0A2472 100%)",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          overflow: "hidden",
+          height: "100%",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: -60,
+            right: -60,
+            width: 280,
+            height: 280,
+            borderRadius: "50%",
+            background: "rgba(46,196,182,0.1)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: -80,
+            left: -40,
+            width: 320,
+            height: 320,
+            borderRadius: "50%",
+            background: "rgba(255,107,107,0.06)",
+          }}
+        />
 
-        {/* Logo */}
         <div style={{ position: "relative", zIndex: 1, padding: "32px 48px 0" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{
-              width: 38, height: 38, borderRadius: 12,
-              background: "#2EC4B6", display: "grid", placeItems: "center",
-              color: "white", fontWeight: 900, fontSize: 13, fontFamily: "'Sora', sans-serif",
-            }}>PF</div>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 12,
+                background: "#2EC4B6",
+                display: "grid",
+                placeItems: "center",
+                color: "white",
+                fontWeight: 900,
+                fontSize: 13,
+                fontFamily: "'Sora', sans-serif",
+              }}
+            >
+              PF
+            </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 15, color: "white", fontFamily: "'Sora', sans-serif" }}>PathFinder</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Internship & Job Platform</div>
+              <div style={{ fontWeight: 800, fontSize: 15, color: "white", fontFamily: "'Sora', sans-serif" }}>
+                PathFinder
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Internship and Job Platform</div>
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "0 48px",
-          position: "relative",
-          zIndex: 1,
-        }}>
-          <h2 style={{
-            fontSize: 34, fontWeight: 900, color: "white",
-            lineHeight: 1.1, marginBottom: 16, fontFamily: "'Sora', sans-serif",
-          }}>
-            Register your<br />
-            <span style={{ color: "#2EC4B6" }}>company</span> today.
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "0 48px",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 34,
+              fontWeight: 900,
+              color: "white",
+              lineHeight: 1.1,
+              marginBottom: 16,
+              fontFamily: "'Sora', sans-serif",
+            }}
+          >
+            Build your
+            <br />
+            <span style={{ color: "#2EC4B6" }}>company profile</span>
+            <br />
+            on PathFinder.
           </h2>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 15, lineHeight: 1.7, marginBottom: 40, maxWidth: 360 }}>
-            Company accounts require admin approval before you can log in and access your dashboard.
+            Register your organization and start preparing your hiring pipeline. Approval is required before access.
           </p>
 
-          <div style={{ display: "grid", gap: 16 }}>
+          <div style={{ display: "grid", gap: 0 }}>
             {[
-              { icon: "✅", text: "Create a verified company account" },
-              { icon: "🛡️", text: "Admin approval for platform safety" },
-              { icon: "📌", text: "Post jobs & manage applicants after approval" },
-            ].map((f) => (
-              <div key={f.text} style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: 12,
-                  background: "rgba(46,196,182,0.15)",
-                  display: "grid", placeItems: "center",
-                  fontSize: 18, flexShrink: 0,
-                }}>{f.icon}</div>
-                <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 14, lineHeight: 1.5 }}>{f.text}</p>
+              { step: "1", title: "Create company account", desc: "Use official company details", done: true },
+              { step: "2", title: "Wait for approval", desc: "Admin verifies your account", done: false },
+              { step: "3", title: "Access dashboard", desc: "Manage recruitment activity", done: false },
+              { step: "4", title: "Start hiring", desc: "Post roles and review candidates", done: false },
+            ].map((item, i) => (
+              <div key={item.title} style={{ display: "flex", gap: 14, paddingBottom: i < 3 ? 16 : 0 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      background: item.done ? "#2EC4B6" : "rgba(255,255,255,0.12)",
+                      display: "grid",
+                      placeItems: "center",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: "white",
+                      border: item.done ? "none" : "1.5px solid rgba(255,255,255,0.2)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {item.done ? "OK" : item.step}
+                  </div>
+                  {i < 3 && <div style={{ width: 1.5, flex: 1, background: "rgba(255,255,255,0.12)", marginTop: 4 }} />}
+                </div>
+                <div style={{ paddingTop: 4 }}>
+                  <div style={{ fontWeight: 600, color: item.done ? "white" : "rgba(255,255,255,0.7)", fontSize: 14 }}>
+                    {item.title}
+                  </div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginTop: 2 }}>{item.desc}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Right panel */}
-      <div className="auth-page-form" style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "0 64px",
-        background: "white",
-        height: "100%",
-        overflowY: "auto",
-      }}>
+      <div
+        className="auth-page-form"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "0 64px",
+          background: "white",
+          height: "100%",
+          overflowY: "auto",
+        }}
+      >
         <div style={{ width: "100%", maxWidth: 420 }} className="auth-form-shell animate-fade-up">
           <div style={{ marginBottom: 32 }}>
-            <h1 style={{ fontSize: 32, fontWeight: 900, color: "var(--text)", marginBottom: 10, fontFamily: "'Sora', sans-serif" }}>
+            <h1
+              style={{
+                fontSize: 32,
+                fontWeight: 900,
+                color: "var(--text)",
+                marginBottom: 10,
+                fontFamily: "'Sora', sans-serif",
+              }}
+            >
               Company Registration
             </h1>
             <p className="helper" style={{ fontSize: 15 }}>
-              Create your company account (admin approval required).
+              Create your company account (approval required).
             </p>
           </div>
 
           {error && (
             <div className="alert error animate-fade-in" style={{ marginBottom: 20 }}>
-              ⚠️ {error}
+              {error}
             </div>
           )}
 
           {success && (
             <div className="alert success animate-fade-in" style={{ marginBottom: 20 }}>
-              ✅ {success}
+              {success}
               <div style={{ marginTop: 10 }}>
                 <Link className="btn btn-outline btn-sm" to="/company/login">
-                  Go to Company Login →
+                  Go to Company Login {"->"}
                 </Link>
               </div>
             </div>
@@ -223,7 +297,9 @@ export default function CompanyRegister() {
           <form onSubmit={onSubmit}>
             <div className="form-row">
               <div>
-                <label className="label" htmlFor="companyName" style={{ fontSize: 14 }}>Company name</label>
+                <label className="label" htmlFor="companyName" style={{ fontSize: 14 }}>
+                  Company name
+                </label>
                 <input
                   id="companyName"
                   className="input"
@@ -238,7 +314,9 @@ export default function CompanyRegister() {
               </div>
 
               <div>
-                <label className="label" htmlFor="email" style={{ fontSize: 14 }}>Company email</label>
+                <label className="label" htmlFor="email" style={{ fontSize: 14 }}>
+                  Company email
+                </label>
                 <input
                   id="email"
                   className="input"
@@ -254,7 +332,9 @@ export default function CompanyRegister() {
               </div>
 
               <div>
-                <label className="label" htmlFor="password" style={{ fontSize: 14 }}>Password</label>
+                <label className="label" htmlFor="password" style={{ fontSize: 14 }}>
+                  Password
+                </label>
                 <div style={{ position: "relative" }}>
                   <input
                     id="password"
@@ -272,21 +352,29 @@ export default function CompanyRegister() {
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
                     style={{
-                      position: "absolute", right: 12, top: "50%",
-                      transform: "translateY(-50%)", background: "none",
-                      border: "none", color: "var(--muted)", cursor: "pointer",
-                      fontSize: 16, padding: 4,
+                      position: "absolute",
+                      right: 12,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      color: "var(--muted)",
+                      cursor: "pointer",
+                      fontSize: 13,
+                      fontWeight: 700,
+                      padding: 4,
                     }}
-                    title={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? "🙈" : "👁️"}
+                    {showPassword ? "HIDE" : "SHOW"}
                   </button>
                 </div>
                 <StrengthBar password={form.password} />
               </div>
 
               <div>
-                <label className="label" htmlFor="confirmPassword" style={{ fontSize: 14 }}>Confirm password</label>
+                <label className="label" htmlFor="confirmPassword" style={{ fontSize: 14 }}>
+                  Confirm password
+                </label>
                 <input
                   id="confirmPassword"
                   className="input"
@@ -298,21 +386,21 @@ export default function CompanyRegister() {
                   autoComplete="new-password"
                   required
                   style={{
-                    fontSize: 15, padding: "14px 16px",
-                    borderColor: form.confirmPassword && form.password !== form.confirmPassword
-                      ? "var(--coral)" : undefined,
+                    fontSize: 15,
+                    padding: "14px 16px",
+                    borderColor: form.confirmPassword && form.password !== form.confirmPassword ? "var(--coral)" : undefined,
                   }}
                 />
                 {form.confirmPassword && form.password !== form.confirmPassword && (
-                  <p style={{ fontSize: 12, color: "var(--coral)", marginTop: 4 }}>Passwords don't match</p>
+                  <p style={{ fontSize: 12, color: "var(--coral)", marginTop: 4 }}>Passwords do not match</p>
                 )}
                 {form.confirmPassword && form.password === form.confirmPassword && form.password && (
-                  <p style={{ fontSize: 12, color: "var(--teal)", marginTop: 4 }}>✓ Passwords match</p>
+                  <p style={{ fontSize: 12, color: "var(--teal)", marginTop: 4 }}>Passwords match</p>
                 )}
               </div>
 
               <p style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.6 }}>
-                By registering, you agree to PathFinder's terms of service and privacy policy.
+                By creating an account, you agree to PathFinder terms and privacy policy.
               </p>
 
               <button
@@ -320,12 +408,14 @@ export default function CompanyRegister() {
                 className="btn btn-teal"
                 disabled={loading}
                 style={{
-                  width: "100%", justifyContent: "center",
-                  padding: "14px 24px", fontSize: 15,
+                  width: "100%",
+                  justifyContent: "center",
+                  padding: "14px 24px",
+                  fontSize: 15,
                   opacity: loading ? 0.7 : 1,
                 }}
               >
-                {loading ? "Creating account…" : "Register Company →"}
+                {loading ? "Creating account..." : "Register Company ->"}
               </button>
             </div>
           </form>
@@ -334,7 +424,7 @@ export default function CompanyRegister() {
 
           <p style={{ textAlign: "center", fontSize: 14, color: "var(--muted)" }}>
             Already registered?{" "}
-            <Link to="/company/login" style={{ color: "var(--primary)", fontWeight: 600 }}>
+            <Link to="/company/login" style={{ color: "var(--teal)", fontWeight: 600 }}>
               Company login
             </Link>
           </p>
