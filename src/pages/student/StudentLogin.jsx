@@ -51,7 +51,7 @@ export default function StudentLogin() {
   };
 
   return (
-    <div style={{
+    <div className="auth-page auth-login-page" style={{
       height: "calc(100vh - 65px)",
       background: "var(--bg)",
       display: "grid",
@@ -60,7 +60,7 @@ export default function StudentLogin() {
     }}>
 
       {/* ── Left Panel ────────────────────────────────── */}
-      <div style={{
+      <div className="auth-page-side" style={{
         background: "linear-gradient(145deg, #0A2472 0%, #1a3a8f 100%)",
         display: "flex",
         flexDirection: "column",
@@ -131,7 +131,7 @@ export default function StudentLogin() {
       </div>
 
       {/* ── Right Panel: Form ──────────────────────────── */}
-      <div style={{
+      <div className="auth-page-form" style={{
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -141,7 +141,7 @@ export default function StudentLogin() {
         height: "100%",
         overflowY: "auto",
       }}>
-        <div style={{ width: "100%", maxWidth: 400 }} className="animate-fade-up">
+        <div style={{ width: "100%", maxWidth: 400 }} className="auth-form-shell animate-fade-up">
 
           <div style={{ marginBottom: 36 }}>
             <h1 style={{ fontSize: 32, fontWeight: 900, color: "var(--text)", marginBottom: 10, fontFamily: "'Sora', sans-serif" }}>
@@ -255,14 +255,6 @@ export default function StudentLogin() {
       {/* Spinner keyframe */}
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        @media (max-width: 768px) {
-          div[style*="gridTemplateColumns: \"1fr 1fr\""] {
-            grid-template-columns: 1fr !important;
-          }
-          div[style*="padding: \"60px 56px\""] {
-            display: none !important;
-          }
-        }
       `}</style>
     </div>
   );

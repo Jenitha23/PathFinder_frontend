@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { clearAuth, getAuth, isLoggedIn } from "../services/auth";
+import { api } from "../services/api";
 
 export default function Navbar() {
   const nav = useNavigate();
@@ -7,9 +8,17 @@ export default function Navbar() {
   const auth = getAuth();
   const loggedIn = isLoggedIn();
 
-  const logout = () => {
-    clearAuth();
-    nav("/");
+  const logout = async () => {
+    try {
+      if (auth.role === "STUDENT") {
+        await api.post("/api/student/auth/logout");
+      }
+    } catch {
+      // Always clear local auth even if backend logout fails.
+    } finally {
+      clearAuth();
+      nav("/");
+    }
   };
 
   // Hide full navbar on auth pages (login/register) — show minimal version
@@ -17,22 +26,22 @@ export default function Navbar() {
 
   if (isAuthPage) {
     return (
-      <div style={{
+      <div className="pf-nav-min" style={{
         borderBottom: "1px solid var(--border)",
         background: "white",
         height: 65,
         display: "flex",
         alignItems: "center",
       }}>
-        <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-          <Link to="/" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div className="container pf-nav-min-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+          <Link to="/" className="pf-nav-brand" style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <div style={{
               width: 34, height: 34, borderRadius: 12,
               background: "var(--primary)", color: "white",
               display: "grid", placeItems: "center",
               fontWeight: 900, fontSize: 13, fontFamily: "'Sora', sans-serif",
             }}>PF</div>
-            <div>
+            <div className="pf-brand-text">
               <div style={{ fontWeight: 800, fontFamily: "'Sora', sans-serif", lineHeight: 1.1 }}>PathFinder</div>
               <div style={{ fontSize: 11, color: "var(--muted)" }}>Internship & Job Platform</div>
             </div>
@@ -44,34 +53,34 @@ export default function Navbar() {
   }
 
   return (
-    <nav style={{
+    <nav className="pf-nav" style={{
       borderBottom: "1px solid var(--border)",
       background: "white",
       position: "sticky", top: 0, zIndex: 100,
       boxShadow: "0 2px 12px rgba(10,36,114,0.05)",
       height: 65,
     }}>
-      <div className="container" style={{
+      <div className="container pf-nav-inner" style={{
         display: "flex", alignItems: "center",
         justifyContent: "space-between",
         height: "100%",
       }}>
         {/* Logo */}
-        <Link to="/" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <Link to="/" className="pf-nav-brand" style={{ display: "flex", gap: 10, alignItems: "center" }}>
           <div style={{
             width: 36, height: 36, borderRadius: 12,
             background: "var(--primary)", color: "white",
             display: "grid", placeItems: "center",
             fontWeight: 900, fontSize: 13, fontFamily: "'Sora', sans-serif",
           }}>PF</div>
-          <div>
+          <div className="pf-brand-text">
             <div style={{ fontWeight: 800, fontFamily: "'Sora', sans-serif", lineHeight: 1.1, fontSize: 15 }}>PathFinder</div>
             <div style={{ fontSize: 11, color: "var(--muted)" }}>Internship & Job Platform</div>
           </div>
         </Link>
 
         {/* Nav links */}
-        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+        <div className="pf-nav-links" style={{ display: "flex", gap: 4, alignItems: "center" }}>
           <Link
             className="btn btn-ghost btn-sm"
             to="/"
@@ -88,16 +97,16 @@ export default function Navbar() {
         </div>
 
         {/* Auth section */}
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div className="pf-nav-auth" style={{ display: "flex", gap: 10, alignItems: "center" }}>
           {!loggedIn ? (
             <>
               <Link className="btn btn-outline btn-sm" to="/student/login">Sign In</Link>
               <Link className="btn btn-primary btn-sm" to="/student/register">Get Started</Link>
             </>
           ) : (
-            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <div className="pf-nav-user" style={{ display: "flex", gap: 10, alignItems: "center" }}>
               {/* User chip */}
-              <div style={{
+              <div className="pf-user-chip" style={{
                 display: "flex", alignItems: "center", gap: 8,
                 background: "var(--bg)", border: "1px solid var(--border)",
                 borderRadius: 999, padding: "6px 14px 6px 8px",

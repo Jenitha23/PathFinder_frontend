@@ -62,7 +62,7 @@ export default function StudentRegister() {
     if (!form.fullName.trim()) return "Full name is required.";
     if (!form.email.trim()) return "Email is required.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "Please enter a valid email address.";
-    if (form.password.length < 6) return "Password must be at least 6 characters.";
+    if (form.password.length < 8) return "Password must be at least 8 characters.";
     if (form.password !== form.confirmPassword) return "Passwords do not match.";
     return null;
   };
@@ -107,7 +107,7 @@ export default function StudentRegister() {
   };
 
   return (
-    <div style={{
+    <div className="auth-page auth-register-page" style={{
       height: "calc(100vh - 65px)",
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -115,7 +115,7 @@ export default function StudentRegister() {
     }}>
 
       {/* ── Left: Visual Panel ─────────────────────────── */}
-      <div style={{
+      <div className="auth-page-side" style={{
         background: "linear-gradient(145deg, #0A2472 0%, #1a3a8f 100%)",
         display: "flex",
         flexDirection: "column",
@@ -194,7 +194,7 @@ export default function StudentRegister() {
       </div>
 
       {/* ── Right: Form ────────────────────────────────── */}
-      <div style={{
+      <div className="auth-page-form" style={{
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -204,7 +204,7 @@ export default function StudentRegister() {
         height: "100%",
         overflowY: "auto",
       }}>
-        <div style={{ width: "100%", maxWidth: 420 }} className="animate-fade-up">
+        <div style={{ width: "100%", maxWidth: 420 }} className="auth-form-shell animate-fade-up">
 
           <div style={{ marginBottom: 32 }}>
             <h1 style={{ fontSize: 32, fontWeight: 900, color: "var(--text)", marginBottom: 10, fontFamily: "'Sora', sans-serif" }}>
@@ -265,7 +265,7 @@ export default function StudentRegister() {
                     className="input"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="At least 6 characters"
+                    placeholder="At least 8 characters"
                     value={form.password}
                     onChange={onChange}
                     autoComplete="new-password"

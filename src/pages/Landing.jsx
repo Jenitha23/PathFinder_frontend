@@ -11,7 +11,7 @@ function HeroShowcase() {
   ];
 
   return (
-    <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <div className="hero-showcase" style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <div style={{
         position: "absolute", width: 340, height: 340, borderRadius: "50%",
         background: "radial-gradient(circle, rgba(46,196,182,0.13) 0%, transparent 70%)",
@@ -19,7 +19,7 @@ function HeroShowcase() {
         animation: "float 6s ease-in-out infinite",
       }} />
 
-      <div style={{
+      <div className="hero-showcase-card" style={{
         background: "white", borderRadius: 24, padding: "24px 22px",
         boxShadow: "0 20px 60px rgba(10,36,114,0.14)", width: 330,
         position: "relative", animation: "float 5s ease-in-out infinite",
@@ -61,7 +61,7 @@ function HeroShowcase() {
         </div>
       </div>
 
-      <div style={{
+      <div className="hero-showcase-badge-top" style={{
         position: "absolute", top: 0, right: -24,
         background: "white", borderRadius: 14, padding: "10px 14px",
         boxShadow: "0 8px 24px rgba(10,36,114,0.12)", border: "1px solid var(--border)",
@@ -71,7 +71,7 @@ function HeroShowcase() {
         <div style={{ fontSize: 11, color: "var(--teal)", fontWeight: 500, marginTop: 2 }}>No credit card needed</div>
       </div>
 
-      <div style={{
+      <div className="hero-showcase-badge-bottom" style={{
         position: "absolute", bottom: 16, left: -28,
         background: "var(--primary)", borderRadius: 14, padding: "10px 14px",
         boxShadow: "0 8px 24px rgba(10,36,114,0.22)",
@@ -88,7 +88,7 @@ function HeroShowcase() {
 // ── Role Card ──────────────────────────────────────────────────────────────
 function RoleCard({ emoji, title, desc, to, accentColor, accentBg, delay }) {
   return (
-    <Link to={to} className="animate-fade-up" style={{ animationDelay: delay }}
+    <Link to={to} className="animate-fade-up"
       onMouseEnter={e => {
         e.currentTarget.style.transform = "translateY(-4px)";
         e.currentTarget.style.boxShadow = "0 16px 40px rgba(10,36,114,0.12)";
@@ -100,6 +100,7 @@ function RoleCard({ emoji, title, desc, to, accentColor, accentBg, delay }) {
         e.currentTarget.style.borderColor = "#dce8f0";
       }}
       style={{
+        animationDelay: delay,
         display: "block", background: "white", border: "1.5px solid #dce8f0",
         borderRadius: 20, padding: "24px 22px",
         boxShadow: "0 4px 24px rgba(10,36,114,0.08)",
@@ -150,7 +151,7 @@ export default function Landing() {
     <div style={{ minHeight: "100vh" }}>
 
       {/* HERO */}
-      <section style={{
+      <section className="landing-hero" style={{
         background: "linear-gradient(135deg, #0A2472 0%, #1a3a8f 60%, #0d2d7e 100%)",
         padding: "80px 0 100px", position: "relative", overflow: "hidden",
       }}>
@@ -158,7 +159,7 @@ export default function Landing() {
         <div style={{ position: "absolute", top: -100, right: -100, width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(46,196,182,0.15) 0%, transparent 60%)" }} />
 
         <div className="container">
-          <div className="grid-2">
+          <div className="grid-2 landing-hero-grid">
             <div style={{ display: "grid", gap: 24 }}>
               {loggedIn ? (
                 <div className="animate-fade-up" style={{
@@ -213,7 +214,7 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="animate-fade-up animate-delay-2" style={{ display: "flex", justifyContent: "center" }}>
+            <div className="animate-fade-up animate-delay-2 landing-showcase-wrap" style={{ display: "flex", justifyContent: "center" }}>
               <HeroShowcase />
             </div>
           </div>
@@ -230,7 +231,7 @@ export default function Landing() {
               PathFinder handles the whole journey — from finding the right opportunity to hearing back from companies.
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+          <div className="landing-feature-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             <FeatureCard icon="🎯" title="Discover Opportunities"
               desc="Browse and search internships and job listings. Filter by role, industry, and more to find what suits you."
               color="var(--primary)" bg="var(--primary-dim)" delay="0.1s" />
@@ -245,7 +246,6 @@ export default function Landing() {
               color="#FF6B6B" bg="var(--coral-dim)" delay="0.4s" />
           </div>
         </div>
-        <style>{`@media (max-width: 900px) { .feat-grid { grid-template-columns: 1fr 1fr !important; } }`}</style>
       </section>
 
       {/* ROLES */}
@@ -258,7 +258,7 @@ export default function Landing() {
               PathFinder provides dedicated dashboards for students, companies, and administrators — each with tailored features and access control.
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          <div className="landing-role-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             <RoleCard emoji="🎓" title="Student"
               desc="Register, build your profile, upload your CV, and browse & apply for internship and job opportunities. Track your application status in real time."
               to="/student/login" accentColor="var(--primary)" accentBg="var(--primary-dim)" delay="0.1s" />
@@ -269,7 +269,6 @@ export default function Landing() {
               desc="Manage user accounts, approve or reject company registrations, monitor platform activity, and access analytics and system reports."
               to="/admin/login" accentColor="#FF6B6B" accentBg="var(--coral-dim)" delay="0.3s" />
           </div>
-          <style>{`@media (max-width: 900px) { #roles > div > div:last-child { grid-template-columns: 1fr !important; } }`}</style>
         </div>
       </section>
 
@@ -283,7 +282,7 @@ export default function Landing() {
               PathFinder makes it easy to go from zero to hired — all in one place.
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
+          <div className="landing-step-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
             <StepCard number="1" title="Create your account"
               desc="Sign up in minutes as a student. It's completely free — just your name, email, and a password."
               delay="0.1s" />
@@ -297,7 +296,6 @@ export default function Landing() {
               desc="Follow your applications in real time. See when a company reviews, approves, or moves you forward."
               delay="0.4s" />
           </div>
-          <style>{`@media (max-width: 900px) { #how > div > div:last-child { grid-template-columns: 1fr 1fr !important; } }`}</style>
         </div>
       </section>
 
