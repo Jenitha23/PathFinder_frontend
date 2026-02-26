@@ -13,12 +13,17 @@ import AdminLogin from "./pages/admin/AdminLogin";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import CompanyDashboard from "./pages/company/CompanyDashboard";
+
+import AuthChoose from "./pages/AuthChoose";
+
 export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/auth/choose" element={<AuthChoose />} />
 
         {/* Student */}
         <Route path="/student/login" element={<StudentLogin />} />
@@ -35,6 +40,10 @@ export default function App() {
         {/* Company */}
         <Route path="/company/login" element={<CompanyLogin />} />
         <Route path="/company/register" element={<CompanyRegister />} />
+        <Route path="/company/dashboard" element={<ProtectedRoute allowRole="COMPANY"><CompanyDashboard />
+    </ProtectedRoute>
+  }
+/>
 
         {/* Admin */}
         <Route path="/admin/login" element={<AdminLogin />} />

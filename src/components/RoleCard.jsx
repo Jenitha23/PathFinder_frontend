@@ -17,12 +17,12 @@ export default function RoleCard({
       border: 'rgba(10, 36, 114, 0.2)'
     },
     company: {
-      primary: 'var(--secondary)',
+      primary: 'var(--teal)',
       light: 'rgba(46, 196, 182, 0.05)',
       border: 'rgba(46, 196, 182, 0.2)'
     },
     admin: {
-      primary: 'var(--accent)',
+      primary: 'var(--coral)',
       light: 'rgba(255, 107, 107, 0.05)',
       border: 'rgba(255, 107, 107, 0.2)'
     }

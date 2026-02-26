@@ -195,8 +195,8 @@ export default function Landing() {
                   <Link className="btn btn-teal btn-lg" to="/student/home">Go to Dashboard →</Link>
                 ) : (
                   <>
-                    <Link className="btn btn-teal btn-lg" to="/student/register">Get Started Free</Link>
-                    <Link className="btn btn-lg" to="/student/login" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.2)" }}>Sign In</Link>
+                    <Link className="btn btn-teal btn-lg" to="/auth/choose?mode=register">Get Started Free</Link>
+                    <Link className="btn btn-lg" to="/auth/choose?mode=login" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.2)" }}>Sign In</Link>
                   </>
                 )}
               </div>
@@ -310,8 +310,8 @@ export default function Landing() {
               Join PathFinder — Sri Lanka's Smart Internship Management System. Free for students, built for real opportunities.
             </p>
             <div className="animate-fade-up animate-delay-2" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-              <Link className="btn btn-teal btn-lg" to="/student/register">Create Free Account</Link>
-              <Link className="btn btn-lg" to="/student/login" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.25)" }}>Sign In Instead</Link>
+              <Link className="btn btn-teal btn-lg" to="/auth/choose?mode=register">Create Free Account</Link>
+              <Link className="btn btn-lg" to="/auth/choose?mode=login" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.25)" }}>Sign In Instead</Link>
             </div>
           </div>
         </section>
