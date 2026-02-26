@@ -1,9 +1,12 @@
+const AUTH_EVENT = "pf-auth-changed";
+
 export function saveAuth({ token, role, userId, email, fullName }) {
-  localStorage.setItem("pf_token", token);
-  localStorage.setItem("pf_role", role);
-  localStorage.setItem("pf_userId", String(userId));
+  localStorage.setItem("pf_token", token || "");
+  localStorage.setItem("pf_role", role || "");
+  localStorage.setItem("pf_userId", String(userId ?? ""));
   localStorage.setItem("pf_email", email || "");
   localStorage.setItem("pf_fullName", fullName || "");
+  window.dispatchEvent(new Event(AUTH_EVENT));
 }
 
 export function clearAuth() {
@@ -12,6 +15,7 @@ export function clearAuth() {
   localStorage.removeItem("pf_userId");
   localStorage.removeItem("pf_email");
   localStorage.removeItem("pf_fullName");
+  window.dispatchEvent(new Event(AUTH_EVENT));
 }
 
 export function getAuth() {
@@ -27,3 +31,5 @@ export function getAuth() {
 export function isLoggedIn() {
   return !!localStorage.getItem("pf_token");
 }
+
+export const AUTH_CHANGED_EVENT = AUTH_EVENT;
