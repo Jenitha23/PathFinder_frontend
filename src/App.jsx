@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "../components/Navbar";
 import Landing from "./pages/Landing";
 
 import StudentLogin from "./pages/student/StudentLogin";
@@ -11,7 +11,7 @@ import CompanyRegister from "./pages/company/CompanyRegister";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 import CompanyDashboard from "./pages/company/CompanyDashboard";
 
