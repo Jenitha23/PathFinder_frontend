@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/api/auth/:path*",
+      "source": "/api/:path*",
       "destination": "pathfinder-fqgwf0e6bvc2cmbq.southeastasia-01.azurewebsites.net"
     },
     {
