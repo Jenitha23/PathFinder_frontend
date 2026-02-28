@@ -105,7 +105,7 @@ export default function Navbar() {
             </div>
           </Link>
           <Link className="btn btn-ghost btn-sm" to="/">
-            â† Back to home
+            ← Back to home
           </Link>
         </div>
       </div>
