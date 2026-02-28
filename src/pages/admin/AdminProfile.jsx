@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/pages/admin/AdminProfile.jsx
+ * Purpose: Admin page for management workflows.
+ */
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import { api } from "../../services/api";
@@ -5,12 +9,14 @@ import { useAuth } from "../../context/AuthContext";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Fetches or derives data needed for this section.
 function getError(error, fallback) {
   const data = error?.response?.data;
   if (typeof data === "string") return data;
   return data?.message || data?.title || fallback;
 }
 
+// Renders the AdminProfile component.
 export default function AdminProfile() {
   const auth = useAuth();
 
@@ -23,6 +29,7 @@ export default function AdminProfile() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Fetches or derives data needed for this section.
     const load = async () => {
       setLoading(true);
       setError("");
@@ -42,6 +49,7 @@ export default function AdminProfile() {
     load();
   }, []);
 
+  // Validates input values before submitting data.
   const validateProfile = () => {
     const next = {};
     if (!profile.fullName.trim()) next.fullName = "Full name is required.";
@@ -51,6 +59,7 @@ export default function AdminProfile() {
     return Object.keys(next).length === 0;
   };
 
+  // Validates input values before submitting data.
   const validatePassword = () => {
     const next = {};
     if (!passwordForm.currentPassword) next.currentPassword = "Current password is required.";
@@ -59,6 +68,7 @@ export default function AdminProfile() {
     return Object.keys(next).length === 0;
   };
 
+  // Updates related data or UI state for this action.
   const updateProfile = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -86,6 +96,7 @@ export default function AdminProfile() {
     }
   };
 
+  // Runs an async operation and handles success/error states.
   const changePassword = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -188,3 +199,4 @@ export default function AdminProfile() {
     </AdminLayout>
   );
 }
+

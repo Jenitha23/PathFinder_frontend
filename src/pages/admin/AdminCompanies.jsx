@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/pages/admin/AdminCompanies.jsx
+ * Purpose: Admin page for management workflows.
+ */
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminStatusBadge from "../../components/admin/AdminStatusBadge";
@@ -6,6 +10,7 @@ import { api } from "../../services/api";
 
 const ALLOWED_STATUS = ["PENDING_APPROVAL", "APPROVED", "REJECTED"];
 
+// Fetches or derives data needed for this section.
 function listFromResponse(data) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
@@ -13,10 +18,12 @@ function listFromResponse(data) {
   return [];
 }
 
+// Fetches or derives data needed for this section.
 function getCompanyId(company) {
   return company.id ?? company.companyId;
 }
 
+// Renders the AdminCompanies component.
 export default function AdminCompanies() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +31,7 @@ export default function AdminCompanies() {
   const [message, setMessage] = useState("");
   const [savingId, setSavingId] = useState(null);
 
+  // Fetches or derives data needed for this section.
   const loadCompanies = async () => {
     setLoading(true);
     setError("");
@@ -41,6 +49,7 @@ export default function AdminCompanies() {
     loadCompanies();
   }, []);
 
+  // Updates related data or UI state for this action.
   const updateStatus = async (company, status) => {
     const companyId = getCompanyId(company);
     if (!companyId) {
@@ -127,3 +136,4 @@ export default function AdminCompanies() {
     </AdminLayout>
   );
 }
+

@@ -1,9 +1,14 @@
+﻿/**
+ * File: src/pages/admin/AdminDashboard.jsx
+ * Purpose: Admin page for management workflows.
+ */
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminStatusBadge from "../../components/admin/AdminStatusBadge";
 import { api } from "../../services/api";
 
+// Fetches or derives data needed for this section.
 function listFromResponse(data) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
@@ -11,6 +16,7 @@ function listFromResponse(data) {
   return [];
 }
 
+// Renders the AdminDashboard component.
 export default function AdminDashboard() {
   const [students, setStudents] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -18,6 +24,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Fetches or derives data needed for this section.
     const load = async () => {
       setLoading(true);
       setError("");
@@ -79,3 +86,4 @@ export default function AdminDashboard() {
     </AdminLayout>
   );
 }
+

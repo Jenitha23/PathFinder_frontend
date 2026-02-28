@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/services/auth.js
+ * Purpose: Shared service layer for API/auth utilities.
+ */
 const AUTH_EVENT = "pf-auth-changed";
 
 export function saveAuth({ token, role, userId, email, fullName }) {
@@ -33,3 +37,4 @@ export function isLoggedIn() {
 }
 
 export const AUTH_CHANGED_EVENT = AUTH_EVENT;
+

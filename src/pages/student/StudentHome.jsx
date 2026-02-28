@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/pages/student/StudentHome.jsx
+ * Purpose: Student-facing page for authentication and workflow.
+ */
 import { Link } from "react-router-dom";
 import { getAuth } from "../../services/auth";
 
@@ -23,10 +27,12 @@ const DASHBOARD_ACTIONS = [
   },
 ];
 
+// Renders the StudentHome component.
 export default function StudentHome() {
   const auth = getAuth();
   const firstName = auth.fullName ? auth.fullName.split(" ")[0] : "Student";
 
+  // Fetches or derives data needed for this section.
   const getGreeting = () => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";
@@ -200,3 +206,4 @@ export default function StudentHome() {
     </div>
   );
 }
+

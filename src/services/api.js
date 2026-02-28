@@ -1,9 +1,12 @@
+﻿/**
+ * File: src/services/api.js
+ * Purpose: Shared service layer for API/auth utilities.
+ */
 import axios from "axios";
 import { clearAuth, getAuth } from "./auth";
 
 export const API_BASE =
-  import.meta.env.VITE_API_BASE ||
-  "https://pathfinder-fqgwf0e6bvc2cmbq.southeastasia-01.azurewebsites.net";
+  import.meta.env.VITE_API_BASE || "https://pathfinder-fqgwf0e6bvc2cmbq.southeastasia-01.azurewebsites.net";
 
 export const api = axios.create({
   baseURL: API_BASE,
@@ -39,3 +42,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+

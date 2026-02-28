@@ -1,7 +1,12 @@
+﻿/**
+ * File: src/components/Navbar.jsx
+ * Purpose: Reusable UI component used across pages.
+ */
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { clearAuth, getAuth, isLoggedIn } from "../services/auth";
 import { api } from "../services/api";
 
+// Renders the Navbar component.
 export default function Navbar() {
   const nav = useNavigate();
   const location = useLocation();
@@ -16,6 +21,7 @@ export default function Navbar() {
     return "/";
   };
 
+  // Runs an async operation and handles success/error states.
   const logout = async () => {
     try {
       if (auth.role === "STUDENT") {
@@ -99,7 +105,7 @@ export default function Navbar() {
             </div>
           </Link>
           <Link className="btn btn-ghost btn-sm" to="/">
-            ← Back to home
+            â† Back to home
           </Link>
         </div>
       </div>
@@ -299,3 +305,4 @@ export default function Navbar() {
     </nav>
   );
 }
+
