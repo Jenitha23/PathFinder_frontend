@@ -292,7 +292,7 @@ export default function StudentRegister() {
                       fontSize: 16, padding: 4,
                     }}
                   >
-                    {showPassword ? "ðŸ™ˆ" : "ðŸ‘ï¸"}
+                    {showPassword ? "SHOW" : "HIDE"}
                   </button>
                 </div>
                 <StrengthBar password={form.password} />
