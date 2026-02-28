@@ -1,8 +1,13 @@
+﻿/**
+ * File: src/pages/student/StudentLogin.jsx
+ * Purpose: Student-facing page for authentication and workflow.
+ */
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { saveAuth } from "../../services/auth";
 
+// Renders the StudentLogin component.
 export default function StudentLogin() {
   const nav = useNavigate();
 
@@ -11,11 +16,13 @@ export default function StudentLogin() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handles onChange event flow and related state updates.
   const onChange = (e) => {
     setError("");
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Handles onSubmit event flow and related state updates.
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!form.email.trim() || !form.password) {
@@ -259,3 +266,4 @@ export default function StudentLogin() {
     </div>
   );
 }
+

@@ -1,8 +1,13 @@
+﻿/**
+ * File: src/pages/admin/AdminStudents.jsx
+ * Purpose: Admin page for management workflows.
+ */
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminTable from "../../components/admin/AdminTable";
 import { api } from "../../services/api";
 
+// Fetches or derives data needed for this section.
 function listFromResponse(data) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
@@ -10,12 +15,14 @@ function listFromResponse(data) {
   return [];
 }
 
+// Renders the AdminStudents component.
 export default function AdminStudents() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Fetches or derives data needed for this section.
     const load = async () => {
       setLoading(true);
       setError("");
@@ -52,3 +59,4 @@ export default function AdminStudents() {
     </AdminLayout>
   );
 }
+

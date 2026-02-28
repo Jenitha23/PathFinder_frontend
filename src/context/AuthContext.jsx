@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/context/AuthContext.jsx
+ * Purpose: Application context and global auth state management.
+ */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { AUTH_CHANGED_EVENT, clearAuth, getAuth, saveAuth } from "../services/auth";
 
@@ -43,3 +47,4 @@ export function useAuth() {
   }
   return ctx;
 }
+

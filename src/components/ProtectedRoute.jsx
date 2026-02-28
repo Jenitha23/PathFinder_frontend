@@ -1,6 +1,11 @@
+﻿/**
+ * File: src/components/ProtectedRoute.jsx
+ * Purpose: Reusable UI component used across pages.
+ */
 import { Navigate, useLocation } from "react-router-dom";
 import { getAuth } from "../services/auth";
 
+// Renders the ProtectedRoute component.
 export default function ProtectedRoute({ children, allowRole, allowRoles }) {
   const location = useLocation();
   const { token, role } = getAuth();
@@ -19,3 +24,4 @@ export default function ProtectedRoute({ children, allowRole, allowRoles }) {
 
   return children;
 }
+

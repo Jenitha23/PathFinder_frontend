@@ -1,6 +1,11 @@
+﻿/**
+ * File: src/components/RoleCard.jsx
+ * Purpose: Reusable UI component used across pages.
+ */
 // components/RoleCard.jsx
 import { Link } from "react-router-dom";
 
+// Renders the RoleCard component.
 export default function RoleCard({ 
   title, 
   description, 
@@ -91,7 +96,7 @@ export default function RoleCard({
                 fontSize: 14,
                 color: 'var(--text)'
               }}>
-                <span style={{ color: color.primary, fontSize: 18 }}>✓</span>
+                <span style={{ color: color.primary, fontSize: 18 }}>âœ“</span>
                 {feature}
               </li>
             ))}
@@ -113,9 +118,10 @@ export default function RoleCard({
           justifyContent: 'space-between'
         }}>
           {action || `Continue as ${title}`}
-          <span style={{ fontSize: 20 }}>→</span>
+          <span style={{ fontSize: 20 }}>â†’</span>
         </span>
       </div>
     </Link>
   );
 }
+

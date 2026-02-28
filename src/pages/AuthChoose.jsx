@@ -1,6 +1,11 @@
+﻿/**
+ * File: src/pages/AuthChoose.jsx
+ * Purpose: Top-level page component.
+ */
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+// Renders the ChooseRoleCard component.
 function ChooseRoleCard({ icon, title, desc, accentColor, accentBg, action, onClick, delay }) {
   return (
     <button
@@ -21,6 +26,7 @@ function ChooseRoleCard({ icon, title, desc, accentColor, accentBg, action, onCl
   );
 }
 
+// Renders the AuthChoose component.
 export default function AuthChoose() {
   const location = useLocation();
   const nav = useNavigate();
@@ -293,3 +299,4 @@ export default function AuthChoose() {
     </div>
   );
 }
+

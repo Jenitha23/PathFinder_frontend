@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/pages/Landing.jsx
+ * Purpose: Top-level page component.
+ */
 import { Link } from "react-router-dom";
 import { isLoggedIn, getAuth } from "../services/auth";
 
@@ -330,3 +334,4 @@ export default function Landing() {
     </div>
   );
 }
+

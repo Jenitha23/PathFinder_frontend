@@ -1,9 +1,15 @@
+﻿/**
+ * File: src/pages/student/StudentRegister.jsx
+ * Purpose: Student-facing page for authentication and workflow.
+ */
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { saveAuth } from "../../services/auth";
 
+// Renders the StrengthBar component.
 function StrengthBar({ password }) {
+  // Fetches or derives data needed for this section.
   const getStrength = () => {
     if (!password) return 0;
     let score = 0;
@@ -40,6 +46,7 @@ function StrengthBar({ password }) {
   );
 }
 
+// Renders the StudentRegister component.
 export default function StudentRegister() {
   const nav = useNavigate();
 
@@ -53,11 +60,13 @@ export default function StudentRegister() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handles onChange event flow and related state updates.
   const onChange = (e) => {
     setError("");
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Validates input values before submitting data.
   const validate = () => {
     if (!form.fullName.trim()) return "Full name is required.";
     if (!form.email.trim()) return "Email is required.";
@@ -67,6 +76,7 @@ export default function StudentRegister() {
     return null;
   };
 
+  // Handles onSubmit event flow and related state updates.
   const onSubmit = async (e) => {
     e.preventDefault();
     const validationError = validate();
@@ -282,7 +292,7 @@ export default function StudentRegister() {
                       fontSize: 16, padding: 4,
                     }}
                   >
-                    {showPassword ? "🙈" : "👁️"}
+                    {showPassword ? "ðŸ™ˆ" : "ðŸ‘ï¸"}
                   </button>
                 </div>
                 <StrengthBar password={form.password} />
@@ -364,3 +374,4 @@ export default function StudentRegister() {
     </div>
   );
 }
+

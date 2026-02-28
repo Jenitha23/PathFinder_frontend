@@ -1,3 +1,8 @@
+﻿/**
+ * File: src/components/admin/AdminStatusBadge.jsx
+ * Purpose: Reusable admin UI component.
+ */
+// Renders the AdminStatusBadge component.
 export default function AdminStatusBadge({ status }) {
   const s = status || "UNKNOWN";
 
@@ -7,3 +12,4 @@ export default function AdminStatusBadge({ status }) {
 
   return <span className={cls}>{s.replaceAll("_", " ")}</span>;
 }
+

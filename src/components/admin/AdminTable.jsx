@@ -1,3 +1,8 @@
+﻿/**
+ * File: src/components/admin/AdminTable.jsx
+ * Purpose: Reusable admin UI component.
+ */
+// Renders the AdminTable component.
 export default function AdminTable({ columns, rows, emptyText = "No records found." }) {
   return (
     <div className="card admin-table-wrap">
@@ -30,3 +35,4 @@ export default function AdminTable({ columns, rows, emptyText = "No records foun
     </div>
   );
 }
+

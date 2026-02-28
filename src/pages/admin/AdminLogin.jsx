@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/pages/admin/AdminLogin.jsx
+ * Purpose: Admin page for management workflows.
+ */
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
@@ -5,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Fetches or derives data needed for this section.
 function getErrorMessage(error) {
   const data = error?.response?.data;
   if (typeof data === "string") return data;
@@ -13,6 +18,7 @@ function getErrorMessage(error) {
   return "Invalid email or password. Please try again.";
 }
 
+// Renders the AdminLogin component.
 export default function AdminLogin() {
   const nav = useNavigate();
   const auth = useAuth();
@@ -27,6 +33,7 @@ export default function AdminLogin() {
     [form, loading],
   );
 
+  // Handles onChange event flow and related state updates.
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -34,6 +41,7 @@ export default function AdminLogin() {
     setError("");
   };
 
+  // Validates input values before submitting data.
   const validate = () => {
     const next = {};
 
@@ -46,6 +54,7 @@ export default function AdminLogin() {
     return Object.keys(next).length === 0;
   };
 
+  // Handles onSubmit event flow and related state updates.
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -126,3 +135,4 @@ export default function AdminLogin() {
     </div>
   );
 }
+

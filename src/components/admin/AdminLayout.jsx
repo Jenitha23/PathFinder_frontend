@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/components/admin/AdminLayout.jsx
+ * Purpose: Reusable admin UI component.
+ */
 import { NavLink, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -9,11 +13,13 @@ const NAV_ITEMS = [
   { to: "/admin/companies", label: "Companies" },
 ];
 
+// Renders the AdminLayout component.
 export default function AdminLayout({ title, subtitle, children }) {
   const nav = useNavigate();
   const auth = useAuth();
   const initial = (auth.fullName || auth.email || "A")[0].toUpperCase();
 
+  // Runs an async operation and handles success/error states.
   const logout = async () => {
     try {
       await api.post("/api/admin/auth/logout");
@@ -76,3 +82,4 @@ export default function AdminLayout({ title, subtitle, children }) {
     </div>
   );
 }
+

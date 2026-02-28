@@ -1,3 +1,7 @@
+﻿/**
+ * File: src/pages/company/CompanyDashboard.jsx
+ * Purpose: Company-facing page for authentication and workflow.
+ */
 import { Link } from "react-router-dom";
 import { getAuth } from "../../services/auth";
 
@@ -22,10 +26,12 @@ const COMPANY_ACTIONS = [
   },
 ];
 
+// Renders the CompanyDashboard component.
 export default function CompanyDashboard() {
   const auth = getAuth();
   const name = auth.fullName || auth.email || "Company";
 
+  // Fetches or derives data needed for this section.
   const getGreeting = () => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";
@@ -307,3 +313,4 @@ export default function CompanyDashboard() {
     </div>
   );
 }
+

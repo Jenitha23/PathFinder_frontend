@@ -1,8 +1,14 @@
+﻿/**
+ * File: src/pages/company/CompanyRegister.jsx
+ * Purpose: Company-facing page for authentication and workflow.
+ */
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 
+// Renders the StrengthBar component.
 function StrengthBar({ password }) {
+  // Fetches or derives data needed for this section.
   const getStrength = () => {
     if (!password) return 0;
     let score = 0;
@@ -42,6 +48,7 @@ function StrengthBar({ password }) {
   );
 }
 
+// Renders the CompanyRegister component.
 export default function CompanyRegister() {
   const [form, setForm] = useState({
     companyName: "",
@@ -55,12 +62,14 @@ export default function CompanyRegister() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handles onChange event flow and related state updates.
   const onChange = (e) => {
     setError("");
     setSuccess("");
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Validates input values before submitting data.
   const validate = () => {
     if (!form.companyName.trim()) return "Company name is required.";
     if (!form.email.trim()) return "Email is required.";
@@ -70,6 +79,7 @@ export default function CompanyRegister() {
     return null;
   };
 
+  // Handles onSubmit event flow and related state updates.
   const onSubmit = async (e) => {
     e.preventDefault();
     const validationError = validate();
@@ -433,3 +443,4 @@ export default function CompanyRegister() {
     </div>
   );
 }
+
