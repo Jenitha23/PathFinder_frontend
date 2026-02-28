@@ -2,8 +2,10 @@
  * File: src/pages/company/CompanyDashboard.jsx
  * Purpose: Company-facing page for authentication and workflow.
  */
-import { Link } from "react-router-dom";
-import { getAuth } from "../../services/auth";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { clearAuth, getAuth, saveAuth } from "../../services/auth";
+import { companyProfileApi } from "../../services/profile";
 
 const COMPANY_ACTIONS = [
   {
@@ -28,8 +30,136 @@ const COMPANY_ACTIONS = [
 
 // Renders the CompanyDashboard component.
 export default function CompanyDashboard() {
+  const nav = useNavigate();
   const auth = getAuth();
-  const name = auth.fullName || auth.email || "Company";
+  const [profile, setProfile] = useState({
+    companyName: auth.fullName || "",
+    email: auth.email || "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState({
+    companyName: auth.fullName || "",
+    email: auth.email || "",
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const name = profile.companyName || profile.email || "Company";
+
+  const getErrorMessage = (err, fallback) => {
+    const data = err?.response?.data;
+    if (typeof data === "string") return data;
+    return data?.message || data?.error || fallback;
+  };
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const { data } = await companyProfileApi.getMe();
+        const nextCompanyName = data?.companyName || data?.fullName || data?.name || "";
+        const nextEmail = data?.email || "";
+
+        setProfile({
+          companyName: nextCompanyName,
+          email: nextEmail,
+        });
+        setForm({
+          companyName: nextCompanyName,
+          email: nextEmail,
+        });
+
+        saveAuth({
+          token: auth.token,
+          role: auth.role,
+          userId: auth.userId,
+          fullName: nextCompanyName,
+          email: nextEmail,
+        });
+      } catch (err) {
+        setError(getErrorMessage(err, "Failed to load company profile."));
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  const validateForm = () => {
+    const next = {};
+    if (!form.companyName.trim()) next.companyName = "Company name is required.";
+    if (!form.email.trim()) next.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = "Enter a valid email.";
+    setFormErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const handleEditProfile = () => {
+    setMessage("");
+    setError("");
+    setFormErrors({});
+    setForm({
+      companyName: profile.companyName || "",
+      email: profile.email || "",
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!validateForm()) return;
+    setSaving(true);
+    setMessage("");
+    setError("");
+    try {
+      await companyProfileApi.updateProfile({
+        companyName: form.companyName.trim(),
+        email: form.email.trim(),
+      });
+
+      const updated = { companyName: form.companyName.trim(), email: form.email.trim() };
+      setProfile(updated);
+      saveAuth({
+        token: auth.token,
+        role: auth.role,
+        userId: auth.userId,
+        fullName: updated.companyName,
+        email: updated.email,
+      });
+      setIsEditing(false);
+      setMessage("Company profile updated successfully.");
+    } catch (err) {
+      const status = err?.response?.status;
+      const fallback = status === 400 || status === 409 ? "Profile update failed." : "Failed to update company profile.";
+      setError(getErrorMessage(err, fallback));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setFormErrors({});
+    setError("");
+    setMessage("");
+    setForm({
+      companyName: profile.companyName || "",
+      email: profile.email || "",
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm("Delete your company account permanently?");
+    if (!confirmed) return;
+
+    try {
+      await companyProfileApi.deleteAccount();
+      clearAuth();
+      sessionStorage.clear();
+      localStorage.clear();
+      nav("/company/login", { replace: true });
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to delete account."));
+    }
+  };
 
   // Fetches or derives data needed for this section.
   const getGreeting = () => {
@@ -124,7 +254,7 @@ export default function CompanyDashboard() {
                     padding: "5px 12px",
                   }}
                 >
-                  {auth.email}
+                  {profile.email}
                 </span>
               </div>
             </div>
@@ -243,35 +373,91 @@ export default function CompanyDashboard() {
 
               <hr className="divider" style={{ margin: "0 0 20px" }} />
 
-              <div style={{ display: "grid", gap: 14 }}>
-                {[
-                  { label: "Company", value: auth.fullName || "-" },
-                  { label: "Email", value: auth.email || "-" },
-                  { label: "Role", value: "Company" },
-                  { label: "Member since", value: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }) },
-                ].map((r) => (
-                  <div key={r.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 14, color: "var(--muted)" }}>{r.label}</span>
-                    <span
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: "var(--text)",
-                        maxWidth: 180,
-                        textAlign: "right",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {r.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {message ? <div className="alert success" style={{ marginBottom: 12 }}>{message}</div> : null}
+              {error ? <div className="alert error" style={{ marginBottom: 12 }}>{error}</div> : null}
 
-              <button className="btn btn-teal" style={{ width: "100%", justifyContent: "center", marginTop: 22, fontSize: 15 }}>
-                Edit Company Profile {"->"}
+              {isEditing ? (
+                <div style={{ display: "grid", gap: 12 }}>
+                  <div>
+                    <label className="label" htmlFor="company-name">Company name</label>
+                    <input
+                      id="company-name"
+                      className="input"
+                      value={form.companyName}
+                      onChange={(e) => {
+                        setForm((prev) => ({ ...prev, companyName: e.target.value }));
+                        setFormErrors((prev) => ({ ...prev, companyName: "" }));
+                      }}
+                    />
+                    {formErrors.companyName ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.companyName}</div> : null}
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="company-email">Email</label>
+                    <input
+                      id="company-email"
+                      className="input"
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => {
+                        setForm((prev) => ({ ...prev, email: e.target.value }));
+                        setFormErrors((prev) => ({ ...prev, email: "" }));
+                      }}
+                    />
+                    {formErrors.email ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.email}</div> : null}
+                  </div>
+                  <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                    <button className="btn btn-teal" style={{ flex: 1, justifyContent: "center" }} onClick={handleSaveProfile} disabled={saving}>
+                      {saving ? "Saving..." : "Save Changes"}
+                    </button>
+                    <button className="btn btn-outline" style={{ flex: 1, justifyContent: "center" }} onClick={handleCancelEdit} disabled={saving}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: "grid", gap: 14 }}>
+                    {[
+                      { label: "Company", value: profile.companyName || "-" },
+                      { label: "Email", value: profile.email || "-" },
+                      { label: "Role", value: "Company" },
+                      { label: "Member since", value: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }) },
+                    ].map((r) => (
+                      <div key={r.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 14, color: "var(--muted)" }}>{r.label}</span>
+                        <span
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: "var(--text)",
+                            maxWidth: 180,
+                            textAlign: "right",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {r.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    className="btn btn-teal"
+                    style={{ width: "100%", justifyContent: "center", marginTop: 22, fontSize: 15 }}
+                    onClick={handleEditProfile}
+                  >
+                    Edit Company Profile {"->"}
+                  </button>
+                </>
+              )}
+              <button
+                className="btn btn-outline"
+                style={{ width: "100%", justifyContent: "center", marginTop: 10, fontSize: 15 }}
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
               </button>
             </div>
 

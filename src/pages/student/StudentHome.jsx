@@ -3,7 +3,10 @@
  * Purpose: Student-facing page for authentication and workflow.
  */
 import { Link } from "react-router-dom";
-import { getAuth } from "../../services/auth";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { clearAuth, getAuth, saveAuth } from "../../services/auth";
+import { studentProfileApi } from "../../services/profile";
 
 // Real data only — zeros are honest placeholders until API is connected
 const DASHBOARD_ACTIONS = [
@@ -29,8 +32,136 @@ const DASHBOARD_ACTIONS = [
 
 // Renders the StudentHome component.
 export default function StudentHome() {
+  const nav = useNavigate();
   const auth = getAuth();
-  const firstName = auth.fullName ? auth.fullName.split(" ")[0] : "Student";
+  const [profile, setProfile] = useState({
+    fullName: auth.fullName || "",
+    email: auth.email || "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState({
+    fullName: auth.fullName || "",
+    email: auth.email || "",
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const firstName = profile.fullName ? profile.fullName.split(" ")[0] : "Student";
+
+  const getErrorMessage = (err, fallback) => {
+    const data = err?.response?.data;
+    if (typeof data === "string") return data;
+    return data?.message || data?.error || fallback;
+  };
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const { data } = await studentProfileApi.getMe();
+        const nextFullName = data?.fullName || data?.name || "";
+        const nextEmail = data?.email || "";
+
+        setProfile({
+          fullName: nextFullName,
+          email: nextEmail,
+        });
+        setForm({
+          fullName: nextFullName,
+          email: nextEmail,
+        });
+
+        saveAuth({
+          token: auth.token,
+          role: auth.role,
+          userId: auth.userId,
+          fullName: nextFullName,
+          email: nextEmail,
+        });
+      } catch (err) {
+        setError(getErrorMessage(err, "Failed to load profile."));
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  const validateForm = () => {
+    const next = {};
+    if (!form.fullName.trim()) next.fullName = "Full name is required.";
+    if (!form.email.trim()) next.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = "Enter a valid email.";
+    setFormErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const handleEditProfile = () => {
+    setMessage("");
+    setError("");
+    setFormErrors({});
+    setForm({
+      fullName: profile.fullName || "",
+      email: profile.email || "",
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!validateForm()) return;
+    setSaving(true);
+    setMessage("");
+    setError("");
+    try {
+      await studentProfileApi.updateProfile({
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+      });
+
+      const updated = { fullName: form.fullName.trim(), email: form.email.trim() };
+      setProfile(updated);
+      saveAuth({
+        token: auth.token,
+        role: auth.role,
+        userId: auth.userId,
+        fullName: updated.fullName,
+        email: updated.email,
+      });
+      setIsEditing(false);
+      setMessage("Profile updated successfully.");
+    } catch (err) {
+      const status = err?.response?.status;
+      const fallback = status === 400 || status === 409 ? "Profile update failed." : "Failed to update profile.";
+      setError(getErrorMessage(err, fallback));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setFormErrors({});
+    setError("");
+    setMessage("");
+    setForm({
+      fullName: profile.fullName || "",
+      email: profile.email || "",
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm("Delete your account permanently?");
+    if (!confirmed) return;
+
+    try {
+      await studentProfileApi.deleteAccount();
+      clearAuth();
+      sessionStorage.clear();
+      localStorage.clear();
+      nav("/student/login", { replace: true });
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to delete account."));
+    }
+  };
 
   // Fetches or derives data needed for this section.
   const getGreeting = () => {
@@ -72,14 +203,14 @@ export default function StudentHome() {
             <div>
               <div style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", marginBottom: 6 }}>{getGreeting()},</div>
               <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: 36, fontWeight: 900, color: "white" }}>
-                {auth.fullName || auth.email} 👋
+                {profile.fullName || profile.email} 👋
               </h1>
               <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
                 <span className="badge" style={{ background: "rgba(46,196,182,0.2)", color: "#2EC4B6", border: "1px solid rgba(46,196,182,0.3)", fontSize: 13, padding: "5px 12px" }}>
                   🎓 Student
                 </span>
                 <span className="badge" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", fontSize: 13, padding: "5px 12px" }}>
-                  {auth.email}
+                  {profile.email}
                 </span>
               </div>
             </div>
@@ -156,22 +287,78 @@ export default function StudentHome() {
 
               <hr className="divider" style={{ margin: "0 0 20px" }} />
 
-              <div style={{ display: "grid", gap: 14 }}>
-                {[
-                  { label: "Full Name", value: auth.fullName || "—" },
-                  { label: "Email", value: auth.email || "—" },
-                  { label: "Role", value: "Student" },
-                  { label: "Member since", value: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }) },
-                ].map(r => (
-                  <div key={r.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 14, color: "var(--muted)" }}>{r.label}</span>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", maxWidth: 180, textAlign: "right", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.value}</span>
-                  </div>
-                ))}
-              </div>
+              {message ? <div className="alert success" style={{ marginBottom: 12 }}>{message}</div> : null}
+              {error ? <div className="alert error" style={{ marginBottom: 12 }}>{error}</div> : null}
 
-              <button className="btn btn-primary" style={{ width: "100%", justifyContent: "center", marginTop: 22, fontSize: 15 }}>
-                Edit Profile →
+              {isEditing ? (
+                <div style={{ display: "grid", gap: 12 }}>
+                  <div>
+                    <label className="label" htmlFor="student-fullname">Full name</label>
+                    <input
+                      id="student-fullname"
+                      className="input"
+                      value={form.fullName}
+                      onChange={(e) => {
+                        setForm((prev) => ({ ...prev, fullName: e.target.value }));
+                        setFormErrors((prev) => ({ ...prev, fullName: "" }));
+                      }}
+                    />
+                    {formErrors.fullName ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.fullName}</div> : null}
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="student-email">Email</label>
+                    <input
+                      id="student-email"
+                      className="input"
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => {
+                        setForm((prev) => ({ ...prev, email: e.target.value }));
+                        setFormErrors((prev) => ({ ...prev, email: "" }));
+                      }}
+                    />
+                    {formErrors.email ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.email}</div> : null}
+                  </div>
+                  <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                    <button className="btn btn-primary" style={{ flex: 1, justifyContent: "center" }} onClick={handleSaveProfile} disabled={saving}>
+                      {saving ? "Saving..." : "Save Changes"}
+                    </button>
+                    <button className="btn btn-outline" style={{ flex: 1, justifyContent: "center" }} onClick={handleCancelEdit} disabled={saving}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: "grid", gap: 14 }}>
+                    {[
+                      { label: "Full Name", value: profile.fullName || "—" },
+                      { label: "Email", value: profile.email || "—" },
+                      { label: "Role", value: "Student" },
+                      { label: "Member since", value: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }) },
+                    ].map(r => (
+                      <div key={r.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 14, color: "var(--muted)" }}>{r.label}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", maxWidth: 180, textAlign: "right", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: "100%", justifyContent: "center", marginTop: 22, fontSize: 15 }}
+                    onClick={handleEditProfile}
+                  >
+                    Edit Profile →
+                  </button>
+                </>
+              )}
+              <button
+                className="btn btn-outline"
+                style={{ width: "100%", justifyContent: "center", marginTop: 10, fontSize: 15 }}
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
               </button>
             </div>
 
