@@ -210,7 +210,7 @@ export default function StudentLogin() {
                     }}
                     title={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? "SHOW" : "HIDE"}
+                    {showPassword ? "HIDE" : "SHOW"}
                   </button>
                 </div>
               </div>
