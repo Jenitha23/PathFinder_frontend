@@ -35,7 +35,7 @@ This repository contains the **frontend** of the application, built with React.j
 
 ## System Architecture
 
-~~~
+```
 User Browser
 ↓
 Frontend (React + Vite)
@@ -45,7 +45,7 @@ Vercel Cloud Hosting
 Backend API (.NET - Azure Web App)
 ↓
 Azure SQL Database
-~~~
+```
 
 ---
 
@@ -131,7 +131,7 @@ export default API_BASE_URL;
 ```
 All frontend API requests are routed through this base URL.
 
-Production Deployment
+### Production Deployment
 - Frontend is deployed using Vercel.
 - Live Application : https://pathfinder-frontend-navy.vercel.app/
 
