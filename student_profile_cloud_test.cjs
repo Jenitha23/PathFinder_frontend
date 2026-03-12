@@ -29,7 +29,7 @@ const { Builder, By, until } = require('selenium-webdriver');
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
-const BASE_URL    = 'http://localhost:5173';
+const BASE_URL    = 'https://pathfinder-frontend-navy.vercel.app';
 const LOGIN_URL   = `${BASE_URL}/student/login`;
 const PROFILE_URL = `${BASE_URL}/student/profile`;
 
