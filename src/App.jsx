@@ -12,7 +12,7 @@ import Landing from "./pages/Landing";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentRegister from "./pages/student/StudentRegister";
 import StudentHome from "./pages/student/StudentHome";
-import StudentJobs from "./pages/student/StudentJobs";
+import StudentJobs from "./pages/student/studentJobs";
 import StudentJobDetails from "./pages/student/StudentJobDetails";
 import StudentProfile from "./pages/student/StudentProfile";
 
