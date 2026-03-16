@@ -9,6 +9,7 @@ export const API_BASE =
 import.meta.env.VITE_API_BASE || "https://pathfinder-fqgwf0e6bvc2cmbq.southeastasia-01.azurewebsites.net";
 //import.meta.env.VITE_API_BASE || "http://localhost:5249";
 
+
 export const api = axios.create({
   baseURL: API_BASE,
 });
