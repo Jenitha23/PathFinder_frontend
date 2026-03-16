@@ -18,6 +18,7 @@ export default function StudentJobs() {
   const [category, setCategory] = useState("");
 
   const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   const getErrorMessage = (err, fallback) => {
     const data = err?.response?.data;
@@ -49,7 +50,8 @@ export default function StudentJobs() {
         const { data } = await jobsApi.getJobs(params);
         if (ignore) return;
 
-        const nextJobs = Array.isArray(data) ? data : [];
+        const nextJobs = Array.isArray(data.items) ? data.items : [];
+        setHasNextPage(data.hasNextPage || false);
 
         setJobs((prev) => (page === 1 ? nextJobs : [...prev, ...nextJobs]));
       } catch (err) {
@@ -92,8 +94,6 @@ export default function StudentJobs() {
     setPage(1);
     setJobs([]);
   };
-
-  const hasMore = jobs.length >= page * PAGE_SIZE;
 
   return (
     <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 70 }}>
@@ -362,7 +362,7 @@ export default function StudentJobs() {
             </div>
 
             <div style={{ display: "flex", justifyContent: "center", marginTop: 28 }}>
-              {hasMore ? (
+              {hasNextPage ? (
                 <button
                   className="btn btn-primary"
                   onClick={() => setPage((prev) => prev + 1)}

@@ -13,7 +13,6 @@ import StudentLogin from "./pages/student/StudentLogin";
 import StudentRegister from "./pages/student/StudentRegister";
 import StudentHome from "./pages/student/StudentHome";
 import StudentJobs from "./pages/student/StudentJobs";
-import StudentProfile from "./pages/student/StudentProfile";
 import StudentJobDetails from "./pages/student/StudentJobDetails";
 
 import CompanyLogin from "./pages/company/CompanyLogin";
@@ -26,6 +25,7 @@ import AdminProfile from "./pages/admin/AdminProfile";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminCompanies from "./pages/admin/AdminCompanies";
 
+// Renders the App component.
 export default function App() {
   return (
     <BrowserRouter>
@@ -41,14 +41,6 @@ export default function App() {
           element={
             <ProtectedRoute allowRole="STUDENT">
               <StudentHome />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/student/profile"
-          element={
-            <ProtectedRoute allowRole="STUDENT">
-              <StudentProfile />
             </ProtectedRoute>
           }
         />
@@ -113,9 +105,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/student/jobs" element={<StudentJobs />} />
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
