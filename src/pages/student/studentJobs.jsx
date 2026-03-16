@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { jobsApi } from "../../services/jobs";
 
+
 const PAGE_SIZE = 6;
 
 export default function StudentJobs() {
