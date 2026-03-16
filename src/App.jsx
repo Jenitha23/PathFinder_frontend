@@ -13,6 +13,8 @@ import StudentLogin from "./pages/student/StudentLogin";
 import StudentRegister from "./pages/student/StudentRegister";
 import StudentHome from "./pages/student/StudentHome";
 import StudentJobs from "./pages/student/StudentJobs";
+import StudentProfile from "./pages/student/StudentProfile";
+import StudentJobDetails from "./pages/student/StudentJobDetails";
 
 import CompanyLogin from "./pages/company/CompanyLogin";
 import CompanyRegister from "./pages/company/CompanyRegister";
