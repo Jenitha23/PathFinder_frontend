@@ -629,3 +629,9 @@ input, textarea, select { font-family: inherit; }
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .profile-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
