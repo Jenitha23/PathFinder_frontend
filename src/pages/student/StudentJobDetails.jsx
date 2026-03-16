@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { jobsApi } from "../../services/jobs";
+import { formatDate, formatSalary } from "../../utils/jobFormatters";
 
 export default function StudentJobDetails() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ export default function StudentJobDetails() {
       try {
         setLoading(true);
         setError("");
+
         const { data } = await jobsApi.getJobById(id);
         if (!ignore) setJob(data);
       } catch (err) {
@@ -31,6 +33,7 @@ export default function StudentJobDetails() {
     };
 
     loadJob();
+
     return () => {
       ignore = true;
     };
@@ -86,9 +89,7 @@ export default function StudentJobDetails() {
                   </div>
                 </div>
 
-                <span className="badge badge-teal" style={{ fontSize: 13 }}>
-                  {job.type || "Open"}
-                </span>
+                <span className="badge badge-teal">{job.type || "Open"}</span>
               </div>
 
               <div
@@ -110,16 +111,12 @@ export default function StudentJobDetails() {
 
                 <div className="card" style={{ padding: 16, borderRadius: 16, boxShadow: "none" }}>
                   <div className="helper">Salary</div>
-                  <div style={{ fontWeight: 700, marginTop: 4 }}>
-                    {job.salary != null ? `LKR ${job.salary}` : "Not specified"}
-                  </div>
+                  <div style={{ fontWeight: 700, marginTop: 4 }}>{formatSalary(job.salary)}</div>
                 </div>
 
                 <div className="card" style={{ padding: 16, borderRadius: 16, boxShadow: "none" }}>
                   <div className="helper">Deadline</div>
-                  <div style={{ fontWeight: 700, marginTop: 4 }}>
-                    {job.deadline ? new Date(job.deadline).toLocaleDateString() : "Not specified"}
-                  </div>
+                  <div style={{ fontWeight: 700, marginTop: 4 }}>{formatDate(job.deadline)}</div>
                 </div>
               </div>
             </div>
@@ -135,22 +132,6 @@ export default function StudentJobDetails() {
                 }}
               >
                 {job.description || "No description available."}
-              </div>
-
-              <div
-                style={{
-                  marginTop: 24,
-                  display: "flex",
-                  gap: 12,
-                  flexWrap: "wrap",
-                }}
-              >
-                <button className="btn btn-primary" type="button">
-                  Apply Soon
-                </button>
-                <Link to="/student/jobs" className="btn btn-outline">
-                  Browse more jobs
-                </Link>
               </div>
             </div>
           </>

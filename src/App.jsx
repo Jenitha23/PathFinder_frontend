@@ -12,9 +12,7 @@ import Landing from "./pages/Landing";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentRegister from "./pages/student/StudentRegister";
 import StudentHome from "./pages/student/StudentHome";
-import StudentJobs from "./pages/student/studentJobs";
-import StudentJobDetails from "./pages/student/StudentJobDetails";
-import StudentProfile from "./pages/student/StudentProfile";
+import StudentJobs from "./pages/student/StudentJobs";
 
 import CompanyLogin from "./pages/company/CompanyLogin";
 import CompanyRegister from "./pages/company/CompanyRegister";
@@ -113,7 +111,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route path="/student/jobs" element={<StudentJobs />} />
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
