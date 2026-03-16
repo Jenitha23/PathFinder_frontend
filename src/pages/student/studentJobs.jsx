@@ -16,6 +16,7 @@ export default function StudentJobs() {
   const [location, setLocation] = useState("");
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
+  const [company, setCompany] = useState("");
 
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -34,8 +35,9 @@ export default function StudentJobs() {
       location: location || undefined,
       type: type || undefined,
       category: category || undefined,
+      company: company || undefined,
     }),
-    [page, keyword, location, type, category],
+    [page, keyword, location, type, category, company],
   );
 
   useEffect(() => {
@@ -75,14 +77,12 @@ export default function StudentJobs() {
   const handleSearch = (e) => {
     e.preventDefault();
     setPage(1);
-    setJobs([]);
     setKeyword(searchInput.trim());
   };
 
   const handleFilterChange = (setter) => (e) => {
     setter(e.target.value);
     setPage(1);
-    setJobs([]);
   };
 
   const clearFilters = () => {
@@ -91,8 +91,8 @@ export default function StudentJobs() {
     setLocation("");
     setType("");
     setCategory("");
+    setCompany("");
     setPage(1);
-    setJobs([]);
   };
 
   return (
