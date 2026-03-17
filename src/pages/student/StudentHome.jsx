@@ -1,4 +1,4 @@
-﻿/**
+/**
  * File: src/pages/student/StudentHome.jsx
  * Purpose: Student-facing page for authentication and workflow.
  */
@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { studentProfileApi } from "../../services/profile";
+import { localApplications } from "../../services/applications";
 
 // Real data only — zeros are honest placeholders until API is connected
 const DASHBOARD_ACTIONS = [
@@ -173,7 +174,7 @@ export default function StudentHome() {
   };
 
   const stats = [
-    { label: "Applications Sent", value: "—", icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "Coming soon" },
+    { label: "Applications Sent", value: localApplications.getAll().length.toString(), icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "Session tracked" },
     { label: "Saved Jobs", value: "—", icon: "🔖", color: "#FF9F1C", bg: "rgba(255,159,28,0.10)", note: "Coming soon" },
     { label: "Interviews", value: "—", icon: "🎯", color: "#FF6B6B", bg: "var(--coral-dim)", note: "Coming soon" },
   ];
@@ -555,7 +556,7 @@ export default function StudentHome() {
                   { label: "👤 Update Profile", to: "/student/profile" },
                   { label: "📄 Upload CV", to: "/student/profile" },
                   { label: "💼 Browse Jobs", to: "/student/jobs" },
-                  { label: "📩 My Applications", to: "/" },
+                  { label: "📩 My Applications", to: "/student/applications" },
                 ].map((l) => (
                   <Link
                     key={l.label}
