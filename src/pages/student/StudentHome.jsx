@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { studentProfileApi } from "../../services/profile";
-import { localApplications } from "../../services/applications";
+import { localApplications, applicationsApi } from "../../services/applications";
 
 // Real data only — zeros are honest placeholders until API is connected
 const DASHBOARD_ACTIONS = [
@@ -50,6 +50,7 @@ export default function StudentHome() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [applicationsCount, setApplicationsCount] = useState("—");
   const firstName = profile.fullName ? profile.fullName.split(" ")[0] : "Student";
 
   const getErrorMessage = (err, fallback) => {
@@ -81,6 +82,16 @@ export default function StudentHome() {
           fullName: nextFullName,
           email: nextEmail,
         });
+
+        // Fetch application count from database
+        try {
+          const statsRes = await applicationsApi.getApplicationCount();
+          setApplicationsCount(statsRes.data.count.toString());
+        } catch (statsErr) {
+          // Fallback if backend doesn't have the endpoint yet
+          setApplicationsCount(localApplications.getAll().length.toString());
+        }
+
       } catch (err) {
         setError(getErrorMessage(err, "Failed to load profile."));
       }
@@ -174,7 +185,7 @@ export default function StudentHome() {
   };
 
   const stats = [
-    { label: "Applications Sent", value: localApplications.getAll().length.toString(), icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "Session tracked" },
+    { label: "Applications Sent", value: applicationsCount, icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "From database" },
     { label: "Saved Jobs", value: "—", icon: "🔖", color: "#FF9F1C", bg: "rgba(255,159,28,0.10)", note: "Coming soon" },
     { label: "Interviews", value: "—", icon: "🎯", color: "#FF6B6B", bg: "var(--coral-dim)", note: "Coming soon" },
   ];
