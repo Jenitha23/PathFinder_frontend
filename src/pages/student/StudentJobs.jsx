@@ -21,21 +21,27 @@ export default function StudentJobs() {
   const [error, setError] = useState("");
 
   const [searchInput, setSearchInput] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [location, setLocation] = useState("");
-  const [type, setType] = useState("");
-  const [category, setCategory] = useState("");
+  const [locationInput, setLocationInput] = useState("");
+  const [typeInput, setTypeInput] = useState("");
+  const [categoryInput, setCategoryInput] = useState("");
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    keyword: "",
+    location: "",
+    type: "",
+    category: "",
+  });
 
   const params = useMemo(
     () => ({
       page,
       pageSize: PAGE_SIZE,
-      keyword: keyword || undefined,
-      location: location || undefined,
-      type: type || undefined,
-      category: category || undefined,
+      keyword: appliedFilters.keyword || undefined,
+      location: appliedFilters.location || undefined,
+      type: appliedFilters.type || undefined,
+      category: appliedFilters.category || undefined,
     }),
-    [page, keyword, location, type, category]
+    [page, appliedFilters]
   );
 
   const getErrorMessage = (err, fallback) => {
@@ -79,17 +85,29 @@ export default function StudentJobs() {
   }, [params]);
 
   const handleSearch = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setPage(1);
-    setKeyword(searchInput.trim());
+    
+    // We update the applied filters which triggers the useMemo and then the useEffect
+    setAppliedFilters({
+      keyword: searchInput.trim(),
+      location: locationInput.trim(),
+      type: typeInput,
+      category: categoryInput.trim(),
+    });
   };
 
   const clearFilters = () => {
     setSearchInput("");
-    setKeyword("");
-    setLocation("");
-    setType("");
-    setCategory("");
+    setLocationInput("");
+    setTypeInput("");
+    setCategoryInput("");
+    setAppliedFilters({
+      keyword: "",
+      location: "",
+      type: "",
+      category: "",
+    });
     setPage(1);
   };
 
@@ -99,9 +117,32 @@ export default function StudentJobs() {
         style={{
           background: "linear-gradient(135deg, #0A2472 0%, #1a3a8f 100%)",
           padding: "54px 0 86px",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <div className="container">
+        <div
+          style={{
+            position: "absolute",
+            top: -80,
+            right: -90,
+            width: 320,
+            height: 320,
+            borderRadius: "50%",
+            background: "rgba(46,196,182,0.10)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0.04,
+            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+
+        <div className="container" style={{ position: "relative" }}>
           <div style={{ maxWidth: 760 }}>
             <div
               className="badge"
@@ -120,7 +161,8 @@ export default function StudentJobs() {
             </h1>
 
             <p style={{ color: "rgba(255,255,255,0.82)", fontSize: 16, maxWidth: 650, lineHeight: 1.8 }}>
-              Search, filter, and open job listings using real backend data.
+              Search by title or company, filter by category, location, and job type, then open each
+              listing to see full details before applying.
             </p>
           </div>
         </div>
@@ -130,12 +172,12 @@ export default function StudentJobs() {
         <JobFilters
           searchInput={searchInput}
           setSearchInput={setSearchInput}
-          location={location}
-          setLocation={setLocation}
-          type={type}
-          setType={setType}
-          category={category}
-          setCategory={setCategory}
+          location={locationInput}
+          setLocation={setLocationInput}
+          type={typeInput}
+          setType={setTypeInput}
+          category={categoryInput}
+          setCategory={setCategoryInput}
           onSearch={handleSearch}
           onClear={clearFilters}
         />
@@ -162,7 +204,11 @@ export default function StudentJobs() {
           </Link>
         </div>
 
-        {error ? <div className="alert error">{error}</div> : null}
+        {error ? (
+          <div className="alert error" style={{ marginBottom: 18 }}>
+            {error}
+          </div>
+        ) : null}
 
         {loading ? (
           <div className="card" style={{ padding: 26, textAlign: "center", color: "var(--muted)" }}>
