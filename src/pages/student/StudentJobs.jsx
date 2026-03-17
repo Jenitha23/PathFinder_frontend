@@ -21,21 +21,27 @@ export default function StudentJobs() {
   const [error, setError] = useState("");
 
   const [searchInput, setSearchInput] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [location, setLocation] = useState("");
-  const [type, setType] = useState("");
-  const [category, setCategory] = useState("");
+  const [locationInput, setLocationInput] = useState("");
+  const [typeInput, setTypeInput] = useState("");
+  const [categoryInput, setCategoryInput] = useState("");
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    keyword: "",
+    location: "",
+    type: "",
+    category: "",
+  });
 
   const params = useMemo(
     () => ({
       page,
       pageSize: PAGE_SIZE,
-      keyword: keyword || undefined,
-      location: location || undefined,
-      type: type || undefined,
-      category: category || undefined,
+      keyword: appliedFilters.keyword || undefined,
+      location: appliedFilters.location || undefined,
+      type: appliedFilters.type || undefined,
+      category: appliedFilters.category || undefined,
     }),
-    [page, keyword, location, type, category]
+    [page, appliedFilters]
   );
 
   const getErrorMessage = (err, fallback) => {
@@ -79,17 +85,29 @@ export default function StudentJobs() {
   }, [params]);
 
   const handleSearch = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setPage(1);
-    setKeyword(searchInput.trim());
+    
+    // We update the applied filters which triggers the useMemo and then the useEffect
+    setAppliedFilters({
+      keyword: searchInput.trim(),
+      location: locationInput.trim(),
+      type: typeInput,
+      category: categoryInput.trim(),
+    });
   };
 
   const clearFilters = () => {
     setSearchInput("");
-    setKeyword("");
-    setLocation("");
-    setType("");
-    setCategory("");
+    setLocationInput("");
+    setTypeInput("");
+    setCategoryInput("");
+    setAppliedFilters({
+      keyword: "",
+      location: "",
+      type: "",
+      category: "",
+    });
     setPage(1);
   };
 
@@ -154,12 +172,12 @@ export default function StudentJobs() {
         <JobFilters
           searchInput={searchInput}
           setSearchInput={setSearchInput}
-          location={location}
-          setLocation={setLocation}
-          type={type}
-          setType={setType}
-          category={category}
-          setCategory={setCategory}
+          location={locationInput}
+          setLocation={setLocationInput}
+          type={typeInput}
+          setType={setTypeInput}
+          category={categoryInput}
+          setCategory={setCategoryInput}
           onSearch={handleSearch}
           onClear={clearFilters}
         />

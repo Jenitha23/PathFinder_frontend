@@ -185,7 +185,7 @@ export default function StudentHome() {
   };
 
   const stats = [
-    { label: "Applications Sent", value: applicationsCount, icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "From database" },
+    { label: "Applications Sent", value: applicationsCount, icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "" },
     { label: "Saved Jobs", value: "—", icon: "🔖", color: "#FF9F1C", bg: "rgba(255,159,28,0.10)", note: "Coming soon" },
     { label: "Interviews", value: "—", icon: "🎯", color: "#FF6B6B", bg: "var(--coral-dim)", note: "Coming soon" },
   ];
