@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { studentProfileApi } from "../../services/profile";
-import { localApplications, applicationsApi } from "../../services/applications";
+import { localApplications, applicationsApi, localSavedJobs } from "../../services/applications";
 
 // Real data only — zeros are honest placeholders until API is connected
 const DASHBOARD_ACTIONS = [
@@ -31,6 +31,13 @@ const DASHBOARD_ACTIONS = [
     action: "Browse Jobs",
     to: "/student/jobs",
   },
+  {
+    icon: "📋",
+    title: "Track your applications",
+    desc: "View status updates on all your submitted applications — Pending, Shortlisted, Accepted or Rejected.",
+    action: "My Applications",
+    to: "/student/applications",
+  },
 ];
 
 // Renders the StudentHome component.
@@ -48,6 +55,9 @@ export default function StudentHome() {
   });
   const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const [appliedCount, setAppliedCount] = useState(0);
+  const [savedCount, setSavedCount] = useState(() => localSavedJobs.getAll().length);
+  const [isCountLoading, setIsCountLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [applicationsCount, setApplicationsCount] = useState("—");
@@ -185,8 +195,8 @@ export default function StudentHome() {
   };
 
   const stats = [
-    { label: "Applications Sent", value: applicationsCount, icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "" },
-    { label: "Saved Jobs", value: "—", icon: "🔖", color: "#FF9F1C", bg: "rgba(255,159,28,0.10)", note: "Coming soon" },
+    { label: "Applications Sent", value: applicationsCount, icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "View all →", to: "/student/applications" },
+    { label: "Saved Jobs", value: savedCount.toString(), icon: "🔖", color: "#FF9F1C", bg: "rgba(255,159,28,0.10)", note: "View saved →", to: "/student/saved-jobs" },
     { label: "Interviews", value: "—", icon: "🎯", color: "#FF6B6B", bg: "var(--coral-dim)", note: "Coming soon" },
   ];
 
@@ -294,44 +304,64 @@ export default function StudentHome() {
           className="student-stats-grid"
           style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}
         >
-          {stats.map((s, i) => (
-            <div
-              key={i}
-              className="card animate-fade-up"
-              style={{ padding: "24px 22px", animationDelay: `${i * 0.08}s` }}
-            >
-              <div
+          {stats.map((s, i) => {
+            const Wrapper = s.to ? Link : "div";
+            const wrapperProps = s.to ? { to: s.to } : {};
+            return (
+              <Wrapper
+                key={i}
+                {...wrapperProps}
+                className="card animate-fade-up"
                 style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: 14,
-                  background: s.bg,
-                  display: "grid",
-                  placeItems: "center",
-                  fontSize: 22,
-                  marginBottom: 16,
+                  padding: "24px 22px",
+                  animationDelay: `${i * 0.08}s`,
+                  textDecoration: "none",
+                  color: "inherit",
+                  transition: "box-shadow 0.2s, transform 0.2s",
+                  cursor: s.to ? "pointer" : "default",
                 }}
+                onMouseEnter={s.to ? (e) => {
+                  e.currentTarget.style.boxShadow = "var(--shadow-lg)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                } : undefined}
+                onMouseLeave={s.to ? (e) => {
+                  e.currentTarget.style.boxShadow = "";
+                  e.currentTarget.style.transform = "";
+                } : undefined}
               >
-                {s.icon}
-              </div>
-              <div
-                style={{
-                  fontWeight: 900,
-                  fontSize: 28,
-                  color: "var(--muted)",
-                  fontFamily: "'Sora', sans-serif",
-                }}
-              >
-                {s.value}
-              </div>
-              <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>
-                {s.label}
-              </div>
-              <div style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600 }}>
-                {s.note}
-              </div>
-            </div>
-          ))}
+                <div
+                  style={{
+                    width: 46,
+                    height: 46,
+                    borderRadius: 14,
+                    background: s.bg,
+                    display: "grid",
+                    placeItems: "center",
+                    fontSize: 22,
+                    marginBottom: 16,
+                  }}
+                >
+                  {s.icon}
+                </div>
+                <div
+                  style={{
+                    fontWeight: 900,
+                    fontSize: 28,
+                    color: "var(--muted)",
+                    fontFamily: "'Sora', sans-serif",
+                  }}
+                >
+                  {s.value}
+                </div>
+                <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>
+                  {s.label}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600 }}>
+                  {s.note}
+                </div>
+              </Wrapper>
+            );
+          })}
         </div>
 
         <div className="student-main-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
@@ -567,7 +597,11 @@ export default function StudentHome() {
                   { label: "👤 Update Profile", to: "/student/profile" },
                   { label: "📄 Upload CV", to: "/student/profile" },
                   { label: "💼 Browse Jobs", to: "/student/jobs" },
-                  { label: "📩 My Applications", to: "/student/applications" },
+                  { label: "❤️ Saved Jobs", to: "/student/saved-jobs" },
+                  { label: "📋 My Applications", to: "/student/applications" },
+                  { label: "🕐 Pending Applications", to: "/student/applications?status=Pending" },
+                  { label: "⭐ Shortlisted", to: "/student/applications?status=Shortlisted" },
+                  { label: "✅ Accepted", to: "/student/applications?status=Accepted" },
                 ].map((l) => (
                   <Link
                     key={l.label}

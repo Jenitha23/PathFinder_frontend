@@ -16,6 +16,7 @@ import StudentJobs from "./pages/student/StudentJobs";
 import StudentProfile from "./pages/student/StudentProfile";
 import StudentJobDetails from "./pages/student/StudentJobDetails";
 import StudentApplications from "./pages/student/StudentApplications";
+import StudentSavedJobs from "./pages/student/StudentSavedJobs";
 
 import CompanyLogin from "./pages/company/CompanyLogin";
 import CompanyRegister from "./pages/company/CompanyRegister";
@@ -66,6 +67,22 @@ export default function App() {
           element={
             <ProtectedRoute allowRole="STUDENT">
               <StudentJobDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/applications"
+          element={
+            <ProtectedRoute allowRole="STUDENT">
+              <StudentApplications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/saved-jobs"
+          element={
+            <ProtectedRoute allowRole="STUDENT">
+              <StudentSavedJobs />
             </ProtectedRoute>
           }
         />

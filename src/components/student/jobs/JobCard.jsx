@@ -1,7 +1,18 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../../utils/jobFormatters";
+import { localSavedJobs } from "../../../services/applications";
 
 export default function JobCard({ job }) {
+  const [isSaved, setIsSaved] = useState(() => localSavedJobs.isSaved(job.id));
+
+  const handleToggleSave = (e) => {
+    e.preventDefault(); // Stop navigation to details page
+    e.stopPropagation();
+    const nowSaved = localSavedJobs.toggle(job);
+    setIsSaved(nowSaved);
+  };
+
   return (
     <Link
       to={`/student/jobs/${job.id}`}
@@ -12,6 +23,7 @@ export default function JobCard({ job }) {
         display: "block",
         background: "var(--card)",
         transition: "transform 0.18s ease, box-shadow 0.18s ease",
+        position: "relative",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-3px)";
@@ -31,8 +43,18 @@ export default function JobCard({ job }) {
           marginBottom: 14,
         }}
       >
-        <div>
-          <div style={{ fontWeight: 800, fontSize: 19, color: "var(--primary)", marginBottom: 6 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontWeight: 800,
+              fontSize: 19,
+              color: "var(--primary)",
+              marginBottom: 6,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {job.title}
           </div>
           <div style={{ color: "var(--text)", fontWeight: 600 }}>
@@ -40,7 +62,36 @@ export default function JobCard({ job }) {
           </div>
         </div>
 
-        <span className="badge badge-teal">{job.type || "Open"}</span>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button
+            onClick={handleToggleSave}
+            title={isSaved ? "Remove from saved" : "Save this job"}
+            style={{
+              background: isSaved ? "rgba(46,196,182,0.12)" : "rgba(10,36,114,0.06)",
+              border: "none",
+              width: 38,
+              height: 38,
+              borderRadius: 12,
+              display: "grid",
+              placeItems: "center",
+              fontSize: 18,
+              color: isSaved ? "var(--teal)" : "var(--muted)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              if (!isSaved) e.currentTarget.style.background = "rgba(10,36,114,0.12)";
+            }}
+            onMouseLeave={(e) => {
+              if (!isSaved) e.currentTarget.style.background = "rgba(10,36,114,0.06)";
+            }}
+          >
+            {isSaved ? "🔖" : "📑"}
+          </button>
+          <span className="badge badge-teal" style={{ flexShrink: 0 }}>
+            {job.type || "Open"}
+          </span>
+        </div>
       </div>
 
       <div style={{ display: "grid", gap: 10, marginBottom: 18 }}>
