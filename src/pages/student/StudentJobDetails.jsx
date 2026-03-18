@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { jobsApi } from "../../services/jobs";
 import { applicationsApi, localApplications, localSavedJobs } from "../../services/applications";
 import { getAuth } from "../../services/auth";
@@ -33,8 +33,20 @@ const modalBox = {
   animation: "fadeUp .22s ease",
 };
 
+/* ── Status-specific colours (matches StudentApplications) ── */
+const STATUS_COLORS = {
+  Pending: { bg: "rgba(255,193,7,0.12)", border: "rgba(255,193,7,0.35)", color: "#9a7b00", icon: "🕐" },
+  Shortlisted: { bg: "rgba(108,92,231,0.10)", border: "rgba(108,92,231,0.30)", color: "#6C5CE7", icon: "⭐" },
+  Accepted: { bg: "rgba(0,184,148,0.10)", border: "rgba(0,184,148,0.30)", color: "#00b894", icon: "✅" },
+  Rejected: { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: "❌" },
+};
+
 export default function StudentJobDetails() {
   const { id } = useParams();
+  const location = useLocation();
+  const fromApplications = location.state?.fromApplications || false;
+  const applicationStatus = location.state?.applicationStatus || "Pending";
+  const statusStyle = STATUS_COLORS[applicationStatus] || STATUS_COLORS.Pending;
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,7 +59,7 @@ export default function StudentJobDetails() {
   const [showModal, setShowModal] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
   const [applying, setApplying] = useState(false);
-  const [applied, setApplied] = useState(() => localApplications.hasApplied(Number(id)));
+  const [applied, setApplied] = useState(() => fromApplications || localApplications.hasApplied(Number(id)));
   const [isSaved, setIsSaved] = useState(() => localSavedJobs.isSaved(Number(id)));
   const [applyResult, setApplyResult] = useState(null); // { type: "success"|"error"|"profile", text, applicationId? }
 
@@ -78,7 +90,7 @@ export default function StudentJobDetails() {
 
   /* ── sync applied state when id changes ──────────────── */
   useEffect(() => {
-    setApplied(localApplications.hasApplied(Number(id)));
+    setApplied(fromApplications || localApplications.hasApplied(Number(id)));
     setIsSaved(localSavedJobs.isSaved(Number(id)));
     setApplyResult(null);
   }, [id]);
@@ -135,8 +147,8 @@ export default function StudentJobDetails() {
   return (
     <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", padding: "40px 0 80px" }}>
       <div className="container">
-        <Link to="/student/jobs" className="btn btn-ghost" style={{ marginBottom: 22 }}>
-          ← Back to jobs
+        <Link to={fromApplications ? "/student/applications" : "/student/jobs"} className="btn btn-ghost" style={{ marginBottom: 22 }}>
+          {fromApplications ? "← Back to Applications" : "← Back to jobs"}
         </Link>
 
         {loading ? (
@@ -208,10 +220,10 @@ export default function StudentJobDetails() {
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                 {[
-                  { label: "📍 Location",   value: job.location || "Not specified" },
-                  { label: "🗂️ Category",   value: job.category || "General" },
-                  { label: "💰 Salary",     value: formatSalary(job.salary) },
-                  { label: "📅 Deadline",   value: formatDate(job.deadline) },
+                  { label: "📍 Location", value: job.location || "Not specified" },
+                  { label: "🗂️ Category", value: job.category || "General" },
+                  { label: "💰 Salary", value: formatSalary(job.salary) },
+                  { label: "📅 Deadline", value: formatDate(job.deadline) },
                 ].map(({ label, value }) => (
                   <div
                     key={label}
@@ -293,16 +305,16 @@ export default function StudentJobDetails() {
                       display: "inline-flex",
                       alignItems: "center",
                       gap: 10,
-                      background: "rgba(46,196,182,0.12)",
-                      border: "1.5px solid rgba(46,196,182,0.35)",
+                      background: statusStyle.bg,
+                      border: `1.5px solid ${statusStyle.border}`,
                       borderRadius: 14,
                       padding: "14px 32px",
                       fontWeight: 700,
                       fontSize: 16,
-                      color: "#0f7a72",
+                      color: statusStyle.color,
                     }}
                   >
-                    ✅ Applied — Status: Pending
+                    {statusStyle.icon} Applied — Status: {applicationStatus}
                   </div>
                 ) : (
                   <button
