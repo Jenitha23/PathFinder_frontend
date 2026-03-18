@@ -35,6 +35,7 @@ export default function StudentProfile() {
   const [form, setForm] = useState(initialForm);
   const [existingCvUrl, setExistingCvUrl] = useState("");
   const [cvFile, setCvFile] = useState(null);
+  const [removeCv, setRemoveCv] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -130,6 +131,9 @@ export default function StudentProfile() {
       if (cvFile) {
         data.append("cvFile", cvFile);
       }
+      if (removeCv) {
+        data.append("removeCv", "true");
+      }
 
       const response = await studentProfileApi.updateStudentProfile(data);
 
@@ -137,6 +141,10 @@ export default function StudentProfile() {
       if (response?.data?.cvUrl) {
         setExistingCvUrl(response.data.cvUrl);
       }
+      if (removeCv && !cvFile) {
+        setExistingCvUrl("");
+      }
+      setRemoveCv(false);
     } catch (err) {
       setError(getErrorMessage(err, "Failed to update profile."));
     } finally {
@@ -309,18 +317,27 @@ export default function StudentProfile() {
 
             <div className="card" style={{ padding: 24, borderRadius: 22, marginBottom: 18 }}>
               <h3 style={{ marginBottom: 16 }}>CV upload</h3>
-              {existingCvUrl ? (
-                <div className="alert info" style={{ marginBottom: 16 }}>
-                  Current CV saved: <span style={{ wordBreak: "break-all" }}>{existingCvUrl}</span>
+              {existingCvUrl && !removeCv ? (
+                <div className="alert info" style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    Current CV saved: <span style={{ wordBreak: "break-all" }}>{existingCvUrl}</span>
+                  </div>
+                  <button type="button" className="btn btn-outline btn-sm" style={{ background: "white", color: "var(--text)" }} onClick={() => setRemoveCv(true)}>Remove</button>
+                </div>
+              ) : removeCv && existingCvUrl ? (
+                <div className="alert warning" style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>CV will be removed upon saving.</span>
+                  <button type="button" className="btn btn-outline btn-sm" style={{ background: "white", color: "var(--text)" }} onClick={() => setRemoveCv(false)}>Undo</button>
                 </div>
               ) : null}
 
               <label className="label">Upload CV (PDF, DOC, DOCX)</label>
-              <input className="input" type="file" accept=".pdf,.doc,.docx" onChange={handleCvChange} />
+              <input className="input" type="file" accept=".pdf,.doc,.docx" onChange={handleCvChange} id="cvFileInput" />
 
               {cvFile ? (
-                <div className="helper" style={{ marginTop: 10 }}>
+                <div className="helper" style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10 }}>
                   Selected file: {cvFile.name}
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => { setCvFile(null); document.getElementById('cvFileInput').value = ''; }}>Remove File</button>
                 </div>
               ) : null}
             </div>
