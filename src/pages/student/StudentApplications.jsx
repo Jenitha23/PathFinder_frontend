@@ -9,10 +9,10 @@ import { applicationsApi } from "../../services/applications";
 
 /* ── Status badge colour mapping ────────────────────── */
 const STATUS_STYLES = {
-  Pending:     { bg: "rgba(255,193,7,0.12)",  border: "rgba(255,193,7,0.35)",  color: "#9a7b00", icon: "🕐", label: "Pending" },
+  Pending: { bg: "rgba(255,193,7,0.12)", border: "rgba(255,193,7,0.35)", color: "#9a7b00", icon: "🕐", label: "Pending" },
   Shortlisted: { bg: "rgba(108,92,231,0.10)", border: "rgba(108,92,231,0.30)", color: "#6C5CE7", icon: "⭐", label: "Shortlisted" },
-  Accepted:    { bg: "rgba(0,184,148,0.10)",   border: "rgba(0,184,148,0.30)",  color: "#00b894", icon: "✅", label: "Accepted" },
-  Rejected:    { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: "❌", label: "Rejected" },
+  Accepted: { bg: "rgba(0,184,148,0.10)", border: "rgba(0,184,148,0.30)", color: "#00b894", icon: "✅", label: "Accepted" },
+  Rejected: { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: "❌", label: "Rejected" },
 };
 
 const STATUS_OPTIONS = ["All", "Pending", "Shortlisted", "Accepted", "Rejected"];
@@ -120,7 +120,7 @@ export default function StudentApplications() {
   useEffect(() => {
     applicationsApi.getApplicationCount()
       .then(({ data }) => setTotalCount(data.count ?? 0))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -476,6 +476,7 @@ export default function StudentApplications() {
                   {app.jobId && (
                     <Link
                       to={`/student/jobs/${app.jobId}`}
+                      state={{ fromApplications: true, applicationStatus: app.status }}
                       className="btn btn-outline"
                       style={{
                         fontSize: 13,
