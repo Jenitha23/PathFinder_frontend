@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { jobsApi } from "../../services/jobs";
-import { applicationsApi, localApplications } from "../../services/applications";
+import { applicationsApi, localApplications, localSavedJobs } from "../../services/applications";
 import { getAuth } from "../../services/auth";
 import { formatDate, formatSalary } from "../../utils/jobFormatters";
 
@@ -48,6 +48,7 @@ export default function StudentJobDetails() {
   const [coverLetter, setCoverLetter] = useState("");
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(() => localApplications.hasApplied(Number(id)));
+  const [isSaved, setIsSaved] = useState(() => localSavedJobs.isSaved(Number(id)));
   const [applyResult, setApplyResult] = useState(null); // { type: "success"|"error"|"profile", text, applicationId? }
 
   const getErrorMessage = (err, fallback) => {
@@ -78,6 +79,7 @@ export default function StudentJobDetails() {
   /* ── sync applied state when id changes ──────────────── */
   useEffect(() => {
     setApplied(localApplications.hasApplied(Number(id)));
+    setIsSaved(localSavedJobs.isSaved(Number(id)));
     setApplyResult(null);
   }, [id]);
 
@@ -180,7 +182,28 @@ export default function StudentJobDetails() {
                     {job.companyName}
                   </div>
                 </div>
-                <span className="badge badge-teal">{job.type || "Open"}</span>
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  {isStudent && (
+                    <button
+                      onClick={() => setIsSaved(localSavedJobs.toggle(job))}
+                      className="btn btn-outline"
+                      style={{
+                        padding: "10px 18px",
+                        fontSize: 14,
+                        borderRadius: 12,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        background: isSaved ? "rgba(46,196,182,0.06)" : "white",
+                        borderColor: isSaved ? "rgba(46,196,182,0.2)" : "var(--border)",
+                        color: isSaved ? "var(--teal)" : "var(--muted)",
+                      }}
+                    >
+                      <span>{isSaved ? "🔖 Saved" : "📑 Save Job"}</span>
+                    </button>
+                  )}
+                  <span className="badge badge-teal">{job.type || "Open"}</span>
+                </div>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
