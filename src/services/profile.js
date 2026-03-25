@@ -23,7 +23,29 @@ export const studentProfileApi = {
 };
 
 export const companyProfileApi = {
+  // Basic methods
   getMe: () => api.get("/api/company/me"),
-  updateProfile: (payload) => api.put("/api/company/profile", payload),
   deleteAccount: () => api.delete("/api/company/account"),
+  
+  // Full profile methods (for your feature)
+  getProfile: () => api.get("/api/company/profile"),
+  
+  // Update profile with logo upload (form-data)
+  updateProfileWithLogo: (formData) =>
+    api.put("/api/company/profile/update-profile", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
+  
+  // Update profile without logo (JSON)
+  updateProfileJson: (payload) =>
+    api.put("/api/company/profile/update-profile", payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }),
+  
+  // Remove company logo
+  removeLogo: () => api.delete("/api/company/profile/logo"),
 };

@@ -35,12 +35,26 @@ export default function CompanyDashboard() {
   const [profile, setProfile] = useState({
     companyName: auth.fullName || "",
     email: auth.email || "",
+    description: "",
+    industry: "",
+    website: "",
+    location: "",
+    phone: "",
+    logoUrl: null,
   });
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({
     companyName: auth.fullName || "",
     email: auth.email || "",
+    description: "",
+    industry: "",
+    website: "",
+    location: "",
+    phone: "",
   });
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [removeLogo, setRemoveLogo] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -56,18 +70,43 @@ export default function CompanyDashboard() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const { data } = await companyProfileApi.getMe();
+        // Try to get full profile first
+        let data;
+        try {
+          const response = await companyProfileApi.getProfile();
+          data = response.data;
+        } catch (err) {
+          // Fallback to /me endpoint if full profile fails
+          const response = await companyProfileApi.getMe();
+          data = response.data;
+        }
+        
         const nextCompanyName = data?.companyName || data?.fullName || data?.name || "";
         const nextEmail = data?.email || "";
-
+        
         setProfile({
           companyName: nextCompanyName,
           email: nextEmail,
+          description: data?.description || "",
+          industry: data?.industry || "",
+          website: data?.website || "",
+          location: data?.location || "",
+          phone: data?.phone || "",
+          logoUrl: data?.logoUrl || null,
         });
         setForm({
           companyName: nextCompanyName,
           email: nextEmail,
+          description: data?.description || "",
+          industry: data?.industry || "",
+          website: data?.website || "",
+          location: data?.location || "",
+          phone: data?.phone || "",
         });
+        
+        if (data?.logoUrl) {
+          setLogoPreview(data.logoUrl);
+        }
 
         saveAuth({
           token: auth.token,
@@ -89,6 +128,9 @@ export default function CompanyDashboard() {
     if (!form.companyName.trim()) next.companyName = "Company name is required.";
     if (!form.email.trim()) next.email = "Email is required.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = "Enter a valid email.";
+    if (form.website && !/^https?:\/\//.test(form.website)) {
+      next.website = "Enter a valid URL (http:// or https://)";
+    }
     setFormErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -100,8 +142,42 @@ export default function CompanyDashboard() {
     setForm({
       companyName: profile.companyName || "",
       email: profile.email || "",
+      description: profile.description || "",
+      industry: profile.industry || "",
+      website: profile.website || "",
+      location: profile.location || "",
+      phone: profile.phone || "",
     });
+    setLogoFile(null);
+    setLogoPreview(profile.logoUrl || null);
+    setRemoveLogo(false);
     setIsEditing(true);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Invalid file type. Allowed: JPG, PNG, GIF, SVG, WEBP.");
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File is too large. Max size is 5MB.");
+      return;
+    }
+    
+    setLogoFile(file);
+    setLogoPreview(URL.createObjectURL(file));
+    setRemoveLogo(false);
+  };
+
+  const handleRemoveLogoClick = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    setRemoveLogo(true);
   };
 
   const handleSaveProfile = async () => {
@@ -110,13 +186,35 @@ export default function CompanyDashboard() {
     setMessage("");
     setError("");
     try {
-      await companyProfileApi.updateProfile({
-        companyName: form.companyName.trim(),
-        email: form.email.trim(),
-      });
+      const formData = new FormData();
+      formData.append("CompanyName", form.companyName.trim());
+      formData.append("Email", form.email.trim().toLowerCase());
+      if (form.description) formData.append("Description", form.description.trim());
+      if (form.industry) formData.append("Industry", form.industry.trim());
+      if (form.website) formData.append("Website", form.website.trim());
+      if (form.location) formData.append("Location", form.location.trim());
+      if (form.phone) formData.append("Phone", form.phone.trim());
+      formData.append("RemoveLogo", removeLogo);
+      
+      if (logoFile) {
+        formData.append("LogoFile", logoFile);
+      }
 
-      const updated = { companyName: form.companyName.trim(), email: form.email.trim() };
-      setProfile(updated);
+      const { data } = await companyProfileApi.updateProfileWithLogo(formData);
+
+      const updated = data.profile;
+      setProfile({
+        companyName: updated.companyName,
+        email: updated.email,
+        description: updated.description || "",
+        industry: updated.industry || "",
+        website: updated.website || "",
+        location: updated.location || "",
+        phone: updated.phone || "",
+        logoUrl: updated.logoUrl || null,
+      });
+      setLogoPreview(updated.logoUrl || null);
+      
       saveAuth({
         token: auth.token,
         role: auth.role,
@@ -140,9 +238,17 @@ export default function CompanyDashboard() {
     setFormErrors({});
     setError("");
     setMessage("");
+    setLogoFile(null);
+    setLogoPreview(profile.logoUrl || null);
+    setRemoveLogo(false);
     setForm({
       companyName: profile.companyName || "",
       email: profile.email || "",
+      description: profile.description || "",
+      industry: profile.industry || "",
+      website: profile.website || "",
+      location: profile.location || "",
+      phone: profile.phone || "",
     });
   };
 
@@ -209,23 +315,37 @@ export default function CompanyDashboard() {
 
         <div className="container" style={{ position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
-            <div
-              style={{
-                width: 72,
-                height: 72,
-                borderRadius: 22,
-                background: "#2EC4B6",
-                display: "grid",
-                placeItems: "center",
-                fontWeight: 900,
-                fontSize: 24,
-                color: "white",
-                fontFamily: "'Sora', sans-serif",
-                flexShrink: 0,
-              }}
-            >
-              {name[0].toUpperCase()}
-            </div>
+            {profile.logoUrl ? (
+              <img
+                src={profile.logoUrl}
+                alt={name}
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 22,
+                  objectFit: "cover",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 22,
+                  background: "#2EC4B6",
+                  display: "grid",
+                  placeItems: "center",
+                  fontWeight: 900,
+                  fontSize: 24,
+                  color: "white",
+                  fontFamily: "'Sora', sans-serif",
+                  flexShrink: 0,
+                }}
+              >
+                {name[0].toUpperCase()}
+              </div>
+            )}
 
             <div>
               <div style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", marginBottom: 6 }}>{getGreeting()},</div>
@@ -256,6 +376,19 @@ export default function CompanyDashboard() {
                 >
                   {profile.email}
                 </span>
+                {profile.industry && (
+                  <span
+                    className="badge"
+                    style={{
+                      background: "rgba(255,255,255,0.1)",
+                      color: "rgba(255,255,255,0.7)",
+                      fontSize: 13,
+                      padding: "5px 12px",
+                    }}
+                  >
+                    {profile.industry}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -378,6 +511,55 @@ export default function CompanyDashboard() {
 
               {isEditing ? (
                 <div style={{ display: "grid", gap: 12 }}>
+                  {/* Logo Upload Section */}
+                  <div style={{ textAlign: "center", marginBottom: 8 }}>
+                    {logoPreview && (
+                      <div style={{ position: "relative", display: "inline-block", marginBottom: 12 }}>
+                        <img
+                          src={logoPreview}
+                          alt="Logo preview"
+                          style={{
+                            width: 80,
+                            height: 80,
+                            borderRadius: 12,
+                            objectFit: "cover",
+                            border: "1px solid var(--border)",
+                          }}
+                        />
+                        {!removeLogo && (
+                          <button
+                            type="button"
+                            onClick={handleRemoveLogoClick}
+                            style={{
+                              position: "absolute",
+                              top: -8,
+                              right: -8,
+                              background: "var(--coral)",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "50%",
+                              width: 24,
+                              height: 24,
+                              cursor: "pointer",
+                              fontSize: 12,
+                            }}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/svg+xml,image/webp"
+                      onChange={handleFileChange}
+                      style={{ fontSize: 13 }}
+                    />
+                    <p style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>
+                      JPG, PNG, GIF, SVG, WEBP (max 5MB)
+                    </p>
+                  </div>
+
                   <div>
                     <label className="label" htmlFor="company-name">Company name</label>
                     <input
@@ -405,6 +587,60 @@ export default function CompanyDashboard() {
                     />
                     {formErrors.email ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.email}</div> : null}
                   </div>
+                  <div>
+                    <label className="label" htmlFor="company-description">Description</label>
+                    <textarea
+                      id="company-description"
+                      className="input"
+                      rows="3"
+                      value={form.description}
+                      onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                      placeholder="Tell students about your company"
+                      style={{ resize: "vertical" }}
+                    />
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="company-industry">Industry</label>
+                    <input
+                      id="company-industry"
+                      className="input"
+                      value={form.industry}
+                      onChange={(e) => setForm((prev) => ({ ...prev, industry: e.target.value }))}
+                      placeholder="e.g., Information Technology, Finance, Healthcare"
+                    />
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="company-website">Website</label>
+                    <input
+                      id="company-website"
+                      className="input"
+                      type="url"
+                      value={form.website}
+                      onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))}
+                      placeholder="https://www.yourcompany.com"
+                    />
+                    {formErrors.website ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.website}</div> : null}
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="company-location">Location</label>
+                    <input
+                      id="company-location"
+                      className="input"
+                      value={form.location}
+                      onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
+                      placeholder="City, Country"
+                    />
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="company-phone">Phone</label>
+                    <input
+                      id="company-phone"
+                      className="input"
+                      value={form.phone}
+                      onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+                      placeholder="+94 77 123 4567"
+                    />
+                  </div>
                   <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
                     <button className="btn btn-teal" style={{ flex: 1, justifyContent: "center" }} onClick={handleSaveProfile} disabled={saving}>
                       {saving ? "Saving..." : "Save Changes"}
@@ -420,25 +656,51 @@ export default function CompanyDashboard() {
                     {[
                       { label: "Company", value: profile.companyName || "-" },
                       { label: "Email", value: profile.email || "-" },
+                      { label: "Description", value: profile.description || "-" },
+                      { label: "Industry", value: profile.industry || "-" },
+                      { label: "Website", value: profile.website || "-" },
+                      { label: "Location", value: profile.location || "-" },
+                      { label: "Phone", value: profile.phone || "-" },
                       { label: "Role", value: "Company" },
                       { label: "Member since", value: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }) },
                     ].map((r) => (
                       <div key={r.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <span style={{ fontSize: 14, color: "var(--muted)" }}>{r.label}</span>
-                        <span
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: "var(--text)",
-                            maxWidth: 180,
-                            textAlign: "right",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {r.value}
-                        </span>
+                        {r.label === "Website" && r.value !== "-" ? (
+                          <a
+                            href={r.value}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "var(--teal)",
+                              maxWidth: 180,
+                              textAlign: "right",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              textDecoration: "none",
+                            }}
+                          >
+                            {r.value}
+                          </a>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "var(--text)",
+                              maxWidth: 180,
+                              textAlign: "right",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {r.value}
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -499,4 +761,3 @@ export default function CompanyDashboard() {
     </div>
   );
 }
-
