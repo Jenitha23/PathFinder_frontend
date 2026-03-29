@@ -1,10 +1,6 @@
-/**
- * File: src/pages/company/PostJob.jsx
- * Purpose: Company page for creating new job postings
- */
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import companyJobService from "../../services/companyJobService";
+import companyJobService from "../../services/companyjobService";
 
 export default function PostJob() {
   const navigate = useNavigate();

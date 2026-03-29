@@ -1,12 +1,8 @@
-﻿/**
- * File: src/pages/company/CompanyDashboard.jsx
- * Purpose: Company-facing page for authentication and workflow.
- */
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { companyProfileApi } from "../../services/profile";
-import companyJobService from "../../services/companyJobService";
+import companyJobService from "../../services/companyjobService";
 
 const COMPANY_ACTIONS = [
   {

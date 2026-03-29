@@ -1,10 +1,6 @@
-/**
- * File: src/pages/company/CompanyJobDetails.jsx
- * Purpose: Company page to view a single job posting details
- */
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import companyJobService from "../../services/companyJobService";
+import companyJobService from "../../services/companyjobService";
 import { formatDate, formatSalary } from "../../utils/jobFormatters";
 
 export default function CompanyJobDetails() {

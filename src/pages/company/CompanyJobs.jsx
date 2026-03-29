@@ -1,10 +1,6 @@
-/**
- * File: src/pages/company/CompanyJobs.jsx
- * Purpose: Company page to view all jobs posted by the authenticated company
- */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import companyJobService from "../../services/companyJobService";
+import companyJobService from "../../services/companyjobService";
 import { formatDate } from "../../utils/jobFormatters";
 
 export default function CompanyJobs() {
