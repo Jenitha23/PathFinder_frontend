@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { companyProfileApi } from "../../services/profile";
+import companyJobService from "../../services/companyJobService";
 
 const COMPANY_ACTIONS = [
   {
@@ -13,18 +14,21 @@ const COMPANY_ACTIONS = [
     title: "Create a job post",
     desc: "Add title, skills, and role details to prepare your next opening.",
     action: "Create Job Post",
+    link: "/company/post-job", 
   },
   {
     icon: "IN",
     title: "Create an internship post",
     desc: "Publish internship opportunities and define candidate requirements.",
     action: "Create Internship Post",
+    link: "/company/post-job", 
   },
   {
     icon: "AP",
     title: "Review applicants",
     desc: "Check candidate lists and update statuses from one place.",
     action: "View Applicants",
+    link: "/company/applicants", 
   },
 ];
 
@@ -59,6 +63,15 @@ export default function CompanyDashboard() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  
+  // Job stats state
+  const [jobStats, setJobStats] = useState({
+    activeJobs: 0,
+    activeInternships: 0,
+    totalApplicants: 0,
+    loading: true
+  });
+
   const name = profile.companyName || profile.email || "Company";
 
   const getErrorMessage = (err, fallback) => {
@@ -67,6 +80,7 @@ export default function CompanyDashboard() {
     return data?.message || data?.error || fallback;
   };
 
+  // Load company profile
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -121,6 +135,26 @@ export default function CompanyDashboard() {
     };
 
     loadProfile();
+  }, []);
+
+  // Load job statistics
+  useEffect(() => {
+    const loadJobStats = async () => {
+      try {
+        const { data } = await companyJobService.getJobStats();
+        setJobStats({
+          activeJobs: data.activeJobs || 0,
+          activeInternships: data.activeInternships || 0,
+          totalApplicants: data.totalApplicants || 0,
+          loading: false
+        });
+      } catch (err) {
+        console.error("Failed to load job stats:", err);
+        setJobStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+    
+    loadJobStats();
   }, []);
 
   const validateForm = () => {
@@ -267,7 +301,6 @@ export default function CompanyDashboard() {
     }
   };
 
-  // Fetches or derives data needed for this section.
   const getGreeting = () => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";
@@ -275,11 +308,11 @@ export default function CompanyDashboard() {
     return "Good evening";
   };
 
-  const stats = [
-    { label: "Active Job Posts", value: "-", icon: "JP", bg: "var(--teal-dim)", note: "Coming soon" },
-    { label: "Active Internships", value: "-", icon: "IN", bg: "rgba(255,159,28,0.10)", note: "Coming soon" },
-    { label: "Total Applicants", value: "-", icon: "AP", bg: "var(--coral-dim)", note: "Coming soon" },
-  ];
+  const handleActionClick = (link) => {
+    if (link) {
+      nav(link);
+    }
+  };
 
   return (
     <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
@@ -325,6 +358,26 @@ export default function CompanyDashboard() {
                   borderRadius: 22,
                   objectFit: "cover",
                   border: "2px solid rgba(255,255,255,0.3)",
+                }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  const parent = e.target.parentElement;
+                  const fallback = document.createElement('div');
+                  fallback.style.cssText = `
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 22px;
+                    background: #2EC4B6;
+                    display: grid;
+                    place-items: center;
+                    font-weight: 900;
+                    font-size: 24px;
+                    color: white;
+                    font-family: 'Sora', sans-serif;
+                    flex-shrink: 0;
+                  `;
+                  fallback.textContent = name[0].toUpperCase();
+                  parent.appendChild(fallback);
                 }}
               />
             ) : (
@@ -396,6 +449,7 @@ export default function CompanyDashboard() {
       </div>
 
       <div className="container" style={{ marginTop: -28 }}>
+        {/* Stats Grid */}
         <div
           className="company-stats-grid"
           style={{
@@ -405,29 +459,95 @@ export default function CompanyDashboard() {
             marginBottom: 28,
           }}
         >
-          {stats.map((s, i) => (
-            <div key={s.label} className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: `${i * 0.08}s` }}>
-              <div
-                style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: 14,
-                  background: s.bg,
-                  color: "var(--teal)",
-                  display: "grid",
-                  placeItems: "center",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  marginBottom: 16,
-                }}
-              >
-                {s.icon}
-              </div>
-              <div style={{ fontWeight: 900, fontSize: 28, color: "var(--muted)", fontFamily: "'Sora', sans-serif" }}>{s.value}</div>
-              <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>{s.label}</div>
-              <div style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600 }}>{s.note}</div>
+          {/* Active Job Posts Card */}
+          <div className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: "0s" }}>
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 14,
+                background: "var(--teal-dim)",
+                color: "var(--teal)",
+                display: "grid",
+                placeItems: "center",
+                fontSize: 12,
+                fontWeight: 700,
+                marginBottom: 16,
+              }}
+            >
+              JP
             </div>
-          ))}
+            <div style={{ fontWeight: 900, fontSize: 28, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>
+              {jobStats.loading ? "..." : jobStats.activeJobs}
+            </div>
+            <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>Active Job Posts</div>
+            <Link 
+              to="/company/jobs" 
+              style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600, display: "inline-block", textDecoration: "none" }}
+            >
+              View all →
+            </Link>
+          </div>
+
+          {/* Active Internships Card */}
+          <div className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: "0.08s" }}>
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 14,
+                background: "rgba(255,159,28,0.10)",
+                color: "#FF9F1C",
+                display: "grid",
+                placeItems: "center",
+                fontSize: 12,
+                fontWeight: 700,
+                marginBottom: 16,
+              }}
+            >
+              IN
+            </div>
+            <div style={{ fontWeight: 900, fontSize: 28, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>
+              {jobStats.loading ? "..." : jobStats.activeInternships}
+            </div>
+            <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>Active Internships</div>
+            <Link 
+              to="/company/jobs" 
+              style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600, display: "inline-block", textDecoration: "none" }}
+            >
+              View all →
+            </Link>
+          </div>
+
+          {/* Total Applicants Card */}
+          <div className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: "0.16s" }}>
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 14,
+                background: "var(--coral-dim)",
+                color: "var(--coral)",
+                display: "grid",
+                placeItems: "center",
+                fontSize: 12,
+                fontWeight: 700,
+                marginBottom: 16,
+              }}
+            >
+              AP
+            </div>
+            <div style={{ fontWeight: 900, fontSize: 28, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>
+              {jobStats.loading ? "..." : jobStats.totalApplicants}
+            </div>
+            <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>Total Applicants</div>
+            <Link 
+              to="/company/applicants" 
+              style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600, display: "inline-block", textDecoration: "none" }}
+            >
+              Review →
+            </Link>
+          </div>
         </div>
 
         <div className="company-main-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
@@ -446,6 +566,19 @@ export default function CompanyDashboard() {
                     gap: 18,
                     alignItems: "flex-start",
                     animationDelay: `${0.2 + i * 0.1}s`,
+                    cursor: step.link ? "pointer" : "default",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                  }}
+                  onClick={() => step.link && handleActionClick(step.link)}
+                  onMouseEnter={(e) => {
+                    if (step.link) {
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "var(--shadow)";
                   }}
                 >
                   <div
@@ -469,7 +602,14 @@ export default function CompanyDashboard() {
                     <p className="helper" style={{ marginBottom: 14, fontSize: 14 }}>
                       {step.desc}
                     </p>
-                    <button className="btn btn-outline btn-sm" style={{ fontSize: 13 }}>
+                    <button 
+                      className="btn btn-outline btn-sm" 
+                      style={{ fontSize: 13 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (step.link) handleActionClick(step.link);
+                      }}
+                    >
                       {step.action} {"->"}
                     </button>
                   </div>
@@ -727,9 +867,10 @@ export default function CompanyDashboard() {
               <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 14 }}>Quick links</div>
               <div style={{ display: "grid", gap: 10 }}>
                 {[
-                  { label: "Create Job Posting", to: "/company/dashboard" },
-                  { label: "Create Internship Posting", to: "/company/dashboard" },
-                  { label: "View Applicants", to: "/company/dashboard" },
+                  { label: "Create Job Posting", to: "/company/post-job" },
+                  { label: "Create Internship Posting", to: "/company/post-job" },
+                  { label: "View Applicants", to: "/company/applicants" },
+                  { label: "View All Jobs", to: "/company/jobs" },
                 ].map((l) => (
                   <Link
                     key={l.label}
@@ -747,6 +888,7 @@ export default function CompanyDashboard() {
                       fontWeight: 500,
                       color: "var(--text)",
                       transition: "background 0.15s",
+                      textDecoration: "none",
                     }}
                   >
                     {l.label}

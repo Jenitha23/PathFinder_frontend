@@ -21,6 +21,9 @@ import StudentSavedJobs from "./pages/student/StudentSavedJobs";
 import CompanyLogin from "./pages/company/CompanyLogin";
 import CompanyRegister from "./pages/company/CompanyRegister";
 import CompanyDashboard from "./pages/company/CompanyDashboard";
+import PostJob from "./pages/company/PostJob";
+import CompanyJobs from "./pages/company/CompanyJobs";
+import CompanyJobDetails from "./pages/company/CompanyJobDetails";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -97,6 +100,21 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/company/post-job" element={
+        <ProtectedRoute allowRole="COMPANY">
+        <PostJob />
+        </ProtectedRoute>
+       } />
+       <Route path="/company/jobs" element={
+       <ProtectedRoute allowRole="COMPANY">
+       <CompanyJobs />
+       </ProtectedRoute>
+      } />
+      <Route path="/company/jobs/:id" element={
+      <ProtectedRoute allowRole="COMPANY">
+      <CompanyJobDetails />
+      </ProtectedRoute>
+      }/>
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
