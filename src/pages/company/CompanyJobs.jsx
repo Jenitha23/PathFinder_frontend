@@ -9,6 +9,9 @@ export default function CompanyJobs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
+  const [deleteType, setDeleteType] = useState("soft"); // "soft" or "hard"
 
   useEffect(() => {
     loadJobs();
@@ -34,17 +37,37 @@ export default function CompanyJobs() {
     navigate(`/company/jobs/${jobId}`);
   };
 
-  const handleDeleteJob = async (jobId, jobTitle) => {
-    const confirmed = window.confirm(`Are you sure you want to delete "${jobTitle}"? This action cannot be undone.`);
-    if (!confirmed) return;
+  const handleEditJob = (jobId) => {
+    navigate(`/company/jobs/${jobId}/edit`);
+  };
 
-    setDeletingId(jobId);
+  const openDeleteModal = (job) => {
+    setJobToDelete(job);
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setJobToDelete(null);
+    setDeleteType("soft");
+  };
+
+  const confirmDelete = async () => {
+    if (!jobToDelete) return;
+
+    setDeletingId(jobToDelete.id);
     try {
-      await companyJobService.deleteJob(jobId);
-      setJobs(jobs.filter(job => job.id !== jobId));
+      const hardDelete = deleteType === "hard";
+      await companyJobService.deleteJob(jobToDelete.id, hardDelete);
+      setJobs(jobs.filter(job => job.id !== jobToDelete.id));
+      closeDeleteModal();
     } catch (err) {
       const message = err.response?.data?.message || "Failed to delete job.";
       setError(message);
+      if (err.response?.status === 400 && message.includes("applications")) {
+        // If hard delete fails because of applications, suggest soft delete
+        alert("This job has applications and cannot be permanently deleted. Use Archive instead.");
+      }
     } finally {
       setDeletingId(null);
     }
@@ -59,6 +82,151 @@ export default function CompanyJobs() {
       return <span className="badge badge-coral">Expired</span>;
     }
     return <span className="badge badge-teal">Active</span>;
+  };
+
+  // Delete Confirmation Modal Component
+  const DeleteModal = () => {
+    if (!deleteModalOpen) return null;
+
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+          backdropFilter: "blur(4px)",
+        }}
+        onClick={closeDeleteModal}
+      >
+        <div
+          className="card"
+          style={{
+            maxWidth: 480,
+            width: "90%",
+            padding: "28px 24px",
+            animation: "fadeUp 0.2s ease",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3 style={{ marginBottom: 12, fontSize: 20, fontWeight: 700 }}>
+            Delete "{jobToDelete?.title}"?
+          </h3>
+          
+          <p style={{ color: "var(--muted)", marginBottom: 20, lineHeight: 1.6 }}>
+            Choose how you want to remove this job posting:
+          </p>
+
+          <div style={{ marginBottom: 24 }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px 16px",
+                background: deleteType === "soft" ? "var(--teal-dim)" : "var(--bg)",
+                border: `1.5px solid ${deleteType === "soft" ? "var(--teal)" : "var(--border)"}`,
+                borderRadius: 12,
+                marginBottom: 12,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onClick={() => setDeleteType("soft")}
+            >
+              <input
+                type="radio"
+                name="deleteType"
+                checked={deleteType === "soft"}
+                onChange={() => setDeleteType("soft")}
+                style={{ width: 18, height: 18, cursor: "pointer" }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                  Archive (Soft Delete)
+                </div>
+                <div style={{ fontSize: 13, color: "var(--muted)" }}>
+                  Job will be archived and no longer visible to students. Can be restored later if needed.
+                </div>
+              </div>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px 16px",
+                background: deleteType === "hard" ? "var(--coral-dim)" : "var(--bg)",
+                border: `1.5px solid ${deleteType === "hard" ? "var(--coral)" : "var(--border)"}`,
+                borderRadius: 12,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onClick={() => setDeleteType("hard")}
+            >
+              <input
+                type="radio"
+                name="deleteType"
+                checked={deleteType === "hard"}
+                onChange={() => setDeleteType("hard")}
+                style={{ width: 18, height: 18, cursor: "pointer" }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                  Permanent Delete (Hard Delete)
+                </div>
+                <div style={{ fontSize: 13, color: "var(--muted)" }}>
+                  ⚠️ Permanently remove from database. Only works if no students have applied to this job.
+                </div>
+              </div>
+            </label>
+          </div>
+
+          {deleteType === "hard" && (
+            <div
+              style={{
+                background: "var(--coral-dim)",
+                padding: "12px",
+                borderRadius: 10,
+                marginBottom: 20,
+                fontSize: 13,
+                color: "var(--coral)",
+              }}
+            >
+              ⚠️ Warning: This action cannot be undone. If students have already applied to this job, permanent deletion will be blocked.
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 12 }}>
+            <button
+              onClick={confirmDelete}
+              className="btn"
+              style={{
+                flex: 1,
+                background: deleteType === "hard" ? "var(--coral)" : "var(--teal)",
+                color: "white",
+                justifyContent: "center",
+              }}
+            >
+              {deleteType === "hard" ? "Permanently Delete" : "Archive Job"}
+            </button>
+            <button
+              onClick={closeDeleteModal}
+              className="btn btn-outline"
+              style={{ flex: 1, justifyContent: "center" }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -105,6 +273,7 @@ export default function CompanyJobs() {
                 fontSize: 14,
                 fontWeight: 500,
                 transition: "color 0.15s",
+                textDecoration: "none",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "white")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
@@ -134,7 +303,7 @@ export default function CompanyJobs() {
               </p>
             </div>
 
-            <Link to="/company/post-job" className="btn btn-teal" style={{ gap: 8 }}>
+            <Link to="/company/post-job" className="btn btn-teal" style={{ gap: 8, textDecoration: "none" }}>
               + Post New Job
             </Link>
           </div>
@@ -143,6 +312,9 @@ export default function CompanyJobs() {
 
       {/* Content Section */}
       <div className="container" style={{ marginTop: 24 }}>
+        {/* Delete Modal */}
+        <DeleteModal />
+
         {/* Stats Summary */}
         {!loading && jobs.length > 0 && (
           <div
@@ -225,7 +397,7 @@ export default function CompanyJobs() {
             <p className="helper" style={{ maxWidth: 400, margin: "0 auto 24px" }}>
               You haven't posted any jobs. Click the button below to create your first job posting.
             </p>
-            <Link to="/company/post-job" className="btn btn-teal" style={{ fontSize: 15, padding: "13px 32px" }}>
+            <Link to="/company/post-job" className="btn btn-teal" style={{ fontSize: 15, padding: "13px 32px", textDecoration: "none" }}>
               + Post Your First Job
             </Link>
           </div>
@@ -287,7 +459,7 @@ export default function CompanyJobs() {
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                     <button
                       onClick={() => handleViewJob(job.id)}
                       className="btn btn-outline"
@@ -296,7 +468,19 @@ export default function CompanyJobs() {
                       View Details →
                     </button>
                     <button
-                      onClick={() => handleDeleteJob(job.id, job.title)}
+                      onClick={() => handleEditJob(job.id)}
+                      className="btn btn-outline"
+                      style={{ 
+                        fontSize: 13, 
+                        padding: "8px 16px",
+                        borderColor: "var(--teal)",
+                        color: "var(--teal)"
+                      }}
+                    >
+                      Edit ✏️
+                    </button>
+                    <button
+                      onClick={() => openDeleteModal(job)}
                       disabled={deletingId === job.id}
                       className="btn btn-ghost"
                       style={{
@@ -320,6 +504,16 @@ export default function CompanyJobs() {
         @keyframes pulse {
           0%, 100% { opacity: 0.6; }
           50% { opacity: 0.3; }
+        }
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
     </div>

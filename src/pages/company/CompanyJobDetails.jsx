@@ -10,6 +10,8 @@ export default function CompanyJobDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteType, setDeleteType] = useState("soft");
 
   useEffect(() => {
     loadJob();
@@ -34,25 +36,189 @@ export default function CompanyJobDetails() {
     }
   };
 
-  const handleDelete = async () => {
-    const confirmed = window.confirm(`Are you sure you want to delete "${job?.title}"? This action cannot be undone.`);
-    if (!confirmed) return;
+  const openDeleteModal = () => {
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setDeleteType("soft");
+  };
+
+  const confirmDelete = async () => {
+    if (!job) return;
 
     setDeleting(true);
+    const hardDelete = deleteType === "hard";
+    
     try {
-      await companyJobService.deleteJob(id);
+      await companyJobService.deleteJob(id, hardDelete);
       navigate("/company/jobs", { replace: true });
     } catch (err) {
       const message = err?.response?.data?.message || "Failed to delete job.";
       setError(message);
       setDeleting(false);
+      closeDeleteModal();
+      
+      if (err.response?.status === 400 && message.includes("applications")) {
+        alert("This job has applications and cannot be permanently deleted. Use Archive instead.");
+      }
     }
   };
 
   const isActive = job && new Date(job.deadline) >= new Date();
 
+  // Delete Confirmation Modal Component
+  const DeleteModal = () => {
+    if (!deleteModalOpen) return null;
+
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+          backdropFilter: "blur(4px)",
+        }}
+        onClick={closeDeleteModal}
+      >
+        <div
+          className="card"
+          style={{
+            maxWidth: 480,
+            width: "90%",
+            padding: "28px 24px",
+            animation: "fadeUp 0.2s ease",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3 style={{ marginBottom: 12, fontSize: 20, fontWeight: 700 }}>
+            Delete "{job?.title}"?
+          </h3>
+          
+          <p style={{ color: "var(--muted)", marginBottom: 20, lineHeight: 1.6 }}>
+            Choose how you want to remove this job posting:
+          </p>
+
+          <div style={{ marginBottom: 24 }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px 16px",
+                background: deleteType === "soft" ? "var(--teal-dim)" : "var(--bg)",
+                border: `1.5px solid ${deleteType === "soft" ? "var(--teal)" : "var(--border)"}`,
+                borderRadius: 12,
+                marginBottom: 12,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onClick={() => setDeleteType("soft")}
+            >
+              <input
+                type="radio"
+                name="deleteType"
+                checked={deleteType === "soft"}
+                onChange={() => setDeleteType("soft")}
+                style={{ width: 18, height: 18, cursor: "pointer" }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                  Archive (Soft Delete)
+                </div>
+                <div style={{ fontSize: 13, color: "var(--muted)" }}>
+                  Job will be archived and no longer visible to students. Can be restored later if needed.
+                </div>
+              </div>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px 16px",
+                background: deleteType === "hard" ? "var(--coral-dim)" : "var(--bg)",
+                border: `1.5px solid ${deleteType === "hard" ? "var(--coral)" : "var(--border)"}`,
+                borderRadius: 12,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onClick={() => setDeleteType("hard")}
+            >
+              <input
+                type="radio"
+                name="deleteType"
+                checked={deleteType === "hard"}
+                onChange={() => setDeleteType("hard")}
+                style={{ width: 18, height: 18, cursor: "pointer" }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                  Permanent Delete (Hard Delete)
+                </div>
+                <div style={{ fontSize: 13, color: "var(--muted)" }}>
+                  ⚠️ Permanently remove from database. Only works if no students have applied to this job.
+                </div>
+              </div>
+            </label>
+          </div>
+
+          {deleteType === "hard" && (
+            <div
+              style={{
+                background: "var(--coral-dim)",
+                padding: "12px",
+                borderRadius: 10,
+                marginBottom: 20,
+                fontSize: 13,
+                color: "var(--coral)",
+              }}
+            >
+              ⚠️ Warning: This action cannot be undone. If students have already applied to this job, permanent deletion will be blocked.
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 12 }}>
+            <button
+              onClick={confirmDelete}
+              className="btn"
+              style={{
+                flex: 1,
+                background: deleteType === "hard" ? "var(--coral)" : "var(--teal)",
+                color: "white",
+                justifyContent: "center",
+              }}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : (deleteType === "hard" ? "Permanently Delete" : "Archive Job")}
+            </button>
+            <button
+              onClick={closeDeleteModal}
+              className="btn btn-outline"
+              style={{ flex: 1, justifyContent: "center" }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
+      {/* Delete Modal */}
+      <DeleteModal />
+
       {/* Hero Section */}
       <div
         style={{
@@ -95,6 +261,7 @@ export default function CompanyJobDetails() {
                 fontSize: 14,
                 fontWeight: 500,
                 transition: "color 0.15s",
+                textDecoration: "none",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "white")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
@@ -208,12 +375,23 @@ export default function CompanyJobDetails() {
             </div>
 
             {/* Action Buttons */}
-            <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
-              <Link to="/company/jobs" className="btn btn-outline">
+            <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", flexWrap: "wrap" }}>
+              <Link to="/company/jobs" className="btn btn-outline" style={{ textDecoration: "none" }}>
                 Back to Jobs
               </Link>
+              <Link 
+                to={`/company/jobs/${id}/edit`}
+                className="btn btn-outline"
+                style={{
+                  borderColor: "var(--teal)",
+                  color: "var(--teal)",
+                  textDecoration: "none",
+                }}
+              >
+                Edit Job ✏️
+              </Link>
               <button
-                onClick={handleDelete}
+                onClick={openDeleteModal}
                 disabled={deleting}
                 className="btn btn-ghost"
                 style={{
@@ -222,12 +400,25 @@ export default function CompanyJobDetails() {
                   opacity: deleting ? 0.6 : 1,
                 }}
               >
-                {deleting ? "Deleting..." : "Delete Job"}
+                Delete Job
               </button>
             </div>
           </>
         ) : null}
       </div>
+
+      <style>{`
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

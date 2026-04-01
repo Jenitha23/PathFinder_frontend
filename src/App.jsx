@@ -24,6 +24,7 @@ import CompanyDashboard from "./pages/company/CompanyDashboard";
 import PostJob from "./pages/company/PostJob";
 import CompanyJobs from "./pages/company/CompanyJobs";
 import CompanyJobDetails from "./pages/company/CompanyJobDetails";
+import EditJob from "./pages/company/EditJob";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -115,6 +116,11 @@ export default function App() {
       <CompanyJobDetails />
       </ProtectedRoute>
       }/>
+      <Route path="/company/jobs/:id/edit" element={
+      <ProtectedRoute allowRole="COMPANY">
+      <EditJob />
+      </ProtectedRoute>
+      } />
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
