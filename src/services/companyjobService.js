@@ -24,6 +24,12 @@ export const companyJobService = {
   getJobById: (jobId) => api.get(`/api/company/jobs/${jobId}`),
 
   /**
+   * Get job for editing (returns all fields)
+   * GET /api/company/jobs/{id}/edit
+   */
+  getJobForEdit: (jobId) => api.get(`/api/company/jobs/${jobId}/edit`),
+
+  /**
    * Get job statistics for the company
    * GET /api/company/jobs/stats
    */
@@ -36,10 +42,13 @@ export const companyJobService = {
   updateJob: (jobId, jobData) => api.put(`/api/company/jobs/${jobId}`, jobData),
 
   /**
-   * Delete a job posting
+   * Delete a job posting (soft delete by default, hard delete with query param)
    * DELETE /api/company/jobs/{id}
+   * @param {number} jobId - The job ID
+   * @param {boolean} hardDelete - If true, permanently delete the job
    */
-  deleteJob: (jobId) => api.delete(`/api/company/jobs/${jobId}`),
+  deleteJob: (jobId, hardDelete = false) => 
+    api.delete(`/api/company/jobs/${jobId}${hardDelete ? '?hardDelete=true' : ''}`),
 };
 
 export default companyJobService;
