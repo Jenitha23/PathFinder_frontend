@@ -1,12 +1,7 @@
-﻿/**
- * File: src/components/Navbar.jsx
- * Purpose: Reusable UI component used across pages.
- */
-import { Link, useNavigate, useLocation } from "react-router-dom";
+﻿import { Link, useNavigate, useLocation } from "react-router-dom";
 import { clearAuth, getAuth, isLoggedIn } from "../services/auth";
 import { api } from "../services/api";
 
-// Renders the Navbar component.
 export default function Navbar() {
   const nav = useNavigate();
   const location = useLocation();
@@ -71,24 +66,39 @@ export default function Navbar() {
           <Link
             to="/"
             className="pf-nav-brand"
-            style={{ display: "flex", gap: 10, alignItems: "center" }}
+            style={{ display: "flex", gap: 10, alignItems: "center", textDecoration: "none" }}
           >
-            <div
+            {/* Logo Image */}
+            <img
+              src="/Logo.png"
+              alt="PathFinder"
               style={{
                 width: 34,
                 height: 34,
                 borderRadius: 12,
-                background: "var(--primary)",
-                color: "white",
-                display: "grid",
-                placeItems: "center",
-                fontWeight: 900,
-                fontSize: 13,
-                fontFamily: "'Sora', sans-serif",
+                objectFit: "cover",
               }}
-            >
-              PF
-            </div>
+              onError={(e) => {
+                // Fallback to text if image fails to load
+                e.target.style.display = 'none';
+                const parent = e.target.parentElement;
+                const fallback = document.createElement('div');
+                fallback.style.cssText = `
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 12px;
+                  background: var(--primary);
+                  color: white;
+                  display: grid;
+                  place-items: center;
+                  font-weight: 900;
+                  font-size: 13px;
+                  font-family: 'Sora', sans-serif;
+                `;
+                fallback.textContent = 'PF';
+                parent.insertBefore(fallback, e.target);
+              }}
+            />
             <div className="pf-brand-text">
               <div
                 style={{
@@ -140,24 +150,39 @@ export default function Navbar() {
         <Link
           to="/"
           className="pf-nav-brand"
-          style={{ display: "flex", gap: 10, alignItems: "center" }}
+          style={{ display: "flex", gap: 10, alignItems: "center", textDecoration: "none" }}
         >
-          <div
+          {/* Logo Image */}
+          <img
+            src="/Logo.png"
+            alt="PathFinder"
             style={{
               width: 36,
               height: 36,
               borderRadius: 12,
-              background: "var(--primary)",
-              color: "white",
-              display: "grid",
-              placeItems: "center",
-              fontWeight: 900,
-              fontSize: 13,
-              fontFamily: "'Sora', sans-serif",
+              objectFit: "cover",
             }}
-          >
-            PF
-          </div>
+            onError={(e) => {
+              // Fallback to text if image fails to load
+              e.target.style.display = 'none';
+              const parent = e.target.parentElement;
+              const fallback = document.createElement('div');
+              fallback.style.cssText = `
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                background: var(--primary);
+                color: white;
+                display: grid;
+                place-items: center;
+                font-weight: 900;
+                font-size: 13px;
+                font-family: 'Sora', sans-serif;
+              `;
+              fallback.textContent = 'PF';
+              parent.insertBefore(fallback, e.target);
+            }}
+          />
           <div className="pf-brand-text">
             <div
               style={{
@@ -188,6 +213,7 @@ export default function Navbar() {
                 location.pathname === "/"
                   ? "var(--primary)"
                   : "var(--text)",
+              textDecoration: "none",
             }}
           >
             Home
@@ -202,6 +228,7 @@ export default function Navbar() {
                   location.pathname === dashboardPath
                     ? "var(--primary)"
                     : "var(--text)",
+                textDecoration: "none",
               }}
             >
               Dashboard
@@ -219,12 +246,14 @@ export default function Navbar() {
               <Link
                 className="btn btn-outline btn-sm"
                 to="/auth/choose?mode=login"
+                style={{ textDecoration: "none" }}
               >
                 Sign In
               </Link>
               <Link
                 className="btn btn-primary btn-sm"
                 to="/auth/choose?mode=register"
+                style={{ textDecoration: "none" }}
               >
                 Get Started
               </Link>
@@ -305,4 +334,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
