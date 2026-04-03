@@ -25,6 +25,7 @@ import PostJob from "./pages/company/PostJob";
 import CompanyJobs from "./pages/company/CompanyJobs";
 import CompanyJobDetails from "./pages/company/CompanyJobDetails";
 import EditJob from "./pages/company/EditJob";
+import CompanyApplicants from "./pages/company/CompanyApplicants";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -121,6 +122,7 @@ export default function App() {
       <EditJob />
       </ProtectedRoute>
       } />
+      <Route path="/company/applicants" element={<CompanyApplicants />} />
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
