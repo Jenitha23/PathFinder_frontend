@@ -135,7 +135,13 @@ export default function CompanyApplicants() {
         applicant.jobId, 
         applicant.applicationId
       );
-      setSelectedApplicant(data.applicant);
+      
+      // IMPORTANT: Preserve the jobId in the selected applicant
+      setSelectedApplicant({
+        ...data.applicant,
+        jobId: applicant.jobId,  // Ensure jobId is preserved
+      });
+      
       setShowDetailsModal(true);
     } catch (err) {
       console.error("Failed to load applicant details:", err);
@@ -144,6 +150,17 @@ export default function CompanyApplicants() {
   };
 
   const handleStatusUpdate = async (applicationId, jobId, newStatus) => {
+    // Validate required parameters
+    if (!applicationId) {
+      setError("Application ID is missing.");
+      return;
+    }
+    
+    if (!jobId) {
+      setError("Job ID is missing. Cannot update status.");
+      return;
+    }
+    
     setUpdating(true);
     setError("");
     setSuccess("");
@@ -151,11 +168,16 @@ export default function CompanyApplicants() {
     try {
       await companyApplicationsService.updateApplicationStatus(jobId, applicationId, newStatus);
       
-      // Update local state
+      // Update local state for allApplications
       const updatedApplications = allApplications.map(app => 
         app.applicationId === applicationId ? { ...app, status: newStatus } : app
       );
       setAllApplications(updatedApplications);
+      
+      // Update selected applicant if the modal is open
+      if (selectedApplicant && selectedApplicant.applicationId === applicationId) {
+        setSelectedApplicant(prev => ({ ...prev, status: newStatus }));
+      }
       
       setSuccess(`Application status updated to "${newStatus}" successfully.`);
       

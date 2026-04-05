@@ -43,9 +43,22 @@ export default function ApplicantDetailsModal({
       return;
     }
     
+    // Validate that we have the necessary IDs
+    if (!applicant.applicationId) {
+      console.error("Missing applicationId for status update");
+      return;
+    }
+    
+    if (!applicant.jobId) {
+      console.error("Missing jobId for status update");
+      return;
+    }
+    
     setUpdatingLocal(true);
     try {
       await onUpdateStatus(applicant.applicationId, selectedStatus);
+    } catch (error) {
+      console.error("Status update failed:", error);
     } finally {
       setUpdatingLocal(false);
     }
@@ -302,9 +315,6 @@ export default function ApplicantDetailsModal({
             </div>
           </div>
         )}
-
-        {/* Rest of the profile sections remain the same */}
-        {/* ... (keep all the existing profile sections) ... */}
 
         {/* Profile Information */}
         {applicant.headline && (
