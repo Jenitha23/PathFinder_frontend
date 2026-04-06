@@ -7,46 +7,73 @@ import { useState, useEffect } from "react";
 export default function CvViewer({ cvUrl, studentName, onClose }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [useGoogleViewer, setUseGoogleViewer] = useState(false);
+  const [previewType, setPreviewType] = useState(null);
+  const [objectUrl, setObjectUrl] = useState(null);
 
   useEffect(() => {
     if (!cvUrl) return;
 
-    // Check if it's an Azure Blob Storage URL
+    const isPdf = cvUrl.toLowerCase().includes('.pdf') || 
+                  cvUrl.toLowerCase().includes('application/pdf');
     const isAzureUrl = cvUrl.includes('blob.core.windows.net');
-    const isPdf = cvUrl.toLowerCase().endsWith('.pdf') || cvUrl.includes('.pdf');
-    
-    if (isAzureUrl && isPdf) {
-      // For Azure PDFs that force download, use Google Docs Viewer as fallback
-      const encodedUrl = encodeURIComponent(cvUrl);
-      const googleViewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
-      setPreviewUrl(googleViewerUrl);
-      setUseGoogleViewer(true);
-    } else if (isPdf) {
-      // For non-Azure PDFs, try direct preview with parameters
-      const separator = cvUrl.includes('?') ? '&' : '?';
-      setPreviewUrl(`${cvUrl}${separator}download=false&inline=true`);
-      setUseGoogleViewer(false);
-    } else {
+
+    if (isPdf) {
+      // For Azure URLs, use Google Docs Viewer (most reliable)
+      if (isAzureUrl) {
+        const encodedUrl = encodeURIComponent(cvUrl);
+        // Using Google Docs Viewer with proper parameters
+        const googleViewerUrl = `https://docs.google.com/gview?url=${encodedUrl}&embedded=true`;
+        setPreviewType('google');
+        setPreviewUrl(googleViewerUrl);
+      } else {
+        // For non-Azure PDFs
+        setPreviewType('direct');
+        setPreviewUrl(cvUrl);
+      }
+    } else if (cvUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      setPreviewType('image');
       setPreviewUrl(cvUrl);
-      setUseGoogleViewer(false);
+    } else {
+      // For other file types, just show download option
+      setPreviewType('unsupported');
+      setError("Preview not available for this file type.");
     }
+    
+    setIsLoading(false);
   }, [cvUrl]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!cvUrl) {
       alert("No CV available for this candidate.");
       return;
     }
     
-    // Create a temporary anchor to trigger download
-    const link = document.createElement('a');
-    link.href = cvUrl;
-    link.download = `${studentName.replace(/\s/g, '_')}_CV.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      // Try to fetch the file with credentials
+      const response = await fetch(cvUrl, {
+        mode: 'cors',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${studentName.replace(/\s/g, '_')}_CV.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        // Fallback: open in new tab
+        window.open(cvUrl, '_blank');
+      }
+    } catch (error) {
+      console.error("Download failed:", error);
+      // Fallback: open in new tab
+      window.open(cvUrl, '_blank');
+    }
   };
 
   const handleIframeLoad = () => {
@@ -55,7 +82,7 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
 
   const handleIframeError = () => {
     setIsLoading(false);
-    setError("Unable to preview CV. Click download to view the file.");
+    setError("Unable to preview CV. Please download the file to view it.");
   };
 
   if (!cvUrl) {
@@ -84,12 +111,9 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
         <div>
           <h3 style={{ fontSize: 18, fontWeight: 700 }}>{studentName}'s CV</h3>
           <div style={{ fontSize: 13, color: "var(--muted)" }}>
-            PDF Document
-            {useGoogleViewer && (
-              <span style={{ marginLeft: 8, fontSize: 11, color: "var(--teal)" }}>
-                (Preview via Google Docs Viewer)
-              </span>
-            )}
+            {previewType === 'google' && "PDF Document (Preview via Google Docs)"}
+            {previewType === 'direct' && "PDF Document"}
+            {previewType === 'image' && "Image File"}
           </div>
         </div>
         <button
@@ -137,7 +161,7 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
           </div>
         )}
         
-        {!error && previewUrl && (
+        {!error && previewType === 'google' && (
           <iframe
             src={previewUrl}
             title={`${studentName} - CV`}
@@ -151,7 +175,40 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
             }}
             onLoad={handleIframeLoad}
             onError={handleIframeError}
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+          />
+        )}
+        
+        {!error && previewType === 'direct' && (
+          <iframe
+            src={`${previewUrl}#toolbar=1&navpanes=1`}
+            title={`${studentName} - CV`}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: "500px",
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              display: isLoading ? "none" : "block"
+            }}
+            onLoad={handleIframeLoad}
+            onError={handleIframeError}
+          />
+        )}
+        
+        {!error && previewType === 'image' && (
+          <img
+            src={previewUrl}
+            alt={`${studentName}'s CV`}
+            style={{
+              width: "100%",
+              height: "auto",
+              minHeight: "500px",
+              objectFit: "contain",
+              border: "1px solid var(--border)",
+              borderRadius: 8
+            }}
+            onLoad={handleIframeLoad}
+            onError={handleIframeError}
           />
         )}
       </div>
