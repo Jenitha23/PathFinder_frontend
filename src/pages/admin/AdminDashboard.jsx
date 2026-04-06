@@ -10,6 +10,8 @@ import { api } from "../../services/api";
 
 // Fetches or derives data needed for this section.
 function listFromResponse(data) {
+  // Handle your actual API response structure
+  if (data?.companies && Array.isArray(data.companies)) return data.companies;
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
   if (Array.isArray(data?.data)) return data.data;
@@ -24,15 +26,16 @@ export default function AdminDashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetches or derives data needed for this section.
     const load = async () => {
       setLoading(true);
       setError("");
       try {
         const [studentsRes, companiesRes] = await Promise.all([
           api.get("/api/admin/students"),
-          api.get("/api/admin/companies"),
+          api.get("/api/admin/companies?pageSize=1000"), // Get more companies for dashboard
         ]);
+
+        console.log("Companies API response:", companiesRes.data); // Debug log
 
         setStudents(listFromResponse(studentsRes.data));
         setCompanies(listFromResponse(companiesRes.data));
@@ -48,10 +51,23 @@ export default function AdminDashboard() {
 
   const companyCounts = useMemo(() => {
     const counts = { PENDING_APPROVAL: 0, APPROVED: 0, REJECTED: 0 };
+    
+    console.log("Companies for counting:", companies); // Debug log
+    
     companies.forEach((c) => {
-      const status = c.status || c.companyStatus;
-      if (counts[status] !== undefined) counts[status] += 1;
+      const status = c.status; // Use just status, not c.companyStatus
+      console.log(`Company ${c.companyName} status:`, status); // Debug log
+      
+      if (status === "PENDING_APPROVAL") {
+        counts.PENDING_APPROVAL += 1;
+      } else if (status === "APPROVED") {
+        counts.APPROVED += 1;
+      } else if (status === "REJECTED") {
+        counts.REJECTED += 1;
+      }
     });
+    
+    console.log("Counts result:", counts); // Debug log
     return counts;
   }, [companies]);
 
@@ -78,12 +94,20 @@ export default function AdminDashboard() {
       <div className="card" style={{ padding: 20, borderColor: "rgba(10, 36, 114, 0.14)" }}>
         <div style={{ fontWeight: 800, marginBottom: 12 }}>Company Approval Summary</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <div className="admin-chip"><AdminStatusBadge status="PENDING_APPROVAL" /> <b>{companyCounts.PENDING_APPROVAL}</b></div>
-          <div className="admin-chip"><AdminStatusBadge status="APPROVED" /> <b>{companyCounts.APPROVED}</b></div>
-          <div className="admin-chip"><AdminStatusBadge status="REJECTED" /> <b>{companyCounts.REJECTED}</b></div>
+          <div className="admin-chip">
+            <AdminStatusBadge status="PENDING_APPROVAL" /> 
+            <b style={{ marginLeft: 8 }}>{companyCounts.PENDING_APPROVAL}</b>
+          </div>
+          <div className="admin-chip">
+            <AdminStatusBadge status="APPROVED" /> 
+            <b style={{ marginLeft: 8 }}>{companyCounts.APPROVED}</b>
+          </div>
+          <div className="admin-chip">
+            <AdminStatusBadge status="REJECTED" /> 
+            <b style={{ marginLeft: 8 }}>{companyCounts.REJECTED}</b>
+          </div>
         </div>
       </div>
     </AdminLayout>
   );
 }
-
