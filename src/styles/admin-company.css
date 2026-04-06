@@ -1,0 +1,107 @@
+/* Admin Company Styles */
+
+/* Status Badge Colors */
+.badge-teal {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-coral {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Action Buttons */
+.btn-teal {
+  background: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.btn-teal:hover:not(:disabled) {
+  background: #059669;
+  border-color: #059669;
+}
+
+.btn-coral {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+.btn-coral:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+/* Filter Bar */
+.admin-filter-bar {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+/* Pagination */
+.admin-pagination button.active {
+  background: #0a2472;
+  color: white;
+}
+
+/* Bulk Action Bar */
+.bulk-action-bar {
+  background: #f0f4ff;
+  border: 1px solid #0a2472;
+  border-radius: 8px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  max-width: 500px;
+  width: 90%;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+/* Alert Variants */
+.alert.warning {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  color: #92400e;
+}
+
+/* Table Styles */
+.admin-table img {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-filter-bar > div {
+    flex-direction: column;
+  }
+  
+  .admin-filter-bar input,
+  .admin-filter-bar select {
+    width: 100%;
+  }
+  
+  .btn-teal, .btn-coral, .btn-outline {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

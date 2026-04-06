@@ -32,6 +32,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminCompanies from "./pages/admin/AdminCompanies";
+// NEW: Import admin company review and details pages
+import AdminCompanyReview from "./pages/admin/AdminCompanyReview";
+import AdminCompanyDetails from "./pages/admin/AdminCompanyDetails";
 
 export default function App() {
   return (
@@ -41,6 +44,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/auth/choose" element={<AuthChoose />} />
 
+        {/* Student Routes */}
         <Route path="/student/login" element={<StudentLogin />} />
         <Route path="/student/register" element={<StudentRegister />} />
         <Route
@@ -92,6 +96,7 @@ export default function App() {
           }
         />
 
+        {/* Company Routes */}
         <Route path="/company/login" element={<CompanyLogin />} />
         <Route path="/company/register" element={<CompanyRegister />} />
         <Route
@@ -102,28 +107,48 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/company/post-job" element={
-        <ProtectedRoute allowRole="COMPANY">
-        <PostJob />
-        </ProtectedRoute>
-       } />
-       <Route path="/company/jobs" element={
-       <ProtectedRoute allowRole="COMPANY">
-       <CompanyJobs />
-       </ProtectedRoute>
-      } />
-      <Route path="/company/jobs/:id" element={
-      <ProtectedRoute allowRole="COMPANY">
-      <CompanyJobDetails />
-      </ProtectedRoute>
-      }/>
-      <Route path="/company/jobs/:id/edit" element={
-      <ProtectedRoute allowRole="COMPANY">
-      <EditJob />
-      </ProtectedRoute>
-      } />
-      <Route path="/company/applicants" element={<CompanyApplicants />} />
+        <Route 
+          path="/company/post-job" 
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <PostJob />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/company/jobs" 
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <CompanyJobs />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/company/jobs/:id" 
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <CompanyJobDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/company/jobs/:id/edit" 
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <EditJob />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/company/applicants" 
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <CompanyApplicants />
+            </ProtectedRoute>
+          } 
+        />
 
+        {/* Admin Routes - Existing */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin/dashboard"
@@ -157,7 +182,26 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/student/jobs" element={<StudentJobs />} />
+
+        {/* NEW: Admin Company Approval Routes */}
+        <Route
+          path="/admin/companies/:id/review"
+          element={
+            <ProtectedRoute allowRole="ADMIN">
+              <AdminCompanyReview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/companies/:id/details"
+          element={
+            <ProtectedRoute allowRole="ADMIN">
+              <AdminCompanyDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Redirects */}
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
