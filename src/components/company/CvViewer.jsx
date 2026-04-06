@@ -8,19 +8,29 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [useGoogleViewer, setUseGoogleViewer] = useState(false);
 
   useEffect(() => {
     if (!cvUrl) return;
 
-    // For Azure Blob Storage URLs, we need to handle them properly
+    // Check if it's an Azure Blob Storage URL
     const isAzureUrl = cvUrl.includes('blob.core.windows.net');
+    const isPdf = cvUrl.toLowerCase().endsWith('.pdf') || cvUrl.includes('.pdf');
     
-    if (isAzureUrl && !cvUrl.includes('?')) {
-      // Add download=false parameter for Azure to force preview instead of download
+    if (isAzureUrl && isPdf) {
+      // For Azure PDFs that force download, use Google Docs Viewer as fallback
+      const encodedUrl = encodeURIComponent(cvUrl);
+      const googleViewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
+      setPreviewUrl(googleViewerUrl);
+      setUseGoogleViewer(true);
+    } else if (isPdf) {
+      // For non-Azure PDFs, try direct preview with parameters
       const separator = cvUrl.includes('?') ? '&' : '?';
-      setPreviewUrl(`${cvUrl}${separator}download=false&preview=true`);
+      setPreviewUrl(`${cvUrl}${separator}download=false&inline=true`);
+      setUseGoogleViewer(false);
     } else {
       setPreviewUrl(cvUrl);
+      setUseGoogleViewer(false);
     }
   }, [cvUrl]);
 
@@ -58,11 +68,6 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
     );
   }
 
-  // Check file type for better preview handling
-  const isPdf = previewUrl?.toLowerCase().endsWith('.pdf') || previewUrl?.includes('.pdf');
-  const isImage = previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-  const isDocx = previewUrl?.toLowerCase().endsWith('.docx') || previewUrl?.includes('.docx');
-
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {/* Header with actions */}
@@ -79,7 +84,12 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
         <div>
           <h3 style={{ fontSize: 18, fontWeight: 700 }}>{studentName}'s CV</h3>
           <div style={{ fontSize: 13, color: "var(--muted)" }}>
-            {isPdf ? "PDF Document" : isImage ? "Image File" : isDocx ? "Word Document" : "Document"}
+            PDF Document
+            {useGoogleViewer && (
+              <span style={{ marginLeft: 8, fontSize: 11, color: "var(--teal)" }}>
+                (Preview via Google Docs Viewer)
+              </span>
+            )}
           </div>
         </div>
         <button
@@ -128,51 +138,21 @@ export default function CvViewer({ cvUrl, studentName, onClose }) {
         )}
         
         {!error && previewUrl && (
-          <>
-            {isPdf && (
-              <iframe
-                src={`${previewUrl}#toolbar=1&navpanes=1`}
-                title={`${studentName} - CV`}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  minHeight: "500px",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  display: isLoading ? "none" : "block"
-                }}
-                onLoad={handleIframeLoad}
-                onError={handleIframeError}
-              />
-            )}
-            
-            {isImage && (
-              <img
-                src={previewUrl}
-                alt={`${studentName}'s CV`}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  minHeight: "500px",
-                  objectFit: "contain",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8
-                }}
-                onLoad={handleIframeLoad}
-                onError={handleIframeError}
-              />
-            )}
-            
-            {!isPdf && !isImage && (
-              <div style={{ textAlign: "center", padding: "40px" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>📄</div>
-                <p>Preview not available for this file type.</p>
-                <button onClick={handleDownload} className="btn btn-outline" style={{ marginTop: 16 }}>
-                  Download CV
-                </button>
-              </div>
-            )}
-          </>
+          <iframe
+            src={previewUrl}
+            title={`${studentName} - CV`}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: "500px",
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              display: isLoading ? "none" : "block"
+            }}
+            onLoad={handleIframeLoad}
+            onError={handleIframeError}
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+          />
         )}
       </div>
 
