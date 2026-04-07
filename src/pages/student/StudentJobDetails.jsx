@@ -245,6 +245,22 @@ export default function StudentJobDetails() {
               </div>
             </div>
 
+            {/* ── requirements card ────────────────────────────── */}
+            <div className="card" style={{ padding: "26px 28px", borderRadius: 22, marginBottom: 22 }}>
+              <h2 style={{ marginBottom: 16 }}>Requirements</h2>
+              <div style={{ color: "var(--text)", lineHeight: 1.9, whiteSpace: "pre-wrap", fontSize: 15 }}>
+                {job.requirements || "No requirements available."}
+              </div>
+            </div>
+
+            {/* ── responsibilities card ────────────────────────── */}
+            <div className="card" style={{ padding: "26px 28px", borderRadius: 22, marginBottom: 22 }}>
+              <h2 style={{ marginBottom: 16 }}>Responsibilities</h2>
+              <div style={{ color: "var(--text)", lineHeight: 1.9, whiteSpace: "pre-wrap", fontSize: 15 }}>
+                {job.responsibilities || "No responsibilities available."}
+              </div>
+            </div>
+
             {/* ── result banners ────────────────────────────────── */}
             {applyResult && (
               <div
