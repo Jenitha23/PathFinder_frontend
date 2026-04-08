@@ -59,6 +59,19 @@ export const adminCompanyService = {
     api.patch("/api/admin/companies/bulk-status", data),
 
   /**
+ * Update company account (full update)
+ * PUT /api/admin/users/companies/{id}
+ */
+  updateCompany: (companyId, data) => 
+    api.put(`/api/admin/users/companies/${companyId}`, data),
+
+/**
+ * Delete company account
+ * DELETE /api/admin/users/companies/{id}
+ */
+  deleteCompany: (companyId) => 
+    api.delete(`/api/admin/users/companies/${companyId}`),
+  /**
    * Get company audit logs
    * GET /api/admin/companies/{id}/audit-logs
    */
