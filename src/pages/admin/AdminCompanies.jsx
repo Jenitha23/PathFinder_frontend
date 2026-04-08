@@ -1,6 +1,6 @@
 ﻿/**
  * File: src/pages/admin/AdminCompanies.jsx
- * Purpose: Admin page for company management with logo display
+ * Purpose: Admin page for company management with edit/delete functionality
  */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,10 @@ import AdminFilterBar from "../../components/admin/AdminFilterBar";
 import AdminPagination from "../../components/admin/AdminPagination";
 import AdminBulkActionBar from "../../components/admin/AdminBulkActionBar";
 import AdminRejectionModal from "../../components/admin/AdminRejectionModal";
+import AdminUserEditModal from "../../components/admin/AdminUserEditModal";
+import AdminDeleteConfirmModal from "../../components/admin/AdminDeleteConfirmModal";
 import { useAdminCompanies } from "../../hooks/useAdminCompanies";
+import adminCompanyService from "../../services/adminCompanyService";
 
 export default function AdminCompanies() {
   const navigate = useNavigate();
@@ -38,6 +41,9 @@ export default function AdminCompanies() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [showRejectModal, setShowRejectModal] = useState(null);
   const [rejectingId, setRejectingId] = useState(null);
+  const [editingCompany, setEditingCompany] = useState(null);
+  const [deletingCompany, setDeletingCompany] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [logoErrors, setLogoErrors] = useState({});
@@ -69,6 +75,41 @@ export default function AdminCompanies() {
       showMessage(result.message);
     } else {
       showMessage(result.message, "error");
+    }
+  };
+
+  const handleEdit = (company) => {
+    setEditingCompany(company);
+  };
+
+  const handleSaveEdit = async (data) => {
+    try {
+      await adminCompanyService.updateCompany(editingCompany.id, data);
+      showMessage("Company updated successfully.");
+      setEditingCompany(null);
+      await loadCompanies();
+    } catch (err) {
+      const message = err?.response?.data?.message || "Failed to update company.";
+      showMessage(message, "error");
+    }
+  };
+
+  const handleDelete = (company) => {
+    setDeletingCompany(company);
+  };
+
+  const handleConfirmDelete = async () => {
+    setDeletingId(deletingCompany.id);
+    try {
+      await adminCompanyService.deleteCompany(deletingCompany.id);
+      showMessage(`Company "${deletingCompany.companyName}" has been deleted.`);
+      setDeletingCompany(null);
+      await loadCompanies();
+    } catch (err) {
+      const message = err?.response?.data?.message || "Failed to delete company.";
+      showMessage(message, "error");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -184,29 +225,44 @@ export default function AdminCompanies() {
       render: (row) => {
         const isPending = row.status === "PENDING_APPROVAL";
         const isSaving = savingId === row.id || rejectingId === row.id;
+        const isDeleting = deletingId === row.id;
         
         return (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button
               className="btn btn-outline btn-sm"
               onClick={() => navigate(`/admin/companies/${row.id}/review`)}
-              disabled={isSaving}
+              disabled={isSaving || isDeleting}
             >
               Review
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => handleEdit(row)}
+              disabled={isSaving || isDeleting}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-coral btn-sm"
+              onClick={() => handleDelete(row)}
+              disabled={isSaving || isDeleting}
+            >
+              Delete
             </button>
             {isPending && (
               <>
                 <button
                   className="btn btn-teal btn-sm"
                   onClick={() => handleApprove(row.id)}
-                  disabled={isSaving}
+                  disabled={isSaving || isDeleting}
                 >
                   {savingId === row.id ? "..." : "Approve"}
                 </button>
                 <button
                   className="btn btn-coral btn-sm"
                   onClick={() => setShowRejectModal(row)}
-                  disabled={isSaving}
+                  disabled={isSaving || isDeleting}
                 >
                   Reject
                 </button>
@@ -221,7 +277,7 @@ export default function AdminCompanies() {
   return (
     <AdminLayout 
       title="Companies" 
-      subtitle="Review, approve, or reject company registrations"
+      subtitle="Review, approve, edit, or delete company registrations"
     >
       {/* Messages */}
       {message && (
@@ -276,6 +332,26 @@ export default function AdminCompanies() {
           loading={rejectingId === showRejectModal.id}
         />
       )}
+
+      {/* Edit Modal */}
+      <AdminUserEditModal
+        isOpen={!!editingCompany}
+        onClose={() => setEditingCompany(null)}
+        onSave={handleSaveEdit}
+        user={editingCompany}
+        userType="COMPANY"
+        loading={savingId === editingCompany?.id}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <AdminDeleteConfirmModal
+        isOpen={!!deletingCompany}
+        onClose={() => setDeletingCompany(null)}
+        onConfirm={handleConfirmDelete}
+        user={deletingCompany}
+        userType="COMPANY"
+        loading={deletingId === deletingCompany?.id}
+      />
     </AdminLayout>
   );
 }
