@@ -4,9 +4,16 @@
  */
 import { useState } from "react";
 
-const STATUS_OPTIONS = [
+const STATUS_OPTIONS_STUDENT = [
   { value: "ALL", label: "All Status" },
   { value: "ACTIVE", label: "Active" },
+];
+
+const STATUS_OPTIONS_COMPANY = [
+  { value: "ALL", label: "All Status" },
+  { value: "PENDING_APPROVAL", label: "Pending Approval" },
+  { value: "APPROVED", label: "Approved" },
+  { value: "REJECTED", label: "Rejected" },
   { value: "SUSPENDED", label: "Suspended" },
 ];
 
@@ -33,6 +40,8 @@ export default function AdminUserSearchBar({
     setLocalFilters(resetFilters);
     onReset();
   };
+
+  const statusOptions = userType === "STUDENT" ? STATUS_OPTIONS_STUDENT : STATUS_OPTIONS_COMPANY;
 
   return (
     <div className="card" style={{ padding: 16, marginBottom: 20 }}>
@@ -61,7 +70,7 @@ export default function AdminUserSearchBar({
             onChange={(e) => handleChange("status", e.target.value)}
             disabled={loading}
           >
-            {STATUS_OPTIONS.map(opt => (
+            {statusOptions.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
