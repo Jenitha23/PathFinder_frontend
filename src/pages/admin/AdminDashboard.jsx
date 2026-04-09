@@ -230,6 +230,27 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {/* ADDED: Reports Quick Links Card */}
+      <div className="card" style={{ padding: 20, marginTop: 20 }}>
+        <h3 style={{ marginBottom: 16, fontSize: 18 }}>📊 Reports</h3>
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <Link 
+            to="/admin/reports/jobs-per-month" 
+            className="btn btn-outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+          >
+            Jobs Per Month Report →
+          </Link>
+          <Link 
+            to="/admin/reports/applications-per-job" 
+            className="btn btn-outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+          >
+            Applications Per Job Report →
+          </Link>
+        </div>
+      </div>
     </AdminLayout>
   );
 }

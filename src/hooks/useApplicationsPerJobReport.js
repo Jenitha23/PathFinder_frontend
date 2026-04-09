@@ -1,6 +1,6 @@
 /**
- * File: src/hooks/useCompanyJobsPerMonthReport.js
- * Purpose: Custom hook for jobs per month report (works for both admin and company)
+ * File: src/hooks/useApplicationsPerJobReport.js
+ * Purpose: Custom hook for applications per job report data fetching
  */
 import { useState, useEffect, useCallback, useRef } from "react";
 import reportsService from "../services/reportsService";
@@ -11,13 +11,13 @@ const initialState = {
   error: null,
   isEmpty: false,
   filters: {
-    year: "",
+    jobId: "",
     startDate: "",
     endDate: "",
   },
 };
 
-export function useCompanyJobsPerMonthReport(role = "company") {
+export function useApplicationsPerJobReport(role = "company") {
   const [state, setState] = useState(initialState);
   const [refreshing, setRefreshing] = useState(false);
   const isInitialMount = useRef(true);
@@ -29,22 +29,21 @@ export function useCompanyJobsPerMonthReport(role = "company") {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     const params = {};
-    if (filters.year && filters.year !== "") params.year = filters.year;
+    if (filters.jobId && filters.jobId !== "") params.jobId = filters.jobId;
     if (filters.startDate) params.startDate = filters.startDate;
     if (filters.endDate) params.endDate = filters.endDate;
 
     try {
-      // Pass role to the service
-      const { data } = await reportsService.getJobsPerMonthReport(params, role);
+      const { data } = await reportsService.getApplicationsPerJobReport(params, role);
       setState({
-        data: data.data,
+        data: data.report,
         loading: false,
         error: null,
         isEmpty: data.isEmpty || false,
         filters,
       });
     } catch (err) {
-      console.error("Jobs per month report error:", err);
+      console.error("Applications per job report error:", err);
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -70,12 +69,13 @@ export function useCompanyJobsPerMonthReport(role = "company") {
     loadReport(state.filters).finally(() => setRefreshing(false));
   }, [loadReport, state.filters]);
 
+  // Initial load
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       loadReport(state.filters);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     data: state.data,
