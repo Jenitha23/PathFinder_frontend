@@ -63,10 +63,19 @@ export function useAdminStudents() {
         pageSize: state.pageSize,
       });
       
+      const studentsWithStatus = (data.users || []).map(student => ({
+        id: student.id,
+        fullName: student.fullName || student.FullName,
+        email: student.email || student.Email,
+        status: student.status || student.Status || "ACTIVE",
+        applicationsCount: student.applicationsCount || 0,
+        createdAt: student.createdAt,
+      }));
+      
       dispatch({
         type: "SET_STUDENTS",
         payload: {
-          users: data.users || [],
+          users: studentsWithStatus,
           total: data.total || 0,
           totalPages: data.totalPages || 0,
         },
@@ -92,6 +101,7 @@ export function useAdminStudents() {
       return { success: true, message: "Student updated successfully." };
     } catch (err) {
       const message = err?.response?.data?.message || "Failed to update student.";
+      console.error("Update error:", err.response?.data);
       return { success: false, message };
     } finally {
       setSavingId(null);

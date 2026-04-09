@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 
 const STATUS_OPTIONS_STUDENT = [
   { value: "ACTIVE", label: "Active" },
-  { value: "SUSPENDED", label: "Suspended" },
 ];
 
 const STATUS_OPTIONS_COMPANY = [
@@ -29,7 +28,6 @@ export default function AdminUserEditModal({
     companyName: "",
     email: "",
     status: "",
-    suspensionReason: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -40,7 +38,6 @@ export default function AdminUserEditModal({
         companyName: user.companyName || user.CompanyName || "",
         email: user.email || user.Email || "",
         status: user.status || user.Status || (userType === "STUDENT" ? "ACTIVE" : "PENDING_APPROVAL"),
-        suspensionReason: user.suspensionReason || user.SuspensionReason || "",
       });
       setErrors({});
     }
@@ -82,10 +79,6 @@ export default function AdminUserEditModal({
       newErrors.status = "Status is required.";
     }
 
-    if (formData.status === "SUSPENDED" && !formData.suspensionReason.trim()) {
-      newErrors.suspensionReason = "Suspension reason is required when suspending an account.";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -101,7 +94,6 @@ export default function AdminUserEditModal({
       ),
       email: formData.email.trim().toLowerCase(),
       status: formData.status,
-      suspensionReason: formData.suspensionReason.trim() || null,
     };
 
     onSave(payload);
@@ -182,7 +174,7 @@ export default function AdminUserEditModal({
             )}
           </div>
 
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 20 }}>
             <label className="label" htmlFor="status">Status *</label>
             <select
               id="status"
@@ -201,29 +193,6 @@ export default function AdminUserEditModal({
               </div>
             )}
           </div>
-
-          {(formData.status === "SUSPENDED" || userType !== "STUDENT") && (
-            <div style={{ marginBottom: 20 }}>
-              <label className="label" htmlFor="suspensionReason">
-                Suspension Reason {formData.status === "SUSPENDED" && "*"}
-              </label>
-              <textarea
-                id="suspensionReason"
-                className="input"
-                rows={3}
-                placeholder="Reason for suspension (visible to user)..."
-                value={formData.suspensionReason}
-                onChange={(e) => handleChange("suspensionReason", e.target.value)}
-                disabled={loading}
-                style={{ resize: "vertical" }}
-              />
-              {errors.suspensionReason && (
-                <div className="helper" style={{ color: "#c0392b", marginTop: 4 }}>
-                  {errors.suspensionReason}
-                </div>
-              )}
-            </div>
-          )}
 
           <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
             <button 

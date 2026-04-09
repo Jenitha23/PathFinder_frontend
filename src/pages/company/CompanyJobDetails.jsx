@@ -22,6 +22,7 @@ export default function CompanyJobDetails() {
     setError("");
     try {
       const { data } = await companyJobService.getJobById(id);
+      console.log("Job data received:", data); // Debug log
       setJob(data);
     } catch (err) {
       const status = err?.response?.status;
@@ -67,6 +68,18 @@ export default function CompanyJobDetails() {
   };
 
   const isActive = job && new Date(job.deadline) >= new Date();
+  
+  // Helper function to get requirements from various possible field names
+  const getRequirements = () => {
+    if (!job) return "No requirements specified.";
+    return job.requirements || job.requirement || job.jobRequirements || job.requiredSkills || "No requirements specified.";
+  };
+
+  // Helper function to get responsibilities from various possible field names
+  const getResponsibilities = () => {
+    if (!job) return "No responsibilities specified.";
+    return job.responsibilities || job.responsibility || job.jobResponsibilities || "No responsibilities specified.";
+  };
 
   // Delete Confirmation Modal Component
   const DeleteModal = () => {
@@ -339,7 +352,7 @@ export default function CompanyJobDetails() {
                 </div>
                 <div>
                   <div className="helper" style={{ marginBottom: 4 }}>💼 Job Type</div>
-                  <div style={{ fontWeight: 600 }}>{job.type || "Not specified"}</div>
+                  <div style={{ fontWeight: 600 }}>{job.type || job.jobType || "Not specified"}</div>
                 </div>
                 <div>
                   <div className="helper" style={{ marginBottom: 4 }}>🗂️ Category</div>
@@ -369,8 +382,13 @@ export default function CompanyJobDetails() {
               </div>
 
               <h3 style={{ marginBottom: 12, fontSize: 18 }}>Requirements</h3>
+              <div style={{ color: "var(--text)", lineHeight: 1.8, whiteSpace: "pre-wrap", marginBottom: 24 }}>
+                {getRequirements()}
+              </div>
+
+              <h3 style={{ marginBottom: 12, fontSize: 18 }}>Responsibilities</h3>
               <div style={{ color: "var(--text)", lineHeight: 1.8, whiteSpace: "pre-wrap" }}>
-                {job.requirements || "No requirements specified."}
+                {getResponsibilities()}
               </div>
             </div>
 

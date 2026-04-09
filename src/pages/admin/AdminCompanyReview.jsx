@@ -104,6 +104,7 @@ export default function AdminCompanyReview() {
   }
 
   const canApprove = actions?.canApprove || company.status === "PENDING_APPROVAL";
+  const canReconsider = actions?.canReconsider || company.status === "REJECTED";
   const completeness = stats?.profileCompleteness || 0;
 
   return (
@@ -112,7 +113,7 @@ export default function AdminCompanyReview() {
       {error && <div className="alert error" style={{ marginBottom: 14 }}>{error}</div>}
 
       {/* Action Buttons */}
-      {canApprove && (
+      {(canApprove || canReconsider) && (
         <div className="card" style={{ padding: 16, marginBottom: 20, display: "flex", gap: 12, flexWrap: "wrap" }}>
           <button
             className="btn btn-teal"
@@ -128,6 +129,15 @@ export default function AdminCompanyReview() {
           >
             ✗ Reject Company
           </button>
+          {canReconsider && (
+            <button
+              className="btn btn-warning"
+              onClick={handleApprove}
+              disabled={updating}
+            >
+              ↻ Reconsider & Approve
+            </button>
+          )}
           <button
             className="btn btn-outline"
             onClick={() => navigate("/admin/companies")}
@@ -137,7 +147,7 @@ export default function AdminCompanyReview() {
         </div>
       )}
 
-      {!canApprove && (
+      {!canApprove && !canReconsider && (
         <div className="card" style={{ padding: 16, marginBottom: 20 }}>
           <button
             className="btn btn-outline"
@@ -326,6 +336,7 @@ export default function AdminCompanyReview() {
             <table className="admin-table" style={{ width: "100%" }}>
               <thead>
                 <tr>
+                  <th>Admin</th>
                   <th>Action</th>
                   <th>From</th>
                   <th>To</th>
@@ -336,6 +347,7 @@ export default function AdminCompanyReview() {
               <tbody>
                 {auditLogs.map(log => (
                   <tr key={log.id}>
+                    <td>{log.adminName || log.adminId || "-"}</td>
                     <td>{log.action}</td>
                     <td>{log.oldValue || "-"}</td>
                     <td>{log.newValue || "-"}</td>
