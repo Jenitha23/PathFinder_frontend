@@ -867,6 +867,7 @@ export default function CompanyDashboard() {
                   { label: "Create Internship Posting", to: "/company/post-job" },
                   { label: "View Applicants", to: "/company/applicants" },
                   { label: "View All Jobs", to: "/company/jobs" },
+                  { label: "Jobs Per Month Report", to: "/company/reports/jobs-per-month" },  // ← ADDED
                 ].map((l) => (
                   <Link
                     key={l.label}

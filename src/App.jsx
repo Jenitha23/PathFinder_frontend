@@ -26,6 +26,8 @@ import CompanyJobs from "./pages/company/CompanyJobs";
 import CompanyJobDetails from "./pages/company/CompanyJobDetails";
 import EditJob from "./pages/company/EditJob";
 import CompanyApplicants from "./pages/company/CompanyApplicants";
+import CompanyJobsPerMonthReport from "./pages/company/CompanyJobsPerMonthReport";
+
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -147,6 +149,7 @@ export default function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/company/reports/jobs-per-month" element={<CompanyJobsPerMonthReport />} />
 
         {/* Admin Routes - Existing */}
         <Route path="/admin/login" element={<AdminLogin />} />
