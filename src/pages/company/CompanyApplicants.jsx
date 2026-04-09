@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 import companyJobService from "../../services/companyjobService";
 import companyApplicationsService from "../../services/companyApplicationsService";
 import ApplicantDetailsModal from "../../components/company/ApplicantDetailsModal";
+import { Users, CheckCircle2, AlertTriangle, RefreshCw, Inbox, Mail, Target, Code2, GraduationCap, BookOpen, Calendar, X } from "lucide-react";
 
 export default function CompanyApplicants() {
   const navigate = useNavigate();
@@ -250,7 +251,7 @@ export default function CompanyApplicants() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
+    <div style={{ background: "var(--bg)", paddingBottom: 60 }}>
       {/* Hero Section */}
       <div
         style={{
@@ -288,7 +289,9 @@ export default function CompanyApplicants() {
                 border: "1px solid rgba(255,255,255,0.18)",
               }}
             >
-              👥 All Applications ({statusCounts.total})
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <Users size={16} /> All Applications ({statusCounts.total})
+              </div>
             </div>
             <h1 style={{ color: "white", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginBottom: 10 }}>
               Manage Applications
@@ -304,14 +307,14 @@ export default function CompanyApplicants() {
       <div className="container" style={{ marginTop: 24 }}>
         {/* Success/Error Messages */}
         {success && (
-          <div className="alert success animate-fade-in" style={{ marginBottom: 20 }}>
-            ✅ {success}
+          <div className="alert success animate-fade-in" style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <CheckCircle2 size={16} /> {success}
           </div>
         )}
         
         {error && (
-          <div className="alert error animate-fade-in" style={{ marginBottom: 20 }}>
-            ⚠️ {error}
+          <div className="alert error animate-fade-in" style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <AlertTriangle size={16} /> {error}
           </div>
         )}
 
@@ -412,7 +415,7 @@ export default function CompanyApplicants() {
                 style={{ padding: "10px 12px" }}
                 title="Refresh applications"
               >
-                🔄
+                <RefreshCw size={16} />
               </button>
             </div>
           </div>
@@ -423,14 +426,14 @@ export default function CompanyApplicants() {
               <span className="helper" style={{ fontSize: 12 }}>Active filters:</span>
               {selectedJobId && (
                 <span className="badge" style={{ background: "var(--teal-dim)", fontSize: 11 }}>
-                  Job: {jobs.find(j => j.id == selectedJobId)?.title}
-                  <button onClick={() => setSelectedJobId("")} style={{ marginLeft: 6, background: "none", border: "none", cursor: "pointer" }}>×</button>
+                  Job: {jobs.find(j => String(j.id) === String(selectedJobId))?.title}
+                  <button onClick={() => setSelectedJobId("")} style={{ marginLeft: 6, background: "none", border: "none", cursor: "pointer", display: 'inline-flex' }}><X size={12} /></button>
                 </span>
               )}
               {statusFilter && (
                 <span className="badge" style={{ background: "var(--teal-dim)", fontSize: 11 }}>
                   Status: {statusFilter}
-                  <button onClick={() => setStatusFilter("")} style={{ marginLeft: 6, background: "none", border: "none", cursor: "pointer" }}>×</button>
+                  <button onClick={() => setStatusFilter("")} style={{ marginLeft: 6, background: "none", border: "none", cursor: "pointer", display: 'inline-flex' }}><X size={12} /></button>
                 </span>
               )}
               <button onClick={clearAllFilters} style={{ fontSize: 11, color: "var(--coral)", background: "none", border: "none", cursor: "pointer" }}>
@@ -475,7 +478,7 @@ export default function CompanyApplicants() {
         {/* Empty State */}
         {!loading && !loadingJobs && filteredApplications.length === 0 && (
           <div className="card" style={{ padding: "60px 32px", textAlign: "center", borderRadius: 22 }}>
-            <div style={{ fontSize: 56, marginBottom: 16 }}>📭</div>
+            <div style={{ display: "flex", justifyContent: "center", color: 'var(--muted)', marginBottom: 16 }}><Inbox size={46} /></div>
             <h3 style={{ marginBottom: 8 }}>No applications found</h3>
             <p className="helper">
               {allApplications.length === 0 ? (
@@ -532,37 +535,37 @@ export default function CompanyApplicants() {
                     </div>
                     
                     <div style={{ marginBottom: 8 }}>
-                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
-                        📧 {applicant.studentEmail}
+                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                        <Mail size={14} /> {applicant.studentEmail}
                       </span>
                       {applicant.headline && (
-                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          🎯 {applicant.headline}
+                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <Target size={14} /> {applicant.headline}
                         </span>
                       )}
                     </div>
                     
                     <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 8 }}>
                       {applicant.skills && (
-                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          💻 Skills: {applicant.skills.length > 100 ? applicant.skills.substring(0, 100) + "..." : applicant.skills}
+                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <Code2 size={14} /> Skills: {applicant.skills.length > 100 ? applicant.skills.substring(0, 100) + "..." : applicant.skills}
                         </span>
                       )}
                     </div>
                     
                     <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                       {applicant.university && (
-                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          🎓 {applicant.university}
+                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <GraduationCap size={14} /> {applicant.university}
                         </span>
                       )}
                       {applicant.degree && (
-                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          📖 {applicant.degree}
+                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <BookOpen size={14} /> {applicant.degree}
                         </span>
                       )}
-                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        📅 Applied: {formatDate(applicant.appliedDate)}
+                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <Calendar size={14} /> Applied: {formatDate(applicant.appliedDate)}
                       </span>
                     </div>
                   </div>

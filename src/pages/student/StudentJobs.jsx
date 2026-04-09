@@ -4,6 +4,7 @@ import { jobsApi } from "../../services/jobs";
 import JobCard from "../../components/student/jobs/JobCard";
 import JobFilters from "../../components/student/jobs/JobFilters";
 import Pagination from "../../components/student/jobs/Pagination";
+import { Search, Inbox } from "lucide-react";
 
 const PAGE_SIZE = 6;
 
@@ -112,7 +113,7 @@ export default function StudentJobs() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 70 }}>
+    <div style={{ background: "var(--bg)", paddingBottom: 70 }}>
       <div
         style={{
           background: "linear-gradient(135deg, #0A2472 0%, #1a3a8f 100%)",
@@ -216,7 +217,7 @@ export default function StudentJobs() {
           </div>
         ) : jobs.length === 0 ? (
           <div className="card" style={{ padding: 30, textAlign: "center" }}>
-            <div style={{ fontSize: 46, marginBottom: 10 }}>📭</div>
+            <div style={{ color: "var(--muted)", display: "flex", justifyContent: "center", marginBottom: 16 }}><Inbox size={46} /></div>
             <h3 style={{ marginBottom: 8 }}>No jobs found</h3>
             <p className="helper">
               Try a different keyword or adjust the filters.

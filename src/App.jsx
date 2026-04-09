@@ -5,6 +5,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardLayout from "./components/DashboardLayout";
 
 import AuthChoose from "./pages/AuthChoose";
 import Landing from "./pages/Landing";
@@ -53,7 +54,9 @@ export default function App() {
           path="/student/home"
           element={
             <ProtectedRoute allowRole="STUDENT">
-              <StudentHome />
+              <DashboardLayout role="STUDENT">
+                <StudentHome />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -61,7 +64,9 @@ export default function App() {
           path="/student/profile"
           element={
             <ProtectedRoute allowRole="STUDENT">
-              <StudentProfile />
+              <DashboardLayout role="STUDENT">
+                <StudentProfile />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -69,7 +74,9 @@ export default function App() {
           path="/student/jobs"
           element={
             <ProtectedRoute allowRole="STUDENT">
-              <StudentJobs />
+              <DashboardLayout role="STUDENT">
+                <StudentJobs />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -77,7 +84,9 @@ export default function App() {
           path="/student/jobs/:id"
           element={
             <ProtectedRoute allowRole="STUDENT">
-              <StudentJobDetails />
+              <DashboardLayout role="STUDENT">
+                <StudentJobDetails />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -85,7 +94,9 @@ export default function App() {
           path="/student/applications"
           element={
             <ProtectedRoute allowRole="STUDENT">
-              <StudentApplications />
+              <DashboardLayout role="STUDENT">
+                <StudentApplications />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -93,7 +104,9 @@ export default function App() {
           path="/student/saved-jobs"
           element={
             <ProtectedRoute allowRole="STUDENT">
-              <StudentSavedJobs />
+              <DashboardLayout role="STUDENT">
+                <StudentSavedJobs />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -105,7 +118,9 @@ export default function App() {
           path="/company/dashboard"
           element={
             <ProtectedRoute allowRole="COMPANY">
-              <CompanyDashboard />
+              <DashboardLayout role="COMPANY">
+                <CompanyDashboard />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -113,7 +128,9 @@ export default function App() {
           path="/company/post-job" 
           element={
             <ProtectedRoute allowRole="COMPANY">
-              <PostJob />
+              <DashboardLayout role="COMPANY">
+                <PostJob />
+              </DashboardLayout>
             </ProtectedRoute>
           } 
         />
@@ -121,7 +138,9 @@ export default function App() {
           path="/company/jobs" 
           element={
             <ProtectedRoute allowRole="COMPANY">
-              <CompanyJobs />
+              <DashboardLayout role="COMPANY">
+                <CompanyJobs />
+              </DashboardLayout>
             </ProtectedRoute>
           } 
         />
@@ -129,7 +148,9 @@ export default function App() {
           path="/company/jobs/:id" 
           element={
             <ProtectedRoute allowRole="COMPANY">
-              <CompanyJobDetails />
+              <DashboardLayout role="COMPANY">
+                <CompanyJobDetails />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
@@ -137,7 +158,9 @@ export default function App() {
           path="/company/jobs/:id/edit" 
           element={
             <ProtectedRoute allowRole="COMPANY">
-              <EditJob />
+              <DashboardLayout role="COMPANY">
+                <EditJob />
+              </DashboardLayout>
             </ProtectedRoute>
           } 
         />
@@ -145,11 +168,22 @@ export default function App() {
           path="/company/applicants" 
           element={
             <ProtectedRoute allowRole="COMPANY">
-              <CompanyApplicants />
+              <DashboardLayout role="COMPANY">
+                <CompanyApplicants />
+              </DashboardLayout>
             </ProtectedRoute>
           } 
         />
-        <Route path="/company/reports/jobs-per-month" element={<CompanyJobsPerMonthReport />} />
+        <Route 
+          path="/company/reports/jobs-per-month" 
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <DashboardLayout role="COMPANY">
+                <CompanyJobsPerMonthReport />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Admin Routes - Existing */}
         <Route path="/admin/login" element={<AdminLogin />} />

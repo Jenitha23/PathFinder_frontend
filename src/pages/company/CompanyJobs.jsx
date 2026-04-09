@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import companyJobService from "../../services/companyjobService";
 import { formatDate } from "../../utils/jobFormatters";
+import { AlertTriangle, ClipboardList, Inbox, MapPin, Folder, Briefcase, Coins, Calendar, Edit2 } from "lucide-react";
 
 export default function CompanyJobs() {
   const navigate = useNavigate();
@@ -199,7 +200,9 @@ export default function CompanyJobs() {
                 color: "var(--coral)",
               }}
             >
-              ⚠️ Warning: This action cannot be undone. If students have already applied to this job, permanent deletion will be blocked.
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <AlertTriangle size={16} /> Warning: This action cannot be undone. If students have already applied to this job, permanent deletion will be blocked.
+              </div>
             </div>
           )}
 
@@ -230,7 +233,7 @@ export default function CompanyJobs() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
+    <div style={{ background: "var(--bg)", paddingBottom: 60 }}>
       {/* Hero Section */}
       <div
         style={{
@@ -293,7 +296,7 @@ export default function CompanyJobs() {
                   border: "1px solid rgba(255,255,255,0.18)",
                 }}
               >
-                📋 My Job Postings
+                <ClipboardList size={16} style={{ display: "inline-block", verticalAlign: "middle", marginRight: 4 }} /> My Job Postings
               </div>
               <h1 style={{ color: "white", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginBottom: 10 }}>
                 Manage Your Jobs
@@ -355,8 +358,8 @@ export default function CompanyJobs() {
 
         {/* Error Message */}
         {error && (
-          <div className="alert error" style={{ marginBottom: 20, borderRadius: 12 }}>
-            ⚠️ {error}
+          <div className="alert error" style={{ marginBottom: 20, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <AlertTriangle size={18} /> {error}
           </div>
         )}
 
@@ -392,7 +395,7 @@ export default function CompanyJobs() {
               boxShadow: "none",
             }}
           >
-            <div style={{ fontSize: 56, marginBottom: 16 }}>📭</div>
+            <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--muted)', marginBottom: 16 }}><Inbox size={46} /></div>
             <h3 style={{ marginBottom: 10, color: "var(--text)" }}>No jobs posted yet</h3>
             <p className="helper" style={{ maxWidth: 400, margin: "0 auto 24px" }}>
               You haven't posted any jobs. Click the button below to create your first job posting.
@@ -436,25 +439,25 @@ export default function CompanyJobs() {
                     </div>
                     
                     <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 12 }}>
-                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        📍 {job.location || "Not specified"}
+                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <MapPin size={16} /> {job.location || "Not specified"}
                       </span>
-                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        🗂️ {job.category || "General"}
+                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <Folder size={16} /> {job.category || "General"}
                       </span>
-                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        💼 {job.type || "Not specified"}
+                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <Briefcase size={16} /> {job.type || "Not specified"}
                       </span>
                     </div>
                     
                     <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                       {job.salary && (
-                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          💰 {job.salary}
+                        <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <Coins size={16} /> {job.salary}
                         </span>
                       )}
-                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        📅 Deadline: {formatDate(job.deadline)}
+                      <span className="helper" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <Calendar size={16} /> Deadline: {formatDate(job.deadline)}
                       </span>
                     </div>
                   </div>
@@ -477,7 +480,7 @@ export default function CompanyJobs() {
                         color: "var(--teal)"
                       }}
                     >
-                      Edit ✏️
+                      <Edit2 size={14} style={{ marginLeft: 4 }} />
                     </button>
                     <button
                       onClick={() => openDeleteModal(job)}

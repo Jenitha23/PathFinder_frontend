@@ -6,13 +6,15 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { applicationsApi } from "../../services/applications";
+import { formatDate } from "../../utils/jobFormatters";
+import { Clock, Star, CheckCircle, XCircle, Info, AlertTriangle, Inbox, ClipboardList, Search, Building2, MapPin, Calendar } from "lucide-react";
 
 /* ── Status badge colour mapping ────────────────────── */
 const STATUS_STYLES = {
-  Pending: { bg: "rgba(255,193,7,0.12)", border: "rgba(255,193,7,0.35)", color: "#9a7b00", icon: "🕐", label: "Pending" },
-  Shortlisted: { bg: "rgba(108,92,231,0.10)", border: "rgba(108,92,231,0.30)", color: "#6C5CE7", icon: "⭐", label: "Shortlisted" },
-  Accepted: { bg: "rgba(0,184,148,0.10)", border: "rgba(0,184,148,0.30)", color: "#00b894", icon: "✅", label: "Accepted" },
-  Rejected: { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: "❌", label: "Rejected" },
+  Pending: { bg: "rgba(255,193,7,0.12)", border: "rgba(255,193,7,0.35)", color: "#9a7b00", icon: <Clock size={16} />, label: "Pending" },
+  Shortlisted: { bg: "rgba(108,92,231,0.10)", border: "rgba(108,92,231,0.30)", color: "#6C5CE7", icon: <Star size={16} />, label: "Shortlisted" },
+  Accepted: { bg: "rgba(0,184,148,0.10)", border: "rgba(0,184,148,0.30)", color: "#00b894", icon: <CheckCircle size={16} />, label: "Accepted" },
+  Rejected: { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: <XCircle size={16} />, label: "Rejected" },
 };
 
 const STATUS_OPTIONS = ["All", "Pending", "Shortlisted", "Accepted", "Rejected"];
@@ -38,12 +40,6 @@ function StatusBadge({ status }) {
       {s.icon} {status}
     </span>
   );
-}
-
-function formatDate(iso) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
 }
 
 /* ── Skeleton loader for cards ──────────────────────── */
@@ -124,7 +120,7 @@ export default function StudentApplications() {
   }, []);
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 80 }}>
+    <div style={{ background: "var(--bg)", paddingBottom: 80 }}>
       {/* ── Hero ─────────────────────────────────────────── */}
       <div
         style={{
@@ -187,9 +183,12 @@ export default function StudentApplications() {
                   color: "white",
                   marginBottom: 14,
                   border: "1px solid rgba(255,255,255,0.18)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
                 }}
               >
-                📋 Application Tracker
+                <ClipboardList size={14} /> Application Tracker
               </div>
               <h1 style={{ color: "white", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginBottom: 10 }}>
                 My Job Applications
@@ -288,7 +287,7 @@ export default function StudentApplications() {
                     }
                   }}
                 >
-                  {s === "All" ? "📋 All" : `${sStyle?.icon || ""} ${s}`}
+                  {s === "All" ? <span style={{display: 'flex', alignItems: 'center', gap: 6}}><ClipboardList size={14} /> All</span> : <span style={{display: 'flex', alignItems: 'center', gap: 6}}>{sStyle?.icon} {s}</span>}
                 </button>
               );
             })}
@@ -322,19 +321,8 @@ export default function StudentApplications() {
         </div>
 
         {/* ── Info note ──────────────────────────────────── */}
-        <div
-          className="alert info"
-          style={{
-            marginBottom: 20,
-            borderRadius: 12,
-            display: "flex",
-            gap: 10,
-            alignItems: "center",
-            fontSize: 13,
-          }}
-        >
-          <span style={{ fontSize: 16 }}>ℹ️</span>
-          Application statuses are updated by companies. Check back later for updates.
+        <div className="alert" style={{ marginBottom: 20, background: "rgba(10,36,114,0.06)", border: "none", color: "var(--text)" }}>
+          <Info size={16} style={{ color: "var(--primary)" }} /> Application statuses are updated by companies. Check back later for updates.
         </div>
 
         {/* ── Error state ──────────────────────────────── */}
@@ -343,7 +331,7 @@ export default function StudentApplications() {
             className="alert error"
             style={{ marginBottom: 20, borderRadius: 12, display: "flex", gap: 10, alignItems: "center" }}
           >
-            <span style={{ fontSize: 16 }}>⚠️</span>
+            <AlertTriangle size={16} />
             <span style={{ fontSize: 13 }}>{error}</span>
           </div>
         )}
@@ -372,7 +360,7 @@ export default function StudentApplications() {
               animation: "fadeUp .4s ease both",
             }}
           >
-            <div style={{ fontSize: 56, marginBottom: 16 }}>📭</div>
+            <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--muted)', marginBottom: 16 }}><Inbox size={46} /></div>
             <h3 style={{ marginBottom: 10, color: "var(--text)" }}>
               {statusFilter !== "All"
                 ? `No ${statusFilter.toLowerCase()} applications`
@@ -384,16 +372,12 @@ export default function StudentApplications() {
                 : "Browse open positions and click \"Apply Now\" on any job you're interested in."}
             </p>
             {statusFilter !== "All" ? (
-              <button
-                className="btn btn-outline"
-                style={{ fontSize: 15, padding: "13px 32px" }}
-                onClick={() => setStatusFilter("All")}
-              >
-                📋 View All Applications
+              <button onClick={() => setStatusFilter("All")} className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <ClipboardList size={16} /> View All Applications
               </button>
             ) : (
-              <Link to="/student/jobs" className="btn btn-primary" style={{ fontSize: 15, padding: "13px 32px" }}>
-                🔍 Browse Jobs
+              <Link to="/student/jobs" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Search size={16} /> Browse Jobs
               </Link>
             )}
           </div>
@@ -446,15 +430,17 @@ export default function StudentApplications() {
                         </span>
                       )}
                     </div>
-                    <div style={{ color: "var(--muted)", fontSize: 14, marginBottom: 10 }}>
-                      🏢 {app.companyName}
-                      {app.location && <span style={{ marginLeft: 14 }}>📍 {app.location}</span>}
+                    <div style={{ color: "var(--text)", fontSize: 14, fontWeight: 500, marginBottom: 8, display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Building2 size={16} /> {app.companyName}</span>
+                      {app.location && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={16} /> {app.location}</span>}
+                    </div>
+                    <div className="helper" style={{ fontSize: 13, marginBottom: 14 }}>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        <Calendar size={14} /> Applied on {formatDate(app.appliedDate)}
+                      </div>
                     </div>
                     <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                       <StatusBadge status={app.status || "Pending"} />
-                      <span className="helper" style={{ fontSize: 12 }}>
-                        📅 Applied on {formatDate(app.appliedDate)}
-                      </span>
                       {app.applicationId && (
                         <span
                           className="helper"
