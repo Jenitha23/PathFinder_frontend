@@ -25,3 +25,19 @@ dist-ssr
 
 .env
 .env.*
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Generated test outputs
+test-reports/
+test-screenshots/
+*.log
+*.png
+*.html
+
+# Environment variables (contains credentials)
+.env
+.env.local
+.env.*.local

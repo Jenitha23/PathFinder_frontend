@@ -1,0 +1,38 @@
+{
+  "name": "admin-user-management-tests",
+  "version": "1.0.0",
+  "description": "Selenium Test Suite for Admin User Management (SCRUM-4/SCRUM-20)",
+  "main": "test-runner.js",
+  "scripts": {
+    "test": "node test-runner.js",
+    "test:verify": "node verify-setup.js",
+    "test:headless": "HEADLESS=true node test-runner.js",
+    "test:debug": "DEBUG=true node test-runner.js",
+    "test:single": "mocha admin-user-management.test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=single-test",
+    "report": "open test-reports/admin-user-management-report.html",
+    "report:merge": "mochawesome-merge test-reports/*.json > test-reports/merged-report.json && marge test-reports/merged-report.json",
+    "clean": "rm -rf test-reports/* test-screenshots/*",
+    "clean:win": "rd /s /q test-reports && rd /s /q test-screenshots && mkdir test-reports test-screenshots",
+    "prettier": "prettier --write \"**/*.js\""
+  },
+  "keywords": [
+    "selenium",
+    "automation",
+    "testing",
+    "admin",
+    "user-management"
+  ],
+  "author": "QA Team",
+  "license": "ISC",
+  "dependencies": {
+    "chromedriver": "~146.0",
+    "mocha": "^11.7.5",
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
+    "selenium-webdriver": "^4.43.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.1"
+  }
+}
