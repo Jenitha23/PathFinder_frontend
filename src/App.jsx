@@ -28,16 +28,17 @@ import CompanyJobDetails from "./pages/company/CompanyJobDetails";
 import EditJob from "./pages/company/EditJob";
 import CompanyApplicants from "./pages/company/CompanyApplicants";
 import CompanyJobsPerMonthReport from "./pages/company/CompanyJobsPerMonthReport";
-
+import CompanyApplicationsPerJobReport from "./pages/company/CompanyApplicationsPerJobReport";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminCompanies from "./pages/admin/AdminCompanies";
-// NEW: Import admin company review and details pages
 import AdminCompanyReview from "./pages/admin/AdminCompanyReview";
 import AdminCompanyDetails from "./pages/admin/AdminCompanyDetails";
+import AdminJobsPerMonthReport from "./pages/admin/AdminJobsPerMonthReport";
+import AdminApplicationsPerJobReport from "./pages/admin/AdminApplicationsPerJobReport";
 
 export default function App() {
   return (
@@ -124,28 +125,28 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path="/company/post-job" 
+        <Route
+          path="/company/post-job"
           element={
             <ProtectedRoute allowRole="COMPANY">
               <DashboardLayout role="COMPANY">
                 <PostJob />
               </DashboardLayout>
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/company/jobs" 
+        <Route
+          path="/company/jobs"
           element={
             <ProtectedRoute allowRole="COMPANY">
               <DashboardLayout role="COMPANY">
                 <CompanyJobs />
               </DashboardLayout>
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/company/jobs/:id" 
+        <Route
+          path="/company/jobs/:id"
           element={
             <ProtectedRoute allowRole="COMPANY">
               <DashboardLayout role="COMPANY">
@@ -154,18 +155,18 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path="/company/jobs/:id/edit" 
+        <Route
+          path="/company/jobs/:id/edit"
           element={
             <ProtectedRoute allowRole="COMPANY">
               <DashboardLayout role="COMPANY">
                 <EditJob />
               </DashboardLayout>
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/company/applicants" 
+        <Route
+          path="/company/applicants"
           element={
             <ProtectedRoute allowRole="COMPANY">
               <DashboardLayout role="COMPANY">
@@ -182,10 +183,26 @@ export default function App() {
                 <CompanyJobsPerMonthReport />
               </DashboardLayout>
             </ProtectedRoute>
-          } 
+          }
+        />
+        <Route
+          path="/company/reports/jobs-per-month"
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <CompanyJobsPerMonthReport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/company/reports/applications-per-job"
+          element={
+            <ProtectedRoute allowRole="COMPANY">
+              <CompanyApplicationsPerJobReport />
+            </ProtectedRoute>
+          }
         />
 
-        {/* Admin Routes - Existing */}
+        {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin/dashboard"
@@ -219,8 +236,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* NEW: Admin Company Approval Routes */}
         <Route
           path="/admin/companies/:id/review"
           element={
@@ -234,6 +249,23 @@ export default function App() {
           element={
             <ProtectedRoute allowRole="ADMIN">
               <AdminCompanyDetails />
+            </ProtectedRoute>
+          }
+        />
+        {/* Admin Report Routes (protected) */}
+        <Route
+          path="/admin/reports/jobs-per-month"
+          element={
+            <ProtectedRoute allowRole="ADMIN">
+              <AdminJobsPerMonthReport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports/applications-per-job"
+          element={
+            <ProtectedRoute allowRole="ADMIN">
+              <AdminApplicationsPerJobReport />
             </ProtectedRoute>
           }
         />
