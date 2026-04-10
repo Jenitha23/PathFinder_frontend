@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../../utils/jobFormatters";
 import { localSavedJobs } from "../../../services/applications";
+import { Bookmark, BookmarkCheck, MapPin, Folder, Clock } from "lucide-react";
 
 export default function JobCard({ job }) {
   const [isSaved, setIsSaved] = useState(() => localSavedJobs.isSaved(job.id));
@@ -86,7 +87,7 @@ export default function JobCard({ job }) {
               if (!isSaved) e.currentTarget.style.background = "rgba(10,36,114,0.06)";
             }}
           >
-            {isSaved ? "🔖" : "📑"}
+            {isSaved ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
           </button>
           <span className="badge badge-teal" style={{ flexShrink: 0 }}>
             {job.type || "Open"}
@@ -95,9 +96,9 @@ export default function JobCard({ job }) {
       </div>
 
       <div style={{ display: "grid", gap: 10, marginBottom: 18 }}>
-        <div className="helper">📍 {job.location || "Not specified"}</div>
-        <div className="helper">🗂 {job.category || "General"}</div>
-        <div className="helper">⏳ Deadline: {formatDate(job.deadline)}</div>
+        <div className="helper" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={16} /> {job.location || "Not specified"}</div>
+        <div className="helper" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Folder size={16} /> {job.category || "General"}</div>
+        <div className="helper" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={16} /> Deadline: {formatDate(job.deadline)}</div>
       </div>
 
       <div

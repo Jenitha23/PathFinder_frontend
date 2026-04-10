@@ -8,31 +8,33 @@ import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { studentProfileApi } from "../../services/profile";
 import { localApplications, applicationsApi, localSavedJobs } from "../../services/applications";
 
+import { User, FileText, Search, ClipboardList, Briefcase, Bookmark, TrendingUp, Sparkles } from "lucide-react";
+
 // Real data only — zeros are honest placeholders until API is connected
 const DASHBOARD_ACTIONS = [
   {
-    icon: "👤",
+    icon: <User size={24} />,
     title: "Complete your profile",
     desc: "Add your skills, education, CV, and job preferences so companies can find you.",
     action: "Edit Profile",
     to: "/student/profile",
   },
   {
-    icon: "📄",
+    icon: <FileText size={24} />,
     title: "Upload your CV",
     desc: "Attach a PDF or DOC resume so recruiters can review your qualifications easily.",
     action: "Update Profile",
     to: "/student/profile",
   },
   {
-    icon: "🔍",
+    icon: <Search size={24} />,
     title: "Browse job listings",
     desc: "Search and filter available internship and job opportunities on the platform.",
     action: "Browse Jobs",
     to: "/student/jobs",
   },
   {
-    icon: "📋",
+    icon: <ClipboardList size={24} />,
     title: "Track your applications",
     desc: "View status updates on all your submitted applications — Pending, Shortlisted, Accepted or Rejected.",
     action: "My Applications",
@@ -195,114 +197,89 @@ export default function StudentHome() {
   };
 
   const stats = [
-    { label: "Applications Sent", value: applicationsCount, icon: "📋", color: "var(--primary)", bg: "var(--primary-dim)", note: "View all →", to: "/student/applications" },
-    { label: "Saved Jobs", value: savedCount.toString(), icon: "🔖", color: "#FF9F1C", bg: "rgba(255,159,28,0.10)", note: "View saved →", to: "/student/saved-jobs" },
-    { label: "Interviews", value: "—", icon: "🎯", color: "#FF6B6B", bg: "var(--coral-dim)", note: "Coming soon" },
+    { label: "Total Applications", value: applicationsCount, icon: <Briefcase size={20} />, color: "#4f46e5", bg: "#e0e7ff", to: "/student/applications" },
+    { label: "Saved Listings", value: savedCount.toString(), icon: <Bookmark size={20} />, color: "#d97706", bg: "#fef3c7", to: "/student/saved-jobs" },
+    { label: "Profile Views", value: "—", icon: <TrendingUp size={20} />, color: "#dc2626", bg: "#fee2e2" },
   ];
 
   return (
     <div
       className="student-home-page"
-      style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}
+      style={{ padding: "32px 40px" }}
     >
-      <div
-        className="student-home-hero"
-        style={{
-          background: "linear-gradient(135deg, #0A2472 0%, #1a3a8f 100%)",
-          padding: "56px 0 80px",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      <style>
+        {`
+          @keyframes sparkleAnim {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+            50% { transform: scale(1.15) rotate(15deg); opacity: 1; }
+          }
+        `}
+      </style>
+      <div className="container" style={{ width: "100%", margin: "0 auto" }}>
+        {/* Welcome Banner */}
         <div
+          className="student-home-hero"
           style={{
-            position: "absolute",
-            top: -80,
-            right: -80,
-            width: 300,
-            height: 300,
-            borderRadius: "50%",
-            background: "rgba(46,196,182,0.10)",
+            background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+            borderRadius: "16px",
+            padding: "40px 40px",
+            position: "relative",
+            overflow: "hidden",
+            marginBottom: "32px",
+            boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)"
           }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: 0.03,
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+        >
+          {/* Decorative Elements */}
+          <div
+            style={{
+              position: "absolute",
+              top: "-50px",
+              right: "10%",
+              width: "300px",
+              height: "300px",
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-100px",
+              right: "-50px",
+              width: "400px",
+              height: "400px",
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.08)",
+            }}
+          />
 
-        <div className="container" style={{ position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
-            <div
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "1px", color: "rgba(255,255,255,0.8)", marginBottom: 8, textTransform: "uppercase" }}>
+              Welcome Back
+            </div>
+            <h1
               style={{
-                width: 72,
-                height: 72,
-                borderRadius: 22,
-                background: "#2EC4B6",
-                display: "grid",
-                placeItems: "center",
-                fontWeight: 900,
-                fontSize: 28,
-                color: "white",
                 fontFamily: "'Sora', sans-serif",
-                flexShrink: 0,
+                fontSize: 42,
+                fontWeight: 800,
+                color: "white",
+                marginBottom: 12,
+                display: "flex",
+                alignItems: "center",
+                gap: 12
               }}
             >
-              {firstName[0].toUpperCase()}
-            </div>
-
-            <div>
-              <div style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", marginBottom: 6 }}>
-                {getGreeting()},
-              </div>
-              <h1
-                style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 36,
-                  fontWeight: 900,
-                  color: "white",
-                }}
-              >
-                {profile.fullName || profile.email} 👋
-              </h1>
-              <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-                <span
-                  className="badge"
-                  style={{
-                    background: "rgba(46,196,182,0.2)",
-                    color: "#2EC4B6",
-                    border: "1px solid rgba(46,196,182,0.3)",
-                    fontSize: 13,
-                    padding: "5px 12px",
-                  }}
-                >
-                  🎓 Student
-                </span>
-                <span
-                  className="badge"
-                  style={{
-                    background: "rgba(255,255,255,0.1)",
-                    color: "rgba(255,255,255,0.7)",
-                    fontSize: 13,
-                    padding: "5px 12px",
-                  }}
-                >
-                  {profile.email}
-                </span>
-              </div>
-            </div>
+              {profile.fullName || profile.email} <Sparkles size={36} color="#fbbf24" style={{ animation: "sparkleAnim 2s infinite" }} />
+            </h1>
+            <p style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", margin: 0 }}>
+              Here's what's happening with your career journey today.
+            </p>
           </div>
         </div>
-      </div>
-
-      <div className="container" style={{ marginTop: -28 }}>
+        {/* Stats Grid */}
         <div
           className="student-stats-grid"
-          style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}
+          style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 40 }}
         >
           {stats.map((s, i) => {
             const Wrapper = s.to ? Link : "div";
@@ -313,104 +290,160 @@ export default function StudentHome() {
                 {...wrapperProps}
                 className="card animate-fade-up"
                 style={{
-                  padding: "24px 22px",
+                  padding: "24px",
+                  background: "white",
+                  borderRadius: "16px",
+                  border: "none",
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
                   animationDelay: `${i * 0.08}s`,
                   textDecoration: "none",
                   color: "inherit",
-                  transition: "box-shadow 0.2s, transform 0.2s",
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "transform 0.2s, box-shadow 0.2s",
                   cursor: s.to ? "pointer" : "default",
                 }}
                 onMouseEnter={s.to ? (e) => {
-                  e.currentTarget.style.boxShadow = "var(--shadow-lg)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.transform = "translateY(-4px)";
                 } : undefined}
                 onMouseLeave={s.to ? (e) => {
-                  e.currentTarget.style.boxShadow = "";
-                  e.currentTarget.style.transform = "";
+                  e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.03)";
+                  e.currentTarget.style.transform = "translateY(0)";
                 } : undefined}
               >
-                <div
-                  style={{
-                    width: 46,
-                    height: 46,
-                    borderRadius: 14,
-                    background: s.bg,
-                    display: "grid",
-                    placeItems: "center",
-                    fontSize: 22,
-                    marginBottom: 16,
-                  }}
-                >
-                  {s.icon}
-                </div>
-                <div
-                  style={{
-                    fontWeight: 900,
-                    fontSize: 28,
-                    color: "var(--muted)",
-                    fontFamily: "'Sora', sans-serif",
-                  }}
-                >
-                  {s.value}
-                </div>
-                <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>
-                  {s.label}
-                </div>
-                <div style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600 }}>
-                  {s.note}
+                {/* Decorative corner shape */}
+                <div style={{
+                  position: "absolute",
+                  top: "-20px",
+                  right: "-20px",
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  background: s.bg,
+                  opacity: 0.5,
+                  zIndex: 0
+                }} />
+
+                <div style={{ display: "flex", flexDirection: "column", zIndex: 1 }}>
+                  <div
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: 10,
+                      background: "white",
+                      border: "1px solid #eee",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 18,
+                      marginBottom: 20,
+                      color: s.color,
+                      boxShadow: "0 2px 5px rgba(0,0,0,0.02)"
+                    }}
+                  >
+                    {s.icon}
+                  </div>
+                  <div
+                    style={{
+                      fontWeight: 800,
+                      fontSize: 32,
+                      color: "#1f2937",
+                      fontFamily: "'Sora', sans-serif",
+                      lineHeight: 1
+                    }}
+                  >
+                    {s.value}
+                  </div>
+                  <div style={{ fontSize: 14, color: "#6b7280", marginTop: 8, fontWeight: 500 }}>
+                    {s.label}
+                  </div>
                 </div>
               </Wrapper>
             );
           })}
         </div>
 
-        <div className="student-main-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
+        <div className="student-main-grid" style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr", gap: 24 }}>
+          {/* Recommended Next Steps */}
           <div>
             <div
               style={{
-                fontWeight: 800,
-                fontSize: 20,
-                marginBottom: 16,
+                fontWeight: 700,
+                fontSize: 18,
+                marginBottom: 20,
+                color: "#1f2937",
                 fontFamily: "'Sora', sans-serif",
               }}
             >
-              Get started — next steps
+              Recommended Next Steps
             </div>
-            <div style={{ display: "grid", gap: 14 }}>
+            <div style={{ display: "grid", gap: 16 }}>
               {DASHBOARD_ACTIONS.map((step, i) => (
                 <div
                   key={i}
-                  className="card animate-fade-up student-action-card"
+                  className="card animate-fade-up"
                   style={{
-                    padding: "22px 24px",
+                    padding: "24px",
+                    background: "white",
+                    borderRadius: "16px",
+                    border: "none",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
                     display: "flex",
-                    gap: 18,
-                    alignItems: "flex-start",
+                    gap: 20,
+                    alignItems: "center",
                     animationDelay: `${0.2 + i * 0.1}s`,
                   }}
                 >
                   <div
                     style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 14,
-                      background: "var(--primary-dim)",
-                      display: "grid",
-                      placeItems: "center",
-                      fontSize: 24,
+                      width: 52,
+                      height: 52,
+                      borderRadius: 12,
+                      background: "#f0f9ff",
+                      color: "#0ea5e9",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 22,
                       flexShrink: 0,
                     }}
                   >
                     {step.icon}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{step.title}</div>
-                    <p className="helper" style={{ marginBottom: 14, fontSize: 14 }}>
+                    <div style={{ fontWeight: 600, fontSize: 16, color: "#1f2937", marginBottom: 4 }}>{step.title}</div>
+                    <p style={{ margin: 0, color: "#6b7280", fontSize: 14, lineHeight: 1.5 }}>
                       {step.desc}
                     </p>
-
-                    <Link to={step.to} className="btn btn-outline btn-sm" style={{ fontSize: 13 }}>
-                      {step.action} →
+                  </div>
+                  <div style={{ flexShrink: 0 }}>
+                    <Link
+                      to={step.to}
+                      style={{
+                        display: "inline-block",
+                        padding: "8px 16px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "#4b5563",
+                        background: "white",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        textDecoration: "none",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#c1c8d1";
+                        e.currentTarget.style.background = "#f9fafb";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "#e5e7eb";
+                        e.currentTarget.style.background = "white";
+                      }}
+                    >
+                      {step.action} &rarr;
                     </Link>
                   </div>
                 </div>
@@ -418,18 +451,32 @@ export default function StudentHome() {
             </div>
           </div>
 
-          <div>
-            <div
-              style={{
-                fontWeight: 800,
-                fontSize: 20,
-                marginBottom: 16,
-                fontFamily: "'Sora', sans-serif",
-              }}
-            >
-              Your profile
-            </div>
-            <div className="card animate-fade-up" style={{ padding: "26px 22px", animationDelay: "0.3s" }}>
+          {/* Right Column: Basic Info & Quick Links */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            {/* Basic Info Card */}
+            <div className="card animate-fade-up" style={{
+              padding: "24px",
+              background: "white",
+              borderRadius: "16px",
+              border: "none",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+              animationDelay: "0.3s"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: "#1f2937", fontFamily: "'Sora', sans-serif" }}>
+                  Basic Info
+                </div>
+                <span style={{
+                  background: "#e0e7ff",
+                  color: "#4338ca",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: "4px 10px",
+                  borderRadius: "12px"
+                }}>
+                  Student
+                </span>
+              </div>
               <div style={{ marginBottom: 24 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                   <span style={{ fontSize: 15, fontWeight: 600 }}>Profile strength</span>
@@ -464,12 +511,13 @@ export default function StudentHome() {
               {error ? <div className="alert error" style={{ marginBottom: 12 }}>{error}</div> : null}
 
               {isEditing ? (
-                <div style={{ display: "grid", gap: 12 }}>
+                <div style={{ display: "grid", gap: 12, marginTop: 16 }}>
                   <div>
-                    <label className="label" htmlFor="student-fullname">Full name</label>
+                    <label className="label" htmlFor="student-fullname" style={{ fontSize: 12, color: "#6b7280" }}>Full Name</label>
                     <input
                       id="student-fullname"
                       className="input"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.fullName}
                       onChange={(e) => {
                         setForm((prev) => ({ ...prev, fullName: e.target.value }));
@@ -483,11 +531,12 @@ export default function StudentHome() {
                     ) : null}
                   </div>
                   <div>
-                    <label className="label" htmlFor="student-email">Email</label>
+                    <label className="label" htmlFor="student-email" style={{ fontSize: 12, color: "#6b7280" }}>Email Address</label>
                     <input
                       id="student-email"
                       className="input"
                       type="email"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.email}
                       onChange={(e) => {
                         setForm((prev) => ({ ...prev, email: e.target.value }));
@@ -502,16 +551,32 @@ export default function StudentHome() {
                   </div>
                   <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
                     <button
-                      className="btn btn-primary"
-                      style={{ flex: 1, justifyContent: "center" }}
+                      style={{
+                        flex: 1,
+                        background: "#1e3a8a",
+                        color: "white",
+                        border: "none",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
                       onClick={handleSaveProfile}
                       disabled={saving}
                     >
-                      {saving ? "Saving..." : "Save Changes"}
+                      {saving ? "Saving..." : "Save"}
                     </button>
                     <button
-                      className="btn btn-outline"
-                      style={{ flex: 1, justifyContent: "center" }}
+                      style={{
+                        flex: 1,
+                        background: "white",
+                        color: "#4b5563",
+                        border: "1px solid #e5e7eb",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
                       onClick={handleCancelEdit}
                       disabled={saving}
                     >
@@ -520,109 +585,117 @@ export default function StudentHome() {
                   </div>
                 </div>
               ) : (
-                <>
-                  <div style={{ display: "grid", gap: 14 }}>
-                    {[
-                      { label: "Full Name", value: profile.fullName || "—" },
-                      { label: "Email", value: profile.email || "—" },
-                      { label: "Role", value: "Student" },
-                      {
-                        label: "Member since",
-                        value: new Date().toLocaleDateString("en-US", {
-                          month: "long",
-                          year: "numeric",
-                        }),
-                      },
-                    ].map((r) => (
-                      <div
-                        key={r.label}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <span style={{ fontSize: 14, color: "var(--muted)" }}>{r.label}</span>
-                        <span
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: "var(--text)",
-                            maxWidth: 180,
-                            textAlign: "right",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {r.value}
-                        </span>
-                      </div>
-                    ))}
+                <div style={{ display: "grid", gap: 20 }}>
+                  <div>
+                    <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>Full Name</div>
+                    <div style={{ fontSize: 15, color: "#1f2937", fontWeight: 600 }}>{profile.fullName || "—"}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>Email Address</div>
+                    <div style={{ fontSize: 15, color: "#1f2937", fontWeight: 600 }}>{profile.email || "—"}</div>
                   </div>
 
-                  <div style={{ display: "grid", gap: 10, marginTop: 22 }}>
-                    <Link
-                      to="/student/profile"
-                      className="btn btn-primary"
-                      style={{ width: "100%", justifyContent: "center", fontSize: 15 }}
-                    >
-                      Edit Full Profile →
-                    </Link>
-
+                  <div style={{ display: "grid", gap: 12, marginTop: 8 }}>
                     <button
-                      className="btn btn-outline"
-                      style={{ width: "100%", justifyContent: "center", fontSize: 15 }}
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        background: "white",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "24px",
+                        color: "#4b5563",
+                        fontWeight: 600,
+                        fontSize: 14,
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#c1c8d1";
+                        e.currentTarget.style.background = "#f9fafb";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "#e5e7eb";
+                        e.currentTarget.style.background = "white";
+                      }}
                       onClick={handleEditProfile}
                     >
-                      Quick Edit Basic Info
+                      Edit Basic Info
                     </button>
+                    <Link
+                      to="/student/profile"
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        background: "#1e3a8a",
+                        border: "none",
+                        borderRadius: "24px",
+                        color: "white",
+                        fontWeight: 600,
+                        fontSize: 14,
+                        textAlign: "center",
+                        textDecoration: "none",
+                        display: "block",
+                        transition: "background 0.2s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "#172554"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "#1e3a8a"}
+                    >
+                      Complete Full Profile
+                    </Link>
                   </div>
-                </>
+                </div>
               )}
-
-              <button
-                className="btn btn-outline"
-                style={{ width: "100%", justifyContent: "center", marginTop: 10, fontSize: 15 }}
-                onClick={handleDeleteAccount}
-              >
-                Delete Account
-              </button>
             </div>
 
-            <div className="card animate-fade-up" style={{ padding: "20px 22px", marginTop: 16, animationDelay: "0.4s" }}>
-              <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 14 }}>Quick links</div>
-              <div style={{ display: "grid", gap: 10 }}>
+            {/* Quick Links Card */}
+            <div className="card animate-fade-up" style={{
+              padding: "24px",
+              background: "white",
+              borderRadius: "16px",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+              animationDelay: "0.4s"
+            }}>
+              <div style={{ fontWeight: 700, fontSize: 16, color: "#1f2937", fontFamily: "'Sora', sans-serif", marginBottom: 16 }}>
+                Quick Links
+              </div>
+              <div style={{ display: "grid", gap: 8 }}>
                 {[
-                  { label: "👤 Update Profile", to: "/student/profile" },
-                  { label: "📄 Upload CV", to: "/student/profile" },
-                  { label: "💼 Browse Jobs", to: "/student/jobs" },
-                  { label: "❤️ Saved Jobs", to: "/student/saved-jobs" },
-                  { label: "📋 My Applications", to: "/student/applications" },
-                  { label: "🕐 Pending Applications", to: "/student/applications?status=Pending" },
-                  { label: "⭐ Shortlisted", to: "/student/applications?status=Shortlisted" },
-                  { label: "✅ Accepted", to: "/student/applications?status=Accepted" },
+                  { label: "Update Profile", icon: <User size={16} />, to: "/student/profile" },
+                  { label: "Upload CV", icon: <FileText size={16} />, to: "/student/profile" },
+                  { label: "Browse Jobs", icon: <Briefcase size={16} />, to: "/student/jobs" },
+                  { label: "Saved Jobs", icon: <Bookmark size={16} />, to: "/student/saved-jobs" },
                 ].map((l) => (
                   <Link
                     key={l.label}
                     to={l.to}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--primary-dim)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--bg)")}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      padding: "12px 14px",
-                      borderRadius: 10,
-                      background: "var(--bg)",
-                      border: "1px solid var(--border)",
-                      fontSize: 15,
-                      fontWeight: 500,
-                      color: "var(--text)",
-                      transition: "background 0.15s",
+                      padding: "14px 16px",
+                      borderRadius: "12px",
+                      background: "#f9fafb",
+                      border: "1px solid transparent",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "#4b5563",
+                      textDecoration: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "white";
+                      e.currentTarget.style.borderColor = "#e5e7eb";
+                      e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#f9fafb";
+                      e.currentTarget.style.borderColor = "transparent";
+                      e.currentTarget.style.boxShadow = "none";
                     }}
                   >
+                    <span style={{ marginRight: 12 }}>{l.icon}</span>
                     {l.label}
-                    <span style={{ marginLeft: "auto", color: "var(--muted)" }}>→</span>
+                    <span style={{ marginLeft: "auto", color: "#9ca3af" }}>›</span>
                   </Link>
                 ))}
               </div>

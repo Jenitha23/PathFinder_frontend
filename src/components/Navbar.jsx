@@ -1,4 +1,4 @@
-﻿import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { clearAuth, getAuth, isLoggedIn } from "../services/auth";
 import { api } from "../services/api";
 
@@ -32,7 +32,7 @@ export default function Navbar() {
     }
   };
 
-  // Hide full navbar on auth pages
+  // Hide full navbar on auth pages and portal pages
   const isAuthPage = [
     "/student/login",
     "/student/register",
@@ -41,6 +41,12 @@ export default function Navbar() {
     "/admin/login",
     "/auth/choose",
   ].includes(location.pathname);
+
+  const isPortalRoute = location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/');
+
+  if (isPortalRoute && !isAuthPage && loggedIn) {
+    return null; // Layout dashboard handles the navbar
+  }
 
   if (isAuthPage) {
     return (

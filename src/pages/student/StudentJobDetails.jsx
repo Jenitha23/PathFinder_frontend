@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { jobsApi } from "../../services/jobs";
 import { applicationsApi, localApplications, localSavedJobs } from "../../services/applications";
-import { getAuth } from "../../services/auth";
 import { formatDate, formatSalary } from "../../utils/jobFormatters";
+import { Clock, Star, CheckCircle, XCircle, Briefcase, Bookmark, BookmarkCheck, MapPin, Folder, Coins, Calendar, Rocket, AlertTriangle, PartyPopper } from "lucide-react";
 
 /* ── max cover-letter chars ──────────────────────────── */
 const MAX_CL = 1000;
@@ -35,10 +35,10 @@ const modalBox = {
 
 /* ── Status-specific colours (matches StudentApplications) ── */
 const STATUS_COLORS = {
-  Pending: { bg: "rgba(255,193,7,0.12)", border: "rgba(255,193,7,0.35)", color: "#9a7b00", icon: "🕐" },
-  Shortlisted: { bg: "rgba(108,92,231,0.10)", border: "rgba(108,92,231,0.30)", color: "#6C5CE7", icon: "⭐" },
-  Accepted: { bg: "rgba(0,184,148,0.10)", border: "rgba(0,184,148,0.30)", color: "#00b894", icon: "✅" },
-  Rejected: { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: "❌" },
+  Pending: { bg: "rgba(255,193,7,0.12)", border: "rgba(255,193,7,0.35)", color: "#9a7b00", icon: <Clock size={16} /> },
+  Shortlisted: { bg: "rgba(108,92,231,0.10)", border: "rgba(108,92,231,0.30)", color: "#6C5CE7", icon: <Star size={16} /> },
+  Accepted: { bg: "rgba(0,184,148,0.10)", border: "rgba(0,184,148,0.30)", color: "#00b894", icon: <CheckCircle size={16} /> },
+  Rejected: { bg: "rgba(255,107,107,0.10)", border: "rgba(255,107,107,0.30)", color: "#c0392b", icon: <XCircle size={16} /> },
 };
 
 export default function StudentJobDetails() {
@@ -145,7 +145,7 @@ export default function StudentJobDetails() {
 
   /* ── render ──────────────────────────────────────────── */
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", padding: "40px 0 80px" }}>
+    <div style={{ background: "var(--bg)", padding: "40px 0 80px" }}>
       <div className="container">
         <Link to={fromApplications ? "/student/applications" : "/student/jobs"} className="btn btn-ghost" style={{ marginBottom: 22 }}>
           {fromApplications ? "← Back to Applications" : "← Back to jobs"}
@@ -153,7 +153,7 @@ export default function StudentJobDetails() {
 
         {loading ? (
           <div className="card" style={{ padding: 32, textAlign: "center", color: "var(--muted)" }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>⏳</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Clock size={32} className="animate-spin" /></div>
             Loading job details...
           </div>
         ) : error ? (
@@ -184,8 +184,8 @@ export default function StudentJobDetails() {
                 }}
               >
                 <div>
-                  <div className="badge badge-primary" style={{ marginBottom: 12 }}>
-                    💼 Job Details
+                  <div className="badge badge-primary" style={{ marginBottom: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Briefcase size={14} /> Job Details
                   </div>
                   <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.7rem)", marginBottom: 10, color: "var(--primary)" }}>
                     {job.title}
@@ -211,7 +211,10 @@ export default function StudentJobDetails() {
                         color: isSaved ? "var(--teal)" : "var(--muted)",
                       }}
                     >
-                      <span>{isSaved ? "🔖 Saved" : "📑 Save Job"}</span>
+                      <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />} 
+                        {isSaved ? "Saved" : "Save Job"}
+                      </span>
                     </button>
                   )}
                   <span className="badge badge-teal">{job.type || "Open"}</span>
@@ -220,17 +223,17 @@ export default function StudentJobDetails() {
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                 {[
-                  { label: "📍 Location", value: job.location || "Not specified" },
-                  { label: "🗂️ Category", value: job.category || "General" },
-                  { label: "💰 Salary", value: formatSalary(job.salary) },
-                  { label: "📅 Deadline", value: formatDate(job.deadline) },
-                ].map(({ label, value }) => (
+                  { label: "Location", icon: <MapPin size={16} />, value: job.location || "Not specified" },
+                  { label: "Category", icon: <Folder size={16} />, value: job.category || "General" },
+                  { label: "Salary", icon: <Coins size={16} />, value: formatSalary(job.salary) },
+                  { label: "Deadline", icon: <Calendar size={16} />, value: formatDate(job.deadline) },
+                ].map(({ label, icon, value }) => (
                   <div
                     key={label}
                     className="card"
                     style={{ padding: "14px 16px", borderRadius: 14, boxShadow: "none", background: "var(--bg)" }}
                   >
-                    <div className="helper" style={{ marginBottom: 4 }}>{label}</div>
+                    <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>{icon} {label}</div>
                     <div style={{ fontWeight: 700, fontSize: 15 }}>{value}</div>
                   </div>
                 ))}
@@ -269,8 +272,8 @@ export default function StudentJobDetails() {
               >
                 {applyResult.type === "success" ? (
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>
-                      🎉 Application Submitted!
+                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <PartyPopper size={18} /> Application Submitted!
                     </div>
                     <div style={{ marginBottom: 10 }}>{applyResult.text}</div>
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
@@ -285,7 +288,7 @@ export default function StudentJobDetails() {
                           fontWeight: 700,
                         }}
                       >
-                        🕐 Status: Pending
+                        <Clock size={14} style={{ marginRight: 4, display: 'inline-block', verticalAlign: 'middle' }} /> Status: Pending
                       </span>
                       {applyResult.applicationId && (
                         <span className="helper">Application #{applyResult.applicationId}</span>
@@ -300,7 +303,9 @@ export default function StudentJobDetails() {
                   </div>
                 ) : applyResult.type === "profile" ? (
                   <div>
-                    <div style={{ fontWeight: 700, marginBottom: 6 }}>⚠️ Incomplete Profile</div>
+                    <div style={{ fontWeight: 700, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <AlertTriangle size={16} /> Incomplete Profile
+                    </div>
                     <div style={{ marginBottom: 12 }}>{applyResult.text}</div>
                     <Link to="/student/profile" className="btn btn-primary" style={{ fontSize: 14, padding: "10px 20px" }}>
                       Complete My Profile →
@@ -330,7 +335,7 @@ export default function StudentJobDetails() {
                       color: statusStyle.color,
                     }}
                   >
-                    {statusStyle.icon} Applied — Status: {applicationStatus}
+                    {statusStyle.icon} <span style={{ marginLeft: 6 }}>Applied — Status: {applicationStatus}</span>
                   </div>
                 ) : (
                   <button
@@ -348,7 +353,7 @@ export default function StudentJobDetails() {
                     onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(10,36,114,0.38)"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 8px 28px rgba(10,36,114,0.28)"; }}
                   >
-                    🚀 Apply Now
+                    <Rocket size={18} /> Apply Now
                   </button>
                 )}
               </div>
@@ -383,7 +388,9 @@ export default function StudentJobDetails() {
 
             {/* header */}
             <div style={{ marginBottom: 20 }}>
-              <div className="badge badge-primary" style={{ marginBottom: 10 }}>📋 Confirm Application</div>
+              <div className="badge badge-primary" style={{ marginBottom: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <ClipboardList size={14} /> Confirm Application
+              </div>
               <h2 style={{ color: "var(--primary)", marginBottom: 6 }}>Apply for this Job</h2>
               <p className="helper" style={{ lineHeight: 1.7 }}>
                 You're applying for <strong style={{ color: "var(--text)" }}>{job?.title}</strong> at{" "}
@@ -444,7 +451,7 @@ export default function StudentJobDetails() {
             {/* inline errors inside modal */}
             {applyResult?.type === "profile" && (
               <div className="alert error" style={{ marginBottom: 14, borderRadius: 12 }}>
-                <div style={{ fontWeight: 600, marginBottom: 6 }}>⚠️ Incomplete Profile</div>
+                <div style={{ fontWeight: 600, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}><AlertTriangle size={16} /> Incomplete Profile</div>
                 <div style={{ marginBottom: 10, fontSize: 13 }}>{applyResult.text}</div>
                 <Link
                   to="/student/profile"

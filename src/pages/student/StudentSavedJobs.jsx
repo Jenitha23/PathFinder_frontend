@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { localSavedJobs } from "../../services/applications";
 import { formatDate } from "../../utils/jobFormatters";
+import { Bookmark, Search, MapPin, Clock } from "lucide-react";
 
 export default function StudentSavedJobs() {
   const [savedJobs, setSavedJobs] = useState([]);
@@ -28,7 +29,7 @@ export default function StudentSavedJobs() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 80 }}>
+    <div style={{ background: "var(--bg)", paddingBottom: 80 }}>
       {/* ── Hero ─────────────────────────────────────────── */}
       <div
         style={{
@@ -83,7 +84,7 @@ export default function StudentSavedJobs() {
                 border: "1px solid rgba(255,255,255,0.18)",
               }}
             >
-              🔖 Favorites
+              <Bookmark size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 4 }} /> Favorites
             </div>
             <h1 style={{ color: "white", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginBottom: 10 }}>
               My Saved Jobs
@@ -113,13 +114,13 @@ export default function StudentSavedJobs() {
               boxShadow: "none",
             }}
           >
-            <div style={{ fontSize: 56, marginBottom: 16 }}>🔖</div>
+            <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--muted)', marginBottom: 16 }}><Bookmark size={46} /></div>
             <h3 style={{ marginBottom: 10, color: "var(--text)" }}>No saved jobs yet</h3>
             <p className="helper" style={{ maxWidth: 400, margin: "0 auto 24px" }}>
               Found a job you like? Click the bookmark icon to save it for later.
             </p>
-            <Link to="/student/jobs" className="btn btn-primary" style={{ fontSize: 15, padding: "13px 32px" }}>
-              🔍 Browse Jobs
+            <Link to="/student/jobs" className="btn btn-primary" style={{ fontSize: 15, padding: "13px 32px", display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Search size={16} /> Browse Jobs
             </Link>
           </div>
         ) : (
@@ -157,10 +158,10 @@ export default function StudentSavedJobs() {
                       <span className="badge badge-teal" style={{ fontSize: 10 }}>{job.type}</span>
                     </div>
                     <div style={{ color: "var(--text)", fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-                      {job.companyName} • <span className="helper">📍 {job.location || "Remote"}</span>
+                      {job.companyName} • <span className="helper" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><MapPin size={14} /> {job.location || "Remote"}</span>
                     </div>
-                    <div className="helper" style={{ fontSize: 12 }}>
-                      Saved on {formatDate(job.savedAt)} • ⏳ Deadline: {formatDate(job.deadline)}
+                    <div className="helper" style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      Saved on {formatDate(job.savedAt)} • <Clock size={12} /> Deadline: {formatDate(job.deadline)}
                     </div>
                   </div>
 

@@ -1,30 +1,31 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { companyProfileApi } from "../../services/profile";
 import companyJobService from "../../services/companyjobService";
+import { Briefcase, GraduationCap, Users, Sparkles, Plus, ClipboardList, TrendingUp } from "lucide-react";
 
 const COMPANY_ACTIONS = [
   {
-    icon: "JP",
+    icon: <Briefcase size={24} />,
     title: "Create a job post",
     desc: "Add title, skills, and role details to prepare your next opening.",
     action: "Create Job Post",
-    link: "/company/post-job", 
+    link: "/company/post-job",
   },
   {
-    icon: "IN",
+    icon: <GraduationCap size={24} />,
     title: "Create an internship post",
     desc: "Publish internship opportunities and define candidate requirements.",
     action: "Create Internship Post",
-    link: "/company/post-job", 
+    link: "/company/post-job",
   },
   {
-    icon: "AP",
+    icon: <Users size={24} />,
     title: "Review applicants",
     desc: "Check candidate lists and update statuses from one place.",
     action: "View Applicants",
-    link: "/company/applicants", 
+    link: "/company/applicants",
   },
 ];
 
@@ -59,7 +60,7 @@ export default function CompanyDashboard() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  
+
   // Job stats state
   const [jobStats, setJobStats] = useState({
     activeJobs: 0,
@@ -90,10 +91,10 @@ export default function CompanyDashboard() {
           const response = await companyProfileApi.getMe();
           data = response.data;
         }
-        
+
         const nextCompanyName = data?.companyName || data?.fullName || data?.name || "";
         const nextEmail = data?.email || "";
-        
+
         setProfile({
           companyName: nextCompanyName,
           email: nextEmail,
@@ -113,7 +114,7 @@ export default function CompanyDashboard() {
           location: data?.location || "",
           phone: data?.phone || "",
         });
-        
+
         if (data?.logoUrl) {
           setLogoPreview(data.logoUrl);
         }
@@ -149,7 +150,7 @@ export default function CompanyDashboard() {
         setJobStats(prev => ({ ...prev, loading: false }));
       }
     };
-    
+
     loadJobStats();
   }, []);
 
@@ -187,18 +188,18 @@ export default function CompanyDashboard() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       alert("Invalid file type. Allowed: JPG, PNG, GIF, SVG, WEBP.");
       return;
     }
-    
+
     if (file.size > 5 * 1024 * 1024) {
       alert("File is too large. Max size is 5MB.");
       return;
     }
-    
+
     setLogoFile(file);
     setLogoPreview(URL.createObjectURL(file));
     setRemoveLogo(false);
@@ -225,7 +226,7 @@ export default function CompanyDashboard() {
       if (form.location) formData.append("Location", form.location.trim());
       if (form.phone) formData.append("Phone", form.phone.trim());
       formData.append("RemoveLogo", removeLogo);
-      
+
       if (logoFile) {
         formData.append("LogoFile", logoFile);
       }
@@ -244,7 +245,7 @@ export default function CompanyDashboard() {
         logoUrl: updated.logoUrl || null,
       });
       setLogoPreview(updated.logoUrl || null);
-      
+
       saveAuth({
         token: auth.token,
         role: auth.role,
@@ -311,66 +312,76 @@ export default function CompanyDashboard() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
-      <div
-        className="company-home-hero"
-        style={{
-          background: "linear-gradient(135deg, #0A5F75 0%, #0A2472 100%)",
-          padding: "56px 0 80px",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+    <div style={{ padding: "32px 40px" }}>
+      <div className="container" style={{ width: "100%", margin: "0 auto" }}>
+        {/* Welcome Banner */}
         <div
+          className="company-home-hero"
           style={{
-            position: "absolute",
-            top: -80,
-            right: -80,
-            width: 300,
-            height: 300,
-            borderRadius: "50%",
-            background: "rgba(46,196,182,0.10)",
+            background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)",
+            borderRadius: "16px",
+            padding: "40px",
+            position: "relative",
+            overflow: "hidden",
+            marginBottom: "32px",
+            boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.3)"
           }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: 0.03,
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+        >
+          {/* Decorative Elements */}
+          <div
+            style={{
+              position: "absolute",
+              top: "-50px",
+              right: "10%",
+              width: "300px",
+              height: "300px",
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-100px",
+              right: "-50px",
+              width: "400px",
+              height: "400px",
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.08)",
+            }}
+          />
 
-        <div className="container" style={{ position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
             {profile.logoUrl ? (
               <img
                 src={profile.logoUrl}
                 alt={name}
                 style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 22,
+                  width: 80,
+                  height: 80,
+                  borderRadius: 16,
                   objectFit: "cover",
-                  border: "2px solid rgba(255,255,255,0.3)",
+                  background: "white",
+                  padding: "4px",
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
                 }}
                 onError={(e) => {
                   e.target.style.display = 'none';
                   const parent = e.target.parentElement;
                   const fallback = document.createElement('div');
                   fallback.style.cssText = `
-                    width: 72px;
-                    height: 72px;
-                    border-radius: 22px;
-                    background: #2EC4B6;
-                    display: grid;
-                    place-items: center;
-                    font-weight: 900;
-                    font-size: 24px;
-                    color: white;
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 16px;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 800;
+                    font-size: 32px;
+                    color: #0f172a;
                     font-family: 'Sora', sans-serif;
-                    flex-shrink: 0;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                   `;
                   fallback.textContent = name[0].toUpperCase();
                   parent.appendChild(fallback);
@@ -379,17 +390,19 @@ export default function CompanyDashboard() {
             ) : (
               <div
                 style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 22,
-                  background: "#2EC4B6",
-                  display: "grid",
-                  placeItems: "center",
-                  fontWeight: 900,
-                  fontSize: 24,
-                  color: "white",
+                  width: 80,
+                  height: 80,
+                  borderRadius: 16,
+                  background: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 800,
+                  fontSize: 32,
+                  color: "#0f172a",
                   fontFamily: "'Sora', sans-serif",
                   flexShrink: 0,
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
                 }}
               >
                 {name[0].toUpperCase()}
@@ -397,42 +410,34 @@ export default function CompanyDashboard() {
             )}
 
             <div>
-              <div style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", marginBottom: 6 }}>{getGreeting()},</div>
-              <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: 36, fontWeight: 900, color: "white" }}>
-                {name}
+              <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "1px", color: "rgba(255,255,255,0.8)", marginBottom: 8, textTransform: "uppercase" }}>
+                {getGreeting()}
+              </div>
+              <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: 42, fontWeight: 800, color: "white", margin: 0, display: "flex", alignItems: "center", gap: 12 }}>
+                {name} <Sparkles size={36} color="#fbbf24" style={{ animation: "sparkleAnim 2s infinite" }} />
               </h1>
-              <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
                 <span
-                  className="badge"
                   style={{
-                    background: "rgba(46,196,182,0.2)",
-                    color: "#2EC4B6",
-                    border: "1px solid rgba(46,196,182,0.3)",
+                    background: "rgba(255,255,255,0.15)",
+                    color: "white",
                     fontSize: 13,
-                    padding: "5px 12px",
+                    fontWeight: 600,
+                    padding: "6px 14px",
+                    borderRadius: "20px",
                   }}
                 >
-                  Company
-                </span>
-                <span
-                  className="badge"
-                  style={{
-                    background: "rgba(255,255,255,0.1)",
-                    color: "rgba(255,255,255,0.7)",
-                    fontSize: 13,
-                    padding: "5px 12px",
-                  }}
-                >
-                  {profile.email}
+                  🏢 Company Account
                 </span>
                 {profile.industry && (
                   <span
-                    className="badge"
                     style={{
                       background: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
+                      color: "rgba(255,255,255,0.9)",
                       fontSize: 13,
-                      padding: "5px 12px",
+                      fontWeight: 500,
+                      padding: "6px 14px",
+                      borderRadius: "20px",
                     }}
                   >
                     {profile.industry}
@@ -442,151 +447,205 @@ export default function CompanyDashboard() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="container" style={{ marginTop: -28 }}>
         {/* Stats Grid */}
         <div
           className="company-stats-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 16,
-            marginBottom: 28,
+            gap: 24,
+            marginBottom: 40,
           }}
         >
           {/* Active Job Posts Card */}
-          <div className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: "0s" }}>
-            <div
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 14,
-                background: "var(--teal-dim)",
-                color: "var(--teal)",
-                display: "grid",
-                placeItems: "center",
-                fontSize: 12,
-                fontWeight: 700,
-                marginBottom: 16,
-              }}
-            >
-              JP
+          <div className="card animate-fade-up" style={{
+            padding: "24px",
+            background: "white",
+            borderRadius: "16px",
+            border: "none",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+            animationDelay: "0s",
+            position: "relative",
+            overflow: "hidden"
+          }}>
+            <div style={{
+              position: "absolute", top: "-20px", right: "-20px", width: "100px", height: "100px", borderRadius: "50%", background: "#f0fdfa", opacity: 0.5, zIndex: 0
+            }} />
+            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 10,
+                  background: "white",
+                  border: "1px solid #ccfbf1",
+                  color: "#0d9488",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  marginBottom: 20,
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.02)"
+                }}
+              >
+                <Briefcase size={20} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: 32, color: "#1f2937", fontFamily: "'Sora', sans-serif", lineHeight: 1 }}>
+                {jobStats.loading ? "..." : jobStats.activeJobs}
+              </div>
+              <div style={{ fontSize: 14, color: "#6b7280", marginTop: 8, fontWeight: 500 }}>Active Job Posts</div>
+              <Link
+                to="/company/jobs"
+                style={{ fontSize: 12, color: "#0d9488", marginTop: 8, fontWeight: 600, textDecoration: "none" }}
+              >
+                View all &rarr;
+              </Link>
             </div>
-            <div style={{ fontWeight: 900, fontSize: 28, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>
-              {jobStats.loading ? "..." : jobStats.activeJobs}
-            </div>
-            <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>Active Job Posts</div>
-            <Link 
-              to="/company/jobs" 
-              style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600, display: "inline-block", textDecoration: "none" }}
-            >
-              View all →
-            </Link>
           </div>
 
           {/* Active Internships Card */}
-          <div className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: "0.08s" }}>
-            <div
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 14,
-                background: "rgba(255,159,28,0.10)",
-                color: "#FF9F1C",
-                display: "grid",
-                placeItems: "center",
-                fontSize: 12,
-                fontWeight: 700,
-                marginBottom: 16,
-              }}
-            >
-              IN
+          <div className="card animate-fade-up" style={{
+            padding: "24px",
+            background: "white",
+            borderRadius: "16px",
+            border: "none",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+            animationDelay: "0.08s",
+            position: "relative",
+            overflow: "hidden"
+          }}>
+            <div style={{
+              position: "absolute", top: "-20px", right: "-20px", width: "100px", height: "100px", borderRadius: "50%", background: "#fffbeb", opacity: 0.5, zIndex: 0
+            }} />
+            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 10,
+                  background: "white",
+                  border: "1px solid #fef3c7",
+                  color: "#d97706",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  marginBottom: 20,
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.02)"
+                }}
+              >
+                <GraduationCap size={20} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: 32, color: "#1f2937", fontFamily: "'Sora', sans-serif", lineHeight: 1 }}>
+                {jobStats.loading ? "..." : jobStats.activeInternships}
+              </div>
+              <div style={{ fontSize: 14, color: "#6b7280", marginTop: 8, fontWeight: 500 }}>Active Internships</div>
+              <Link
+                to="/company/jobs"
+                style={{ fontSize: 12, color: "#d97706", marginTop: 8, fontWeight: 600, textDecoration: "none" }}
+              >
+                View all &rarr;
+              </Link>
             </div>
-            <div style={{ fontWeight: 900, fontSize: 28, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>
-              {jobStats.loading ? "..." : jobStats.activeInternships}
-            </div>
-            <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>Active Internships</div>
-            <Link 
-              to="/company/jobs" 
-              style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600, display: "inline-block", textDecoration: "none" }}
-            >
-              View all →
-            </Link>
           </div>
 
           {/* Total Applicants Card */}
-          <div className="card animate-fade-up" style={{ padding: "24px 22px", animationDelay: "0.16s" }}>
-            <div
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 14,
-                background: "var(--coral-dim)",
-                color: "var(--coral)",
-                display: "grid",
-                placeItems: "center",
-                fontSize: 12,
-                fontWeight: 700,
-                marginBottom: 16,
-              }}
-            >
-              AP
+          <div className="card animate-fade-up" style={{
+            padding: "24px",
+            background: "white",
+            borderRadius: "16px",
+            border: "none",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+            animationDelay: "0.16s",
+            position: "relative",
+            overflow: "hidden"
+          }}>
+            <div style={{
+              position: "absolute", top: "-20px", right: "-20px", width: "100px", height: "100px", borderRadius: "50%", background: "#fef2f2", opacity: 0.5, zIndex: 0
+            }} />
+            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 10,
+                  background: "white",
+                  border: "1px solid #fee2e2",
+                  color: "#dc2626",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  marginBottom: 20,
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.02)"
+                }}
+              >
+                <Users size={20} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: 32, color: "#1f2937", fontFamily: "'Sora', sans-serif", lineHeight: 1 }}>
+                {jobStats.loading ? "..." : jobStats.totalApplicants}
+              </div>
+              <div style={{ fontSize: 14, color: "#6b7280", marginTop: 8, fontWeight: 500 }}>Total Applicants</div>
+              <Link
+                to="/company/applicants"
+                style={{ fontSize: 12, color: "#dc2626", marginTop: 8, fontWeight: 600, textDecoration: "none" }}
+              >
+                Review &rarr;
+              </Link>
             </div>
-            <div style={{ fontWeight: 900, fontSize: 28, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>
-              {jobStats.loading ? "..." : jobStats.totalApplicants}
-            </div>
-            <div style={{ fontSize: 14, color: "var(--muted)", marginTop: 4, fontWeight: 500 }}>Total Applicants</div>
-            <Link 
-              to="/company/applicants" 
-              style={{ fontSize: 11, color: "var(--teal)", marginTop: 4, fontWeight: 600, display: "inline-block", textDecoration: "none" }}
-            >
-              Review →
-            </Link>
           </div>
         </div>
 
-        <div className="company-main-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
+        <div className="company-main-grid" style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr", gap: 24 }}>
+          {/* Company Actions */}
           <div>
-            <div style={{ fontWeight: 800, fontSize: 20, marginBottom: 16, fontFamily: "'Sora', sans-serif" }}>
-              Company actions
+            <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 20, color: "#1f2937", fontFamily: "'Sora', sans-serif" }}>
+              Company Actions
             </div>
-            <div style={{ display: "grid", gap: 14 }}>
+            <div style={{ display: "grid", gap: 16 }}>
               {COMPANY_ACTIONS.map((step, i) => (
                 <div
                   key={step.title}
-                  className="card animate-fade-up company-action-card"
+                  className="card animate-fade-up"
                   style={{
-                    padding: "22px 24px",
+                    padding: "24px",
+                    background: "white",
+                    borderRadius: "16px",
+                    border: "none",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
                     display: "flex",
-                    gap: 18,
-                    alignItems: "flex-start",
+                    gap: 20,
+                    alignItems: "center",
                     animationDelay: `${0.2 + i * 0.1}s`,
                     cursor: step.link ? "pointer" : "default",
-                    transition: "transform 0.2s, box-shadow 0.2s",
+                    transition: "all 0.2s",
                   }}
                   onClick={() => step.link && handleActionClick(step.link)}
                   onMouseEnter={(e) => {
                     if (step.link) {
                       e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                      e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.06)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "var(--shadow)";
+                    e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.03)";
                   }}
                 >
                   <div
                     style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 14,
-                      background: "var(--teal-dim)",
-                      color: "var(--teal)",
-                      display: "grid",
-                      placeItems: "center",
-                      fontSize: 12,
+                      width: 52,
+                      height: 52,
+                      borderRadius: 12,
+                      background: "#f0fdfa",
+                      color: "#0d9488",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 16,
                       fontWeight: 700,
                       flexShrink: 0,
                     }}
@@ -594,19 +653,35 @@ export default function CompanyDashboard() {
                     {step.icon}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{step.title}</div>
-                    <p className="helper" style={{ marginBottom: 14, fontSize: 14 }}>
+                    <div style={{ fontWeight: 600, fontSize: 16, color: "#1f2937", marginBottom: 4 }}>{step.title}</div>
+                    <p style={{ margin: 0, color: "#6b7280", fontSize: 14, lineHeight: 1.5 }}>
                       {step.desc}
                     </p>
-                    <button 
-                      className="btn btn-outline btn-sm" 
-                      style={{ fontSize: 13 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (step.link) handleActionClick(step.link);
+                  </div>
+                  <div style={{ flexShrink: 0 }}>
+                    <button
+                      style={{
+                        display: "inline-block",
+                        padding: "8px 16px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "#4b5563",
+                        background: "white",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#c1c8d1";
+                        e.currentTarget.style.background = "#f9fafb";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "#e5e7eb";
+                        e.currentTarget.style.background = "white";
                       }}
                     >
-                      {step.action} {"->"}
+                      {step.action} &rarr;
                     </button>
                   </div>
                 </div>
@@ -614,39 +689,37 @@ export default function CompanyDashboard() {
             </div>
           </div>
 
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 20, marginBottom: 16, fontFamily: "'Sora', sans-serif" }}>
-              Company profile
-            </div>
-            <div className="card animate-fade-up" style={{ padding: "26px 22px", animationDelay: "0.3s" }}>
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ fontSize: 15, fontWeight: 600 }}>Onboarding status</span>
-                  <span style={{ fontSize: 13, color: "var(--muted)", fontWeight: 500 }}>In progress</span>
+          {/* Right Column: Company Profile Dashboard */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            <div className="card animate-fade-up" style={{
+              padding: "24px",
+              background: "white",
+              borderRadius: "16px",
+              border: "none",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+              animationDelay: "0.3s"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: "#1f2937", fontFamily: "'Sora', sans-serif" }}>
+                  Company Profile
                 </div>
-                <div style={{ height: 8, background: "var(--bg)", borderRadius: 999, overflow: "hidden" }}>
-                  <div
-                    style={{
-                      height: "100%",
-                      width: "20%",
-                      background: "linear-gradient(90deg, var(--primary), var(--teal))",
-                      borderRadius: 999,
-                      transition: "width 1s ease",
-                    }}
-                  />
-                </div>
-                <p className="helper" style={{ marginTop: 8, fontSize: 13 }}>
-                  Complete company setup and publish your first opportunity.
-                </p>
+                <span style={{
+                  background: "#e0e7ff",
+                  color: "#4338ca",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: "4px 10px",
+                  borderRadius: "12px"
+                }}>
+                  Setup
+                </span>
               </div>
-
-              <hr className="divider" style={{ margin: "0 0 20px" }} />
 
               {message ? <div className="alert success" style={{ marginBottom: 12 }}>{message}</div> : null}
               {error ? <div className="alert error" style={{ marginBottom: 12 }}>{error}</div> : null}
 
               {isEditing ? (
-                <div style={{ display: "grid", gap: 12 }}>
+                <div style={{ display: "grid", gap: 12, marginTop: 16 }}>
                   {/* Logo Upload Section */}
                   <div style={{ textAlign: "center", marginBottom: 8 }}>
                     {logoPreview && (
@@ -657,9 +730,11 @@ export default function CompanyDashboard() {
                           style={{
                             width: 80,
                             height: 80,
-                            borderRadius: 12,
+                            borderRadius: 16,
                             objectFit: "cover",
-                            border: "1px solid var(--border)",
+                            border: "1px solid #e5e7eb",
+                            background: "white",
+                            padding: "4px"
                           }}
                         />
                         {!removeLogo && (
@@ -670,7 +745,7 @@ export default function CompanyDashboard() {
                               position: "absolute",
                               top: -8,
                               right: -8,
-                              background: "var(--coral)",
+                              background: "#ef4444",
                               color: "white",
                               border: "none",
                               borderRadius: "50%",
@@ -678,6 +753,8 @@ export default function CompanyDashboard() {
                               height: 24,
                               cursor: "pointer",
                               fontSize: 12,
+                              fontWeight: "bold",
+                              boxShadow: "0 2px 5px rgba(0,0,0,0.2)"
                             }}
                           >
                             ×
@@ -685,22 +762,25 @@ export default function CompanyDashboard() {
                         )}
                       </div>
                     )}
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/gif,image/svg+xml,image/webp"
-                      onChange={handleFileChange}
-                      style={{ fontSize: 13 }}
-                    />
-                    <p style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>
-                      JPG, PNG, GIF, SVG, WEBP (max 5MB)
-                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif,image/svg+xml,image/webp"
+                        onChange={handleFileChange}
+                        style={{ fontSize: 13, color: "#6b7280", maxWidth: "100%" }}
+                      />
+                      <p style={{ fontSize: 11, color: "#9ca3af", marginTop: 4 }}>
+                        JPG, PNG, GIF, SVG, WEBP (max 5MB)
+                      </p>
+                    </div>
                   </div>
 
                   <div>
-                    <label className="label" htmlFor="company-name">Company name</label>
+                    <label className="label" htmlFor="company-name" style={{ fontSize: 12, color: "#6b7280" }}>Company name</label>
                     <input
                       id="company-name"
                       className="input"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.companyName}
                       onChange={(e) => {
                         setForm((prev) => ({ ...prev, companyName: e.target.value }));
@@ -710,11 +790,12 @@ export default function CompanyDashboard() {
                     {formErrors.companyName ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.companyName}</div> : null}
                   </div>
                   <div>
-                    <label className="label" htmlFor="company-email">Email</label>
+                    <label className="label" htmlFor="company-email" style={{ fontSize: 12, color: "#6b7280" }}>Email address</label>
                     <input
                       id="company-email"
                       className="input"
                       type="email"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.email}
                       onChange={(e) => {
                         setForm((prev) => ({ ...prev, email: e.target.value }));
@@ -724,33 +805,35 @@ export default function CompanyDashboard() {
                     {formErrors.email ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.email}</div> : null}
                   </div>
                   <div>
-                    <label className="label" htmlFor="company-description">Description</label>
+                    <label className="label" htmlFor="company-description" style={{ fontSize: 12, color: "#6b7280" }}>Description</label>
                     <textarea
                       id="company-description"
                       className="input"
                       rows="3"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb", resize: "vertical" }}
                       value={form.description}
                       onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
                       placeholder="Tell students about your company"
-                      style={{ resize: "vertical" }}
                     />
                   </div>
                   <div>
-                    <label className="label" htmlFor="company-industry">Industry</label>
+                    <label className="label" htmlFor="company-industry" style={{ fontSize: 12, color: "#6b7280" }}>Industry</label>
                     <input
                       id="company-industry"
                       className="input"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.industry}
                       onChange={(e) => setForm((prev) => ({ ...prev, industry: e.target.value }))}
                       placeholder="e.g., Information Technology, Finance, Healthcare"
                     />
                   </div>
                   <div>
-                    <label className="label" htmlFor="company-website">Website</label>
+                    <label className="label" htmlFor="company-website" style={{ fontSize: 12, color: "#6b7280" }}>Website</label>
                     <input
                       id="company-website"
                       className="input"
                       type="url"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.website}
                       onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))}
                       placeholder="https://www.yourcompany.com"
@@ -758,30 +841,58 @@ export default function CompanyDashboard() {
                     {formErrors.website ? <div className="helper" style={{ color: "var(--danger)", marginTop: 6 }}>{formErrors.website}</div> : null}
                   </div>
                   <div>
-                    <label className="label" htmlFor="company-location">Location</label>
+                    <label className="label" htmlFor="company-location" style={{ fontSize: 12, color: "#6b7280" }}>Location</label>
                     <input
                       id="company-location"
                       className="input"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.location}
                       onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
                       placeholder="City, Country"
                     />
                   </div>
                   <div>
-                    <label className="label" htmlFor="company-phone">Phone</label>
+                    <label className="label" htmlFor="company-phone" style={{ fontSize: 12, color: "#6b7280" }}>Phone</label>
                     <input
                       id="company-phone"
                       className="input"
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                       value={form.phone}
                       onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
                       placeholder="+94 77 123 4567"
                     />
                   </div>
                   <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                    <button className="btn btn-teal" style={{ flex: 1, justifyContent: "center" }} onClick={handleSaveProfile} disabled={saving}>
-                      {saving ? "Saving..." : "Save Changes"}
+                    <button
+                      style={{
+                        flex: 1,
+                        background: "#1e3a8a",
+                        color: "white",
+                        border: "none",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
+                      onClick={handleSaveProfile}
+                      disabled={saving}
+                    >
+                      {saving ? "Saving..." : "Save"}
                     </button>
-                    <button className="btn btn-outline" style={{ flex: 1, justifyContent: "center" }} onClick={handleCancelEdit} disabled={saving}>
+                    <button
+                      style={{
+                        flex: 1,
+                        background: "white",
+                        color: "#4b5563",
+                        border: "1px solid #e5e7eb",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
+                      onClick={handleCancelEdit}
+                      disabled={saving}
+                    >
                       Cancel
                     </button>
                   </div>
@@ -842,55 +953,107 @@ export default function CompanyDashboard() {
                   </div>
 
                   <button
-                    className="btn btn-teal"
-                    style={{ width: "100%", justifyContent: "center", marginTop: 22, fontSize: 15 }}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      background: "white",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "24px",
+                      color: "#4b5563",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      marginTop: 22
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "#c1c8d1";
+                      e.currentTarget.style.background = "#f9fafb";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "#e5e7eb";
+                      e.currentTarget.style.background = "white";
+                    }}
                     onClick={handleEditProfile}
                   >
-                    Edit Company Profile {"->"}
+                    Edit Company Profile
                   </button>
                 </>
               )}
+              <style>{`
+        @keyframes sparkleAnim {
+          0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+          50% { transform: scale(1.15) rotate(15deg); opacity: 1; }
+        }
+      `}</style>
               <button
-                className="btn btn-outline"
-                style={{ width: "100%", justifyContent: "center", marginTop: 10, fontSize: 15 }}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  background: "transparent",
+                  border: "none",
+                  color: "#ef4444",
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: "pointer",
+                  marginTop: 8
+                }}
                 onClick={handleDeleteAccount}
               >
                 Delete Account
               </button>
             </div>
 
-            <div className="card animate-fade-up" style={{ padding: "20px 22px", marginTop: 16, animationDelay: "0.4s" }}>
-              <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 14 }}>Quick links</div>
-              <div style={{ display: "grid", gap: 10 }}>
+            <div className="card animate-fade-up" style={{
+              padding: "24px",
+              background: "white",
+              borderRadius: "16px",
+              border: "none",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+              marginTop: 0,
+              animationDelay: "0.4s"
+            }}>
+              <div style={{ fontWeight: 700, fontSize: 16, color: "#1f2937", fontFamily: "'Sora', sans-serif", marginBottom: 16 }}>
+                Quick Links
+              </div>
+              <div style={{ display: "grid", gap: 8 }}>
                 {[
-                  { label: "Create Job Posting", to: "/company/post-job" },
-                  { label: "Create Internship Posting", to: "/company/post-job" },
-                  { label: "View Applicants", to: "/company/applicants" },
-                  { label: "View All Jobs", to: "/company/jobs" },
-                  { label: "Jobs Per Month Report", to: "/company/reports/jobs-per-month" },
-                  { label: "Applications Per Job Report", to: "/company/reports/applications-per-job" },  // ← ADDED
+                  { label: "Create Job Posting", icon: <Plus size={16} color="var(--primary)" />, to: "/company/post-job" },
+                  { label: "Create Internship Posting", icon: <Sparkles size={16} color="#fbbf24" />, to: "/company/post-job" },
+                  { label: "View Applicants", icon: <Users size={16} color="var(--teal)" />, to: "/company/applicants" },
+                  { label: "View All Jobs", icon: <ClipboardList size={16} color="#4f46e5" />, to: "/company/jobs" },
+                  { label: "Jobs Per Month Report", icon: <TrendingUp size={16} color="#dc2626" />, to: "/company/reports/jobs-per-month" },
                 ].map((l) => (
                   <Link
                     key={l.label}
                     to={l.to}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--teal-dim)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--bg)")}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      padding: "12px 14px",
-                      borderRadius: 10,
-                      background: "var(--bg)",
-                      border: "1px solid var(--border)",
-                      fontSize: 15,
-                      fontWeight: 500,
-                      color: "var(--text)",
-                      transition: "background 0.15s",
+                      padding: "14px 16px",
+                      borderRadius: "12px",
+                      background: "#f9fafb",
+                      border: "1px solid transparent",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "#4b5563",
                       textDecoration: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "white";
+                      e.currentTarget.style.borderColor = "#e5e7eb";
+                      e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#f9fafb";
+                      e.currentTarget.style.borderColor = "transparent";
+                      e.currentTarget.style.boxShadow = "none";
                     }}
                   >
+                    <span style={{ marginRight: 12 }}>{l.icon}</span>
                     {l.label}
-                    <span style={{ marginLeft: "auto", color: "var(--muted)" }}>{"->"}</span>
+                    <span style={{ marginLeft: "auto", color: "#9ca3af" }}>›</span>
                   </Link>
                 ))}
               </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import companyJobService from "../../services/companyjobService";
 import { formatDate, formatSalary } from "../../utils/jobFormatters";
+import { AlertTriangle, FileText, CheckCircle, Clock, MapPin, Briefcase, Folder, Coins, Calendar, CalendarDays, Edit2 } from "lucide-react";
 
 export default function CompanyJobDetails() {
   const { id } = useParams();
@@ -178,8 +179,8 @@ export default function CompanyJobDetails() {
                 <div style={{ fontWeight: 600, marginBottom: 4 }}>
                   Permanent Delete (Hard Delete)
                 </div>
-                <div style={{ fontSize: 13, color: "var(--muted)" }}>
-                  ⚠️ Permanently remove from database. Only works if no students have applied to this job.
+                <div style={{ fontSize: 13, color: "var(--muted)", display: 'flex', gap: 6 }}>
+                  <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 2 }} /> Permanently remove from database. Only works if no students have applied to this job.
                 </div>
               </div>
             </label>
@@ -196,7 +197,9 @@ export default function CompanyJobDetails() {
                 color: "var(--coral)",
               }}
             >
-              ⚠️ Warning: This action cannot be undone. If students have already applied to this job, permanent deletion will be blocked.
+              <div style={{ display: 'flex', gap: 6 }}>
+                <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 2 }} /> Warning: This action cannot be undone. If students have already applied to this job, permanent deletion will be blocked.
+              </div>
             </div>
           )}
 
@@ -228,7 +231,7 @@ export default function CompanyJobDetails() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 65px)", background: "var(--bg)", paddingBottom: 60 }}>
+    <div style={{ background: "var(--bg)", paddingBottom: 60 }}>
       {/* Delete Modal */}
       <DeleteModal />
 
@@ -291,9 +294,12 @@ export default function CompanyJobDetails() {
                 color: "white",
                 marginBottom: 14,
                 border: "1px solid rgba(255,255,255,0.18)",
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6
               }}
             >
-              📄 Job Details
+              <FileText size={14} /> Job Details
             </div>
             <h1 style={{ color: "white", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginBottom: 10 }}>
               {loading ? "Loading..." : job?.title}
@@ -309,9 +315,9 @@ export default function CompanyJobDetails() {
             Loading job details...
           </div>
         ) : error ? (
-          <div className="alert error" style={{ borderRadius: 12 }}>
-            ⚠️ {error}
-            <div style={{ marginTop: 12 }}>
+          <div className="alert error" style={{ borderRadius: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><AlertTriangle size={18} /> {error}</div>
+            <div style={{ marginTop: 4 }}>
               <Link to="/company/jobs" className="btn btn-outline btn-sm">
                 ← Back to My Jobs
               </Link>
@@ -331,7 +337,7 @@ export default function CompanyJobDetails() {
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 20 }}>{isActive ? "✅" : "⏰"}</span>
+                {isActive ? <CheckCircle size={20} /> : <Clock size={20} />}
                 <div>
                   <strong>{isActive ? "Active" : "Expired"}</strong>
                   {!isActive && (
@@ -347,29 +353,29 @@ export default function CompanyJobDetails() {
             <div className="card" style={{ padding: "28px 30px", borderRadius: 22, marginBottom: 20 }}>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, marginBottom: 24 }}>
                 <div>
-                  <div className="helper" style={{ marginBottom: 4 }}>📍 Location</div>
+                  <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={14} /> Location</div>
                   <div style={{ fontWeight: 600 }}>{job.location || "Not specified"}</div>
                 </div>
                 <div>
-                  <div className="helper" style={{ marginBottom: 4 }}>💼 Job Type</div>
+                  <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={14} /> Job Type</div>
                   <div style={{ fontWeight: 600 }}>{job.type || job.jobType || "Not specified"}</div>
                 </div>
                 <div>
-                  <div className="helper" style={{ marginBottom: 4 }}>🗂️ Category</div>
+                  <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><Folder size={14} /> Category</div>
                   <div style={{ fontWeight: 600 }}>{job.category || "General"}</div>
                 </div>
                 <div>
-                  <div className="helper" style={{ marginBottom: 4 }}>💰 Salary</div>
+                  <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><Coins size={14} /> Salary</div>
                   <div style={{ fontWeight: 600 }}>{formatSalary(job.salary)}</div>
                 </div>
                 <div>
-                  <div className="helper" style={{ marginBottom: 4 }}>📅 Deadline</div>
+                  <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><Calendar size={14} /> Deadline</div>
                   <div style={{ fontWeight: 600, color: isActive ? "var(--teal)" : "var(--coral)" }}>
                     {formatDate(job.deadline)}
                   </div>
                 </div>
                 <div>
-                  <div className="helper" style={{ marginBottom: 4 }}>📆 Posted On</div>
+                  <div className="helper" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><CalendarDays size={14} /> Posted On</div>
                   <div style={{ fontWeight: 600 }}>{formatDate(job.createdAt)}</div>
                 </div>
               </div>
@@ -404,9 +410,12 @@ export default function CompanyJobDetails() {
                   borderColor: "var(--teal)",
                   color: "var(--teal)",
                   textDecoration: "none",
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6
                 }}
               >
-                Edit Job ✏️
+                Edit Job <Edit2 size={16} />
               </Link>
               <button
                 onClick={openDeleteModal}
