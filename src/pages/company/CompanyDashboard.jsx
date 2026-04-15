@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { companyProfileApi } from "../../services/profile";
-import companyJobService from "../../services/companyjobservice";
+import companyJobService from "../../services/companyjobService";
 import { Briefcase, GraduationCap, Users, Sparkles, Plus, ClipboardList, TrendingUp, Brain, Award } from "lucide-react";
 
 const COMPANY_ACTIONS = [
