@@ -4,7 +4,7 @@
  */
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import companyJobService from "../../services/companyjobservice";
+import companyJobService from "../../services/companyjobService";
 import { Brain, Briefcase, Search, Inbox, ChevronRight, Users, Calendar, MapPin } from "lucide-react";
 
 export default function CompanyRankedApplicantsSelect() {
