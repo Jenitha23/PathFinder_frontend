@@ -4,7 +4,7 @@ import { jobsApi } from "../../services/jobs";
 import { applicationsApi, localApplications, localSavedJobs } from "../../services/applications";
 import { formatDate, formatSalary } from "../../utils/jobFormatters";
 import { getAuth } from "../../services/auth";
-import { Clock, Star, CheckCircle, XCircle, Briefcase, Bookmark, BookmarkCheck, MapPin, Folder, Coins, Calendar, Rocket, AlertTriangle, PartyPopper } from "lucide-react";
+import { Clock, Star, CheckCircle, XCircle, Briefcase, Bookmark, BookmarkCheck, MapPin, Folder, Coins, Calendar, Rocket, AlertTriangle, PartyPopper, ClipboardList } from "lucide-react";
 
 /* ── max cover-letter chars ──────────────────────────── */
 const MAX_CL = 1000;
