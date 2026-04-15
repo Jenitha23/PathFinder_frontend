@@ -18,6 +18,7 @@ import StudentProfile from "./pages/student/StudentProfile";
 import StudentJobDetails from "./pages/student/StudentJobDetails";
 import StudentApplications from "./pages/student/StudentApplications";
 import StudentSavedJobs from "./pages/student/StudentSavedJobs";
+import StudentAIDashboard from "./pages/student/StudentAIDashboard";
 
 import CompanyLogin from "./pages/company/CompanyLogin";
 import CompanyRegister from "./pages/company/CompanyRegister";
@@ -29,6 +30,8 @@ import EditJob from "./pages/company/EditJob";
 import CompanyApplicants from "./pages/company/CompanyApplicants";
 import CompanyJobsPerMonthReport from "./pages/company/CompanyJobsPerMonthReport";
 import CompanyApplicationsPerJobReport from "./pages/company/CompanyApplicationsPerJobReport";
+import CompanyRankedApplicants from "./pages/company/CompanyRankedApplicants";
+import CompanyRankedApplicantsSelect from "./pages/company/CompanyRankedApplicantsSelect";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -39,6 +42,7 @@ import AdminCompanyReview from "./pages/admin/AdminCompanyReview";
 import AdminCompanyDetails from "./pages/admin/AdminCompanyDetails";
 import AdminJobsPerMonthReport from "./pages/admin/AdminJobsPerMonthReport";
 import AdminApplicationsPerJobReport from "./pages/admin/AdminApplicationsPerJobReport";
+import AdminAIInsights from "./pages/admin/AdminAIInsights";
 
 export default function App() {
   return (
@@ -111,6 +115,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/student/ai-dashboard"
+  element={
+    <ProtectedRoute allowRole="STUDENT">
+      <DashboardLayout role="STUDENT">
+        <StudentAIDashboard />
+      </DashboardLayout>
+    </ProtectedRoute>
+  }
+/>
 
         {/* Company Routes */}
         <Route path="/company/login" element={<CompanyLogin />} />
@@ -145,6 +159,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/company/ranked-applicants"
+  element={
+    <ProtectedRoute allowRole="COMPANY">
+      <DashboardLayout role="COMPANY">
+        <CompanyRankedApplicantsSelect />
+      </DashboardLayout>
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/company/jobs/:id"
           element={
@@ -185,6 +209,17 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/company/jobs/:jobId/ranked-applicants"
+  element={
+    <ProtectedRoute allowRole="COMPANY">
+      <DashboardLayout role="COMPANY">
+        <CompanyRankedApplicants />
+      </DashboardLayout>
+    </ProtectedRoute>
+  }
+/>
+
         <Route
           path="/company/reports/jobs-per-month"
           element={
@@ -261,6 +296,14 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/admin/ai-insights"
+  element={
+    <ProtectedRoute allowRole="ADMIN">
+      <AdminAIInsights />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/admin/reports/applications-per-job"
           element={

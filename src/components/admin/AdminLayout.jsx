@@ -5,12 +5,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { Brain } from "lucide-react";
 
 const NAV_ITEMS = [
   { to: "/admin/dashboard", label: "Dashboard" },
   { to: "/admin/profile", label: "Profile" },
   { to: "/admin/students", label: "Students" },
   { to: "/admin/companies", label: "Companies" },
+  { to: "/admin/ai-insights", label: "AI Insights", icon: <Brain size={18} /> },
 ];
 
 // Renders the AdminLayout component.
@@ -51,7 +53,10 @@ export default function AdminLayout({ title, subtitle, children }) {
                 `admin-nav-link ${isActive ? "admin-nav-link-active" : ""}`
               }
             >
-              {item.label}
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {item.icon && <span style={{ display: "inline-flex" }}>{item.icon}</span>}
+                {item.label}
+              </div>
             </NavLink>
           ))}
         </nav>
@@ -82,4 +87,3 @@ export default function AdminLayout({ title, subtitle, children }) {
     </div>
   );
 }
-

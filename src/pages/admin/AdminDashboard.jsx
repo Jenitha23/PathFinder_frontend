@@ -231,7 +231,7 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* ADDED: Reports Quick Links Card */}
+      {/* Reports Quick Links Card */}
       <div className="card" style={{ padding: 20, marginTop: 20 }}>
         <h3 style={{ marginBottom: 16, fontSize: 18 }}>📊 Reports</h3>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>

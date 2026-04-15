@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { studentProfileApi } from "../../services/profile";
 import { localApplications, applicationsApi, localSavedJobs } from "../../services/applications";
-
-import { User, FileText, Search, ClipboardList, Briefcase, Bookmark, TrendingUp, Sparkles } from "lucide-react";
+import { Brain, User, FileText, Search, ClipboardList, Briefcase, Bookmark, TrendingUp, Sparkles } from "lucide-react";
 
 // Real data only — zeros are honest placeholders until API is connected
 const DASHBOARD_ACTIONS = [
@@ -39,6 +38,13 @@ const DASHBOARD_ACTIONS = [
     desc: "View status updates on all your submitted applications — Pending, Shortlisted, Accepted or Rejected.",
     action: "My Applications",
     to: "/student/applications",
+  },
+  {
+    icon: <Brain size={24} />,
+    title: "AI Career Assistant",
+    desc: "Get personalized ATS scores, job match recommendations, and skill gap analysis.",
+    action: "Go to AI Dashboard",
+    to: "/student/ai-dashboard",
   },
 ];
 
@@ -199,7 +205,7 @@ export default function StudentHome() {
   const stats = [
     { label: "Total Applications", value: applicationsCount, icon: <Briefcase size={20} />, color: "#4f46e5", bg: "#e0e7ff", to: "/student/applications" },
     { label: "Saved Listings", value: savedCount.toString(), icon: <Bookmark size={20} />, color: "#d97706", bg: "#fef3c7", to: "/student/saved-jobs" },
-    { label: "Profile Views", value: "—", icon: <TrendingUp size={20} />, color: "#dc2626", bg: "#fee2e2" },
+    { label: "AI Match Score", value: "—", icon: <Brain size={20} />, color: "#2563eb", bg: "#dbeafe", to: "/student/ai-dashboard" },
   ];
 
   return (
@@ -276,6 +282,7 @@ export default function StudentHome() {
             </p>
           </div>
         </div>
+        
         {/* Stats Grid */}
         <div
           className="student-stats-grid"
@@ -402,8 +409,8 @@ export default function StudentHome() {
                       width: 52,
                       height: 52,
                       borderRadius: 12,
-                      background: "#f0f9ff",
-                      color: "#0ea5e9",
+                      background: step.title === "AI Career Assistant" ? "#dbeafe" : "#f0f9ff",
+                      color: step.title === "AI Career Assistant" ? "#2563eb" : "#0ea5e9",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -427,19 +434,19 @@ export default function StudentHome() {
                         padding: "8px 16px",
                         fontSize: 13,
                         fontWeight: 600,
-                        color: "#4b5563",
+                        color: step.title === "AI Career Assistant" ? "#2563eb" : "#4b5563",
                         background: "white",
-                        border: "1px solid #e5e7eb",
+                        border: `1px solid ${step.title === "AI Career Assistant" ? "#bfdbfe" : "#e5e7eb"}`,
                         borderRadius: "8px",
                         textDecoration: "none",
                         transition: "all 0.2s"
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "#c1c8d1";
-                        e.currentTarget.style.background = "#f9fafb";
+                        e.currentTarget.style.borderColor = step.title === "AI Career Assistant" ? "#2563eb" : "#c1c8d1";
+                        e.currentTarget.style.background = step.title === "AI Career Assistant" ? "#dbeafe" : "#f9fafb";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "#e5e7eb";
+                        e.currentTarget.style.borderColor = step.title === "AI Career Assistant" ? "#bfdbfe" : "#e5e7eb";
                         e.currentTarget.style.background = "white";
                       }}
                     >
@@ -665,6 +672,7 @@ export default function StudentHome() {
                   { label: "Upload CV", icon: <FileText size={16} />, to: "/student/profile" },
                   { label: "Browse Jobs", icon: <Briefcase size={16} />, to: "/student/jobs" },
                   { label: "Saved Jobs", icon: <Bookmark size={16} />, to: "/student/saved-jobs" },
+                  { label: "AI Career Dashboard", icon: <Brain size={16} color="#4b5563" />, to: "/student/ai-dashboard" },
                 ].map((l) => (
                   <Link
                     key={l.label}
