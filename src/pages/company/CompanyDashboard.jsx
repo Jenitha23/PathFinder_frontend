@@ -1,9 +1,13 @@
+/**
+ * File: src/pages/company/CompanyDashboard.jsx
+ * Purpose: Company dashboard with AI applicant ranking integration
+ */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth, saveAuth } from "../../services/auth";
 import { companyProfileApi } from "../../services/profile";
-import companyJobService from "../../services/companyjobService";
-import { Briefcase, GraduationCap, Users, Sparkles, Plus, ClipboardList, TrendingUp } from "lucide-react";
+import companyJobService from "../../services/companyjobservice";
+import { Briefcase, GraduationCap, Users, Sparkles, Plus, ClipboardList, TrendingUp, Brain, Award } from "lucide-react";
 
 const COMPANY_ACTIONS = [
   {
@@ -447,6 +451,7 @@ export default function CompanyDashboard() {
             </div>
           </div>
         </div>
+        
         {/* Stats Grid */}
         <div
           className="company-stats-grid"
@@ -1021,6 +1026,7 @@ export default function CompanyDashboard() {
                   { label: "Create Job Posting", icon: <Plus size={16} color="var(--primary)" />, to: "/company/post-job" },
                   { label: "Create Internship Posting", icon: <Sparkles size={16} color="#fbbf24" />, to: "/company/post-job" },
                   { label: "View Applicants", icon: <Users size={16} color="var(--teal)" />, to: "/company/applicants" },
+                  { label: "AI Ranked Applicants", icon: <Brain size={16} color="#4b5563" />, to: "/company/ranked-applicants" },
                   { label: "View All Jobs", icon: <ClipboardList size={16} color="#4f46e5" />, to: "/company/jobs" },
                   { label: "Jobs Per Month Report", icon: <TrendingUp size={16} color="#dc2626" />, to: "/company/reports/jobs-per-month" },
                 ].map((l) => (

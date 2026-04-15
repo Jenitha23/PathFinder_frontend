@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, Briefcase, Bookmark, FileText, LogOut, FileSearch, Users, PlusCircle, BarChart, Menu, X } from "lucide-react";
+import { LayoutDashboard, User, Briefcase, Bookmark, FileText, LogOut, FileSearch, Users, PlusCircle, BarChart, Menu, X, Brain } from "lucide-react";
 import { clearAuth, getAuth } from "../services/auth";
 import { api } from "../services/api";
 
@@ -10,6 +10,7 @@ const getStudentLinks = () => [
   { label: "Browse Jobs", path: "/student/jobs", icon: <Briefcase size={20} /> },
   { label: "Saved Jobs", path: "/student/saved-jobs", icon: <Bookmark size={20} /> },
   { label: "Applications", path: "/student/applications", icon: <FileText size={20} /> },
+  { label: "AI Career Assistant", path: "/student/ai-dashboard", icon: <Brain size={20} /> },
 ];
 
 const getCompanyLinks = () => [
@@ -17,6 +18,7 @@ const getCompanyLinks = () => [
   { label: "Post a Job", path: "/company/post-job", icon: <PlusCircle size={20} /> },
   { label: "Active Jobs", path: "/company/jobs", icon: <Briefcase size={20} /> },
   { label: "Applicants", path: "/company/applicants", icon: <Users size={20} /> },
+  { label: "AI Ranked Applicants", path: "/company/ranked-applicants", icon: <Brain size={20} /> },
   { label: "Reports", path: "/company/reports/jobs-per-month", icon: <BarChart size={20} /> },
 ];
 
