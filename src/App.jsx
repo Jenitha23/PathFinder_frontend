@@ -32,6 +32,8 @@ import CompanyJobsPerMonthReport from "./pages/company/CompanyJobsPerMonthReport
 import CompanyApplicationsPerJobReport from "./pages/company/CompanyApplicationsPerJobReport";
 import CompanyRankedApplicants from "./pages/company/CompanyRankedApplicants";
 import CompanyRankedApplicantsSelect from "./pages/company/CompanyRankedApplicantsSelect";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -236,6 +238,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+<Route path="/auth/reset-password" element={<ResetPassword />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />

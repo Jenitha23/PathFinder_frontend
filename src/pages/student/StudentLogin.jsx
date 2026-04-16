@@ -215,6 +215,18 @@ export default function StudentLogin() {
                 </div>
               </div>
 
+              {/* Forgot Password Link - ADDED */}
+              <div style={{ textAlign: "right", marginBottom: 8 }}>
+                <Link 
+                  to="/auth/forgot-password" 
+                  style={{ fontSize: 13, color: "var(--muted)", textDecoration: "none" }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = "var(--primary)"}
+                  onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+
               {/* Submit */}
               <button
                 type="submit"
@@ -266,4 +278,3 @@ export default function StudentLogin() {
     </div>
   );
 }
-
