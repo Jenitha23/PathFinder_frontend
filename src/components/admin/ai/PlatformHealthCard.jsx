@@ -1,6 +1,6 @@
 /**
  * File: src/components/admin/ai/PlatformHealthCard.jsx
- * Purpose: Display platform health metrics with gauge and trends
+ * Purpose: Display platform health metrics from backend
  */
 import { useState } from "react";
 import { 
@@ -27,8 +27,9 @@ export default function PlatformHealthCard({ data }) {
   if (!data) {
     return (
       <div className="card" style={{ padding: 20, textAlign: "center" }}>
-        <Activity size={32} color="var(--muted)" style={{ marginBottom: 12 }} />
-        <p className="helper">No platform health data available</p>
+        <div className="skeleton" style={{ height: 20, width: "50%", margin: "0 auto 12px" }} />
+        <div className="skeleton" style={{ height: 80, width: 80, margin: "0 auto 12px", borderRadius: "50%" }} />
+        <div className="skeleton" style={{ height: 60, width: "100%" }} />
       </div>
     );
   }
@@ -51,31 +52,18 @@ export default function PlatformHealthCard({ data }) {
     return "#EF4444";
   };
 
-  const getSuccessRateMessage = (rate) => {
-    if (rate >= 15) return "Excellent hiring rate!";
-    if (rate >= 8) return "Good conversion rate";
-    if (rate >= 5) return "Average conversion rate";
-    return "Low conversion rate - review hiring process";
+  const getAlertLevelColor = (level) => {
+    switch (level?.toLowerCase()) {
+      case "critical": return "#EF4444";
+      case "warning": return "#F59E0B";
+      default: return "#10B981";
+    }
   };
 
-  const getHealthScore = () => {
-    let score = 0;
-    if (data.monthOverMonthGrowth > 0) score += 25;
-    else if (data.monthOverMonthGrowth > -10) score += 10;
-    
-    if (data.applicationSuccessRate >= 15) score += 25;
-    else if (data.applicationSuccessRate >= 8) score += 15;
-    else if (data.applicationSuccessRate >= 5) score += 5;
-    
-    if (data.companiesNeedingAttention === 0) score += 25;
-    else if (data.companiesNeedingAttention <= 3) score += 15;
-    else score += 5;
-    
-    return Math.min(100, score + 25); // Base 25 points
-  };
-
-  const healthScore = getHealthScore();
+  // Use backend health score directly - NO recalculating!
+  const healthScore = data.healthScore || 0;
   const scoreColor = healthScore >= 80 ? "#10B981" : healthScore >= 60 ? "#F59E0B" : "#EF4444";
+  const alertLevel = data.alertLevel || "Good";
 
   const healthMetrics = [
     { 
@@ -83,21 +71,18 @@ export default function PlatformHealthCard({ data }) {
       value: `${data.monthOverMonthGrowth?.toFixed(1) || 0}%`,
       icon: getGrowthIcon(data.monthOverMonthGrowth),
       color: getGrowthColor(data.monthOverMonthGrowth),
-      trend: data.monthOverMonthGrowth > 0 ? "increasing" : "decreasing",
     },
     { 
       label: "Success Rate", 
       value: `${data.applicationSuccessRate?.toFixed(1) || 0}%`,
       icon: <CheckCircle size={16} color={getSuccessRateColor(data.applicationSuccessRate)} />,
       color: getSuccessRateColor(data.applicationSuccessRate),
-      message: getSuccessRateMessage(data.applicationSuccessRate),
     },
     { 
       label: "Pending Reviews", 
       value: data.companiesNeedingAttention || 0,
       icon: data.companiesNeedingAttention === 0 ? <CheckCircle size={16} color="#10B981" /> : <AlertTriangle size={16} color="#F59E0B" />,
       color: data.companiesNeedingAttention === 0 ? "#10B981" : "#F59E0B",
-      message: data.companiesNeedingAttention === 0 ? "All caught up" : `${data.companiesNeedingAttention} companies need attention`,
     },
   ];
 
@@ -129,6 +114,18 @@ export default function PlatformHealthCard({ data }) {
           >
             Health Score: {healthScore}
           </div>
+          <span
+            style={{
+              background: `${getAlertLevelColor(alertLevel)}20`,
+              padding: "2px 10px",
+              borderRadius: 20,
+              fontSize: 11,
+              fontWeight: 600,
+              color: getAlertLevelColor(alertLevel),
+            }}
+          >
+            {alertLevel}
+          </span>
         </div>
         {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
       </div>
@@ -198,18 +195,13 @@ export default function PlatformHealthCard({ data }) {
             <div style={{ fontSize: 22, fontWeight: 700, color: metric.color }}>
               {metric.value}
             </div>
-            {metric.message && (
-              <div className="helper" style={{ fontSize: 10, marginTop: 4 }}>
-                {metric.message}
-              </div>
-            )}
           </div>
         ))}
       </div>
 
       {expanded && (
         <>
-          {/* Detailed Recommendations */}
+          {/* Recommendations from Backend */}
           {data.recommendations && data.recommendations.length > 0 && (
             <div style={{ marginBottom: 16, padding: 12, background: "#EFF6FF", borderRadius: 12 }}>
               <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 13 }}>📋 Action Items</div>
@@ -222,41 +214,6 @@ export default function PlatformHealthCard({ data }) {
               </ul>
             </div>
           )}
-
-          {/* Additional Stats */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, background: "var(--bg)", borderRadius: 10 }}>
-              <ThumbsUp size={18} color="#10B981" />
-              <div>
-                <div className="helper" style={{ fontSize: 10 }}>Positive Indicators</div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>
-                  {data.monthOverMonthGrowth > 0 ? "Growing user base" : "User acquisition stable"}
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, background: "var(--bg)", borderRadius: 10 }}>
-              <ThumbsDown size={18} color="#EF4444" />
-              <div>
-                <div className="helper" style={{ fontSize: 10 }}>Needs Attention</div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>
-                  {data.applicationSuccessRate < 10 ? "Low application success rate" : "Hiring metrics good"}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Trend Analysis */}
-          <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
-            <div className="helper" style={{ fontSize: 11, marginBottom: 8 }}>📈 Trend Analysis</div>
-            <p style={{ fontSize: 13, color: "var(--text)" }}>
-              {data.monthOverMonthGrowth > 0 
-                ? `Platform is growing at ${data.monthOverMonthGrowth.toFixed(1)}% month-over-month. `
-                : `Platform growth is stable. `}
-              {data.applicationSuccessRate < 10 
-                ? "Consider reviewing the hiring process to improve acceptance rates."
-                : "Hiring success rates are healthy."}
-            </p>
-          </div>
         </>
       )}
     </div>

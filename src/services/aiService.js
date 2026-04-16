@@ -51,8 +51,21 @@ export const aiService = {
   /**
    * Get AI-powered platform insights
    * GET /api/ai/admin/insights
+   * Response structure: { success, message, data: { talentDemand, platformHealth, topInDemandSkills, predictions, ... }, metadata }
    */
   getAdminInsights: () => api.get("/api/ai/admin/insights"),
+
+  /**
+   * Get platform health metrics (detailed)
+   * GET /api/ai/admin/insights/health
+   */
+  getPlatformHealth: () => api.get("/api/ai/admin/insights/health"),
+
+  /**
+   * Get skills gap analysis
+   * GET /api/ai/admin/insights/skills-gap
+   */
+  getSkillsGapAnalysis: () => api.get("/api/ai/admin/insights/skills-gap"),
 };
 
 export default aiService;

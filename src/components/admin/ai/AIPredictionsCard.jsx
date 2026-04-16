@@ -1,6 +1,6 @@
 /**
  * File: src/components/admin/ai/AIPredictionsCard.jsx
- * Purpose: Display AI-generated predictions
+ * Purpose: Display AI-generated predictions from backend
  */
 import { Sparkles, TrendingUp, Clock, Activity } from "lucide-react";
 
@@ -8,7 +8,8 @@ export default function AIPredictionsCard({ predictions }) {
   if (!predictions || predictions.length === 0) {
     return (
       <div className="card" style={{ padding: 20, textAlign: "center" }}>
-        <p className="helper">No predictions available</p>
+        <Sparkles size={32} color="var(--muted)" style={{ marginBottom: 12 }} />
+        <p className="helper">No predictions available from AI service</p>
       </div>
     );
   }
