@@ -1,6 +1,6 @@
 /**
  * File: src/components/admin/ai/SkillTrendsChart.jsx
- * Purpose: Display top in-demand skills
+ * Purpose: Display top in-demand skills from backend data
  */
 import { useEffect, useRef } from "react";
 
@@ -44,10 +44,10 @@ export default function SkillTrendsChart({ skills }) {
               callbacks: {
                 afterBody: (tooltipItems) => {
                   const skill = skills[tooltipItems[0].dataIndex];
-                  if (skill) {
+                  if (skill && skill.gapCount !== undefined) {
                     return [
-                      `Gap: ${skill.gapCount || skill.jobPostingsCount} positions`,
-                      `Growth: ${skill.growthRate?.toFixed(1) || 0}%`,
+                      `Gap: ${skill.gapCount} positions`,
+                      `Students with skill: ${skill.studentsWithSkill || 0}`,
                     ];
                   }
                   return [];
@@ -78,7 +78,7 @@ export default function SkillTrendsChart({ skills }) {
   if (!skills || skills.length === 0) {
     return (
       <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p className="helper">No skill data available</p>
+        <p className="helper">No skill data available from backend</p>
       </div>
     );
   }
